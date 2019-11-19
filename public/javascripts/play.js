@@ -136,10 +136,15 @@ canvas.addEventListener("mouseout", () => {
 undo.addEventListener("click", () => undoHandler(points));
 restart.addEventListener("click", resetCanvas);
 canvas.addEventListener("mousemove", mousePos);
-form.addEventListener("submit", async e => {
-  let data = await JSON.stringify(points);
-  console.log(data);
-  input.value = JSON.stringify(points);
+
+//submit completeSquiggle
+form.addEventListener("submit", async () => {
+  var dataURL = await canvas.toDataURL();
+  console.log(dataURL);
+  input.value = dataURL;
+  // let data = await JSON.stringify(points);
+  // console.log(data);
+  // input.value = JSON.stringify(points);
 });
 
 //fetch squiggle

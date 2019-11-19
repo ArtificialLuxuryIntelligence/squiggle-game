@@ -48,7 +48,10 @@ router.post("/newsquiggle/submit", function(req, res, next) {
 router.post("/play/submit", function(req, res, next) {
   let squiggle = new CompletedSquiggle({
     author: "completer",
-    line: req.body.data
+    img: {
+      data: req.body.data,
+      contentType: "image/png"
+    }
   });
   squiggle.save(err => {
     if (err) {

@@ -1,5 +1,5 @@
-let squiggles;
 const container = document.getElementById("gallery-container");
+const image = document.getElementById("test-image");
 
 //fetch squiggle
 const fetchSquiggles = async () => {
@@ -10,9 +10,13 @@ const fetchSquiggles = async () => {
 
 /// render squiggles
 window.addEventListener("load", async () => {
-  squiggles = await fetchSquiggles();
+  const squiggles = await fetchSquiggles();
   console.log(squiggles);
-  console.log(squiggles.length);
-  // drawFromPoints(squiggle, squiggleColour);
-  // ctx.strokeStyle = strokeColour;
+
+  for (let i = 0; i < squiggles.length; i++) {
+    let squiggleImg = document.createElement("img");
+    let data = squiggles[i].img.data;
+    squiggleImg.src = data;
+    container.append(squiggleImg);
+  }
 });

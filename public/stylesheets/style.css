@@ -15,3 +15,12 @@ a {
 canvas {
   border: 1px solid black;
 }
+
+#gallery-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+#gallery-container img {
+  margin: 10px;
+  border-radius: 10px;
+}
