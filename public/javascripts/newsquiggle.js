@@ -125,7 +125,7 @@ canvas.addEventListener("mouseout", () => {
 
 restart.addEventListener("click", resetCanvas);
 canvas.addEventListener("mousemove", mousePos);
-form.addEventListener("submit", e => {
+form.addEventListener("submit", async () => {
   input.value = JSON.stringify(points);
 });
 

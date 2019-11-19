@@ -51,6 +51,10 @@ router.post("/play/submit", function(req, res, next) {
     img: {
       data: req.body.data,
       contentType: "image/png"
+    },
+    img2: {
+      data: req.body.png,
+      contentType: "image/png"
     }
   });
   squiggle.save(err => {

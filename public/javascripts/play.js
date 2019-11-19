@@ -3,7 +3,7 @@ const undo = document.getElementById("undo");
 const restart = document.getElementById("restart");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
-
+const input2 = document.getElementById("hiddenField2");
 const ctx = canvas.getContext("2d");
 const mouse = { x: 0, y: 0 };
 let isDrawing = false;
@@ -139,7 +139,7 @@ canvas.addEventListener("mousemove", mousePos);
 
 //submit completeSquiggle
 form.addEventListener("submit", async () => {
-  var dataURL = await canvas.toDataURL();
+  let dataURL = await canvas.toDataURL();
   console.log(dataURL);
   input.value = dataURL;
   // let data = await JSON.stringify(points);
@@ -160,5 +160,8 @@ window.addEventListener("load", async () => {
   squiggle = await fetchSquiggle();
   console.log(squiggle);
   drawFromPoints(squiggle, squiggleColour);
+  let dataURL = await canvas.toDataURL();
+  console.log(dataURL);
+  input2.value = dataURL;
   ctx.strokeStyle = strokeColour;
 });
