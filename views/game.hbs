@@ -1,0 +1,27 @@
+
+    <div class="canvasContainer">
+      <canvas id="canvas"></canvas>
+    </div>
+    {{#if newsquiggle}}
+      <p>Now draw a new squiggle for someone else!</p>
+      <button type="button" id="restart">RESTART</button>
+      <form id="submit-form" action="/newsquiggle/submit" method="post">
+        <input type='hidden' id= 'hiddenField' name='data' value='test' />
+        <button type="submit" id="submit" name="button">SUBMIT</button>
+      </form>
+      {{else}}
+      <button id="undo" type="button" name="undo">UNDO</button>
+      <button type="button" id="restart">RESTART</button>
+      <form id="submit-form" action="/play/submit" method="post">
+        <input type='hidden' id= 'hiddenField' name='data' value='hello' />
+        <button type="submit" id="submit" name="button">SUBMIT</button>
+      </form>
+    {{/if}}
+    <a href="/">HOME</a>
+
+    {{#if newsquiggle}}
+    <script type="text/javascript" src="javascripts/newsquiggle.js"></script>
+    {{else}}
+    <script type="text/javascript" src="javascripts/play.js"></script>
+
+    {{/if}}
