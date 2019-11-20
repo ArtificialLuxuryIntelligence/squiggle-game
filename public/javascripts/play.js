@@ -12,9 +12,9 @@ let section = 0;
 let squiggle;
 
 //colour variable (from database)
-let squiggleColour = "#fff000";
-let strokeColour = "red";
-let fillColour = "grey";
+let squiggleColour = "#36494E";
+let strokeColour = "#9E2A2B";
+let fillColour = "white";
 
 //context styling
 // canvas.width = window.innerWidth * 0.8;
@@ -22,7 +22,7 @@ let fillColour = "grey";
 // ctx.filter = "blur(1px)";
 ctx.imageSmoothingEnabled = true;
 
-ctx.lineWidth = 1;
+ctx.lineWidth = 2;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 

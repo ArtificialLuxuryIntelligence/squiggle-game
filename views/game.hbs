@@ -1,6 +1,6 @@
 
     <div class="canvas-container">
-      <canvas width = 300 height = 300 id="canvas"></canvas>
+      <canvas width = 320 height = 320 id="canvas"></canvas>
 
     </div>
     <div class="button-container">
@@ -13,6 +13,8 @@
           <button type="submit" id="submit" name="button">SUBMIT</button>
         </form>
         {{else}}
+        <h2>Complete the squiggle. </h2>
+
         <button id="undo" type="button" name="undo">UNDO</button>
         <button type="button" id="restart">RESTART</button>
         <form id="submit-form" action="/play/submit" method="post">

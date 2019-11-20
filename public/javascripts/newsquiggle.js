@@ -10,9 +10,9 @@ let points = [];
 let section = 0;
 
 //colour variable (from database)
-let squiggleColour = "#fff000";
-let strokeColour = "red";
-let fillColour = "grey";
+let squiggleColour = "#36494E";
+let strokeColour = "#9E2A2B";
+let fillColour = "white";
 
 //context styling
 canvas.width = 300;
@@ -20,7 +20,7 @@ canvas.height = 300;
 // ctx.filter = "blur(1px)";
 // ctx.imageSmoothingEnabled = true;
 
-ctx.lineWidth = 1;
+ctx.lineWidth = 2;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 
@@ -80,7 +80,6 @@ function mousePos(e) {
 
 const resetCanvas = () => {
   backgroundFill();
-  drawFromPoints(squiggle, squiggleColour);
   ctx.strokeStyle = strokeColour;
   section = 0;
   points = [];
