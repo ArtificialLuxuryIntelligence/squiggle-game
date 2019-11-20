@@ -14,7 +14,7 @@ router.get("/gallery", function(req, res, next) {
 });
 
 router.get("/gallery/squiggles", async (req, res, next) => {
-  let squiggles = await CompletedSquiggle.find();
+  let squiggles = await CompletedSquiggle.find({}).sort({ time: -1 });
   res.json(squiggles);
 });
 

@@ -1,26 +1,31 @@
 
-    <div class="canvasContainer">
-      <canvas id="canvas"></canvas>
+    <div class="canvas-container">
+      <canvas width = 300 height = 300 id="canvas"></canvas>
+
     </div>
-    {{#if newsquiggle}}
-      <h2>Now draw a new squiggle for someone else!</h2>
-      <button type="button" id="restart">RESTART</button>
-      <form id="submit-form" action="/newsquiggle/submit" method="post">
-        <input type='hidden' id= 'hiddenField' name='data' value='test' />
+    <div class="button-container">
+      {{#if newsquiggle}}
+        <h2>Now draw a new squiggle for someone else!</h2>
+        <button type="button" id="restart">RESTART</button>
+        <form id="submit-form" action="/newsquiggle/submit" method="post">
+          <input type='hidden' id= 'hiddenField' name='data' value='test' />
 
-        <button type="submit" id="submit" name="button">SUBMIT</button>
-      </form>
-      {{else}}
-      <button id="undo" type="button" name="undo">UNDO</button>
-      <button type="button" id="restart">RESTART</button>
-      <form id="submit-form" action="/play/submit" method="post">
-        <input type='hidden' id= 'hiddenField' name='data' value='hello' />
-        <input type='hidden' id= 'hiddenField2' name='png' value='test' />
-        <button type="submit" id="submit" name="button">SUBMIT</button>
-        <a href="/">HOME</a>
+          <button type="submit" id="submit" name="button">SUBMIT</button>
+        </form>
+        {{else}}
+        <button id="undo" type="button" name="undo">UNDO</button>
+        <button type="button" id="restart">RESTART</button>
+        <form id="submit-form" action="/play/submit" method="post">
+          <input type='hidden' id= 'hiddenField' name='data' value='hello' />
+          <input type='hidden' id= 'hiddenField2' name='png' value='test' />
+          <button type="submit" id="submit" name="button">SUBMIT</button>
+          <a href="/">HOME</a>
 
-      </form>
-    {{/if}}
+        </form>
+      {{/if}}
+    </div>
+
+
 
     {{#if newsquiggle}}
     <script type="text/javascript" src="javascripts/newsquiggle.js"></script>

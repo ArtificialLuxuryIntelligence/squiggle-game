@@ -17,8 +17,8 @@ let strokeColour = "red";
 let fillColour = "grey";
 
 //context styling
-canvas.width = 300;
-canvas.height = 300;
+// canvas.width = window.innerWidth * 0.8;
+// canvas.height = window.innerWidth * 0.8;
 // ctx.filter = "blur(1px)";
 ctx.imageSmoothingEnabled = true;
 
@@ -74,18 +74,17 @@ const drawFromPoints = (collection, strokecolour) => {
 };
 
 // Event Handlers
-function mousePos(e) {
-  mouse.x = e.clientX - this.offsetLeft;
-  mouse.y = e.clientY - this.offsetTop;
-}
+// function mousePos(e) {
+//   mouse.x = e.clientX - this.offsetLeft;
+//   mouse.y = e.clientY - this.offsetTop;
+// }
 
-const resetCanvas = () => {
-  backgroundFill();
-  drawFromPoints(squiggle, squiggleColour);
-  ctx.strokeStyle = strokeColour;
-  section = 0;
-  points = [];
-};
+// Handlers
+function mousePos(e) {
+  var rect = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - rect.left;
+  mouse.y = e.clientY - rect.top;
+}
 
 const mouseDownHandler = () => {
   isDrawing = true;
@@ -101,6 +100,24 @@ const mouseDownHandler = () => {
   points[section].push({ x: mouse.x, y: mouse.y });
 };
 
+const mouseUpHandler = () => {
+  drawFromPoints(points);
+  canvas.removeEventListener("mousemove", draw);
+  if (isDrawing) {
+    section++;
+  }
+  isDrawing = false;
+};
+
+const mouseOutHandler = () => {
+  canvas.removeEventListener("mousemove", draw);
+  if (isDrawing) {
+    section++;
+    console.log(section);
+  }
+  isDrawing = false;
+};
+
 const undoHandler = points => {
   points.pop();
   if (section > 0) {
@@ -112,30 +129,21 @@ const undoHandler = points => {
   drawFromPoints(points, strokeColour);
 };
 
+const resetCanvas = () => {
+  backgroundFill();
+  drawFromPoints(squiggle, squiggleColour);
+  ctx.strokeStyle = strokeColour;
+  section = 0;
+  points = [];
+};
+
 //event listeners
 canvas.addEventListener("mousedown", mouseDownHandler);
-
-canvas.addEventListener("mouseup", () => {
-  drawFromPoints(points);
-  canvas.removeEventListener("mousemove", draw);
-  if (isDrawing) {
-    section++;
-  }
-  isDrawing = false;
-});
-
-canvas.addEventListener("mouseout", () => {
-  canvas.removeEventListener("mousemove", draw);
-  if (isDrawing) {
-    section++;
-    console.log(section);
-  }
-  isDrawing = false;
-});
-
+canvas.addEventListener("mouseup", mouseUpHandler);
+canvas.addEventListener("mouseout", mouseOutHandler);
+canvas.addEventListener("mousemove", e => mousePos(e));
 undo.addEventListener("click", () => undoHandler(points));
 restart.addEventListener("click", resetCanvas);
-canvas.addEventListener("mousemove", mousePos);
 
 //submit completeSquiggle
 form.addEventListener("submit", async () => {
@@ -165,3 +173,96 @@ window.addEventListener("load", async () => {
   input2.value = dataURL;
   ctx.strokeStyle = strokeColour;
 });
+
+////////////////////////////////////////////////// mobile touch controls
+
+const touch = { x: 0, y: 0 };
+
+// Handlers
+// Get the position of touch on canvas
+function touchPos(e) {
+  var rect = canvas.getBoundingClientRect();
+  touch.x = e.touches[0].clientX - rect.left;
+  touch.y = e.touches[0].clientY - rect.top;
+}
+
+function touchdraw(e) {
+  if (isDrawing) {
+    ctx.lineTo(touch.x, touch.y);
+    ctx.stroke();
+    points[section].push({ x: touch.x, y: touch.y });
+  }
+}
+
+const touchDownHandler = () => {
+  isDrawing = true;
+  ctx.moveTo(touch.x, touch.y);
+  ctx.beginPath();
+  let arr = [];
+  points.push(arr);
+  canvas.addEventListener("touchmove", touchdraw, { passive: false });
+
+  // draws first pixel before mouse moves take over drawing job
+  // ctx.fillStyle = strokeColour;
+  // ctx.fillRect(touch.x, touch.y, 1, 1);
+  // points[section].push({ x: touch.x, y: touch.y });
+};
+
+const touchUpHandler = () => {
+  drawFromPoints(points);
+  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+  if (isDrawing) {
+    section++;
+  }
+  isDrawing = false;
+};
+
+// const mouseOutHandler = () => {
+//   canvas.removeEventListener("mousemove", draw);
+//   if (isDrawing) {
+//     section++;
+//     console.log(section);
+//   }
+//   isDrawing = false;
+// };
+
+//event listeners
+
+//
+// removed from inside touchstart and end handlers:
+// canvas.addEventListener("touchmove", touchdraw);
+//
+canvas.addEventListener("touchstart", touchDownHandler, { passive: false });
+canvas.addEventListener("touchend", touchUpHandler);
+// canvas.addEventListener("mouseout", mouseOutHandler);
+canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+
+//
+// Prevent scrolling when touching the canvas
+document.body.addEventListener(
+  "touchstart",
+  function(e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
+document.body.addEventListener(
+  "touchend",
+  function(e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
+document.body.addEventListener(
+  "touchmove",
+  function(e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
