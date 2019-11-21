@@ -199,6 +199,7 @@ const touchDownHandler = e => {
 
   // draws first pixel before mouse moves take over drawing job
   // -----------a single quick tap doesnt work with touch for some reason
+  //se touchUpHandler below
   // ctx.fillStyle = strokeColour;
   // ctx.fillRect(touch.x, touch.y, 1, 1);
   // points[section].push({ x: touch.x, y: touch.y });
@@ -220,21 +221,6 @@ const touchUpHandler = () => {
   isDrawing = false;
 };
 
-// const mouseOutHandler = () => {
-//   canvas.removeEventListener("mousemove", draw);
-//   if (isDrawing) {
-//     section++;
-//     console.log(section);
-//   }
-//   isDrawing = false;
-// };
-
-//event listeners
-
-//
-// removed from inside touchstart and end handlers:
-// canvas.addEventListener("touchmove", touchdraw);
-//
 canvas.addEventListener("touchstart", e => touchDownHandler(e), {
   passive: false
 });
@@ -247,7 +233,8 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 document.body.addEventListener(
   "touchstart",
   function(e) {
-    if (e.target == canvas) {
+    console.log(e.touches.length == 1);
+    if (e.target == canvas && e.touches.length == 1) {
       e.preventDefault();
     }
   },
@@ -338,3 +325,5 @@ const touchMoveZoomHandler = function(e) {
 function touchEndZoomHandler() {
   setTimeout(() => (zoom.style.display = "none"), 1000);
 }
+
+// canvas.style.transform = "scale(2,2)";
