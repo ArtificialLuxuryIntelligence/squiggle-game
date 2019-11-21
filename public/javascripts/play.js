@@ -241,11 +241,22 @@ const touchDownHandler = e => {
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
     } else {
       isDrawing = false;
+      //assuming 2 touches here...
+      multitouchTracker = 2;
     }
   }, 50);
 };
 
-const touchUpHandler = () => {
+//tracker to see if there was recently a multitouch(i.e. zoom). If there was, then normal touchend should not fillRect---
+let multitouchTracker;
+
+///------
+
+const touchUpHandler = e => {
+  if (multitouchTracker > 0) {
+    multitouchTracker--;
+    return;
+  }
   console.log("up");
   console.log("points " + points.length);
   console.log("section " + section);
