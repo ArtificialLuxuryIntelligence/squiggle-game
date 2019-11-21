@@ -93,7 +93,6 @@ const mouseDownHandler = () => {
   let arr = [];
   points.push(arr);
   canvas.addEventListener("mousemove", draw);
-
   // draws first pixel before mouse moves take over drawing job
   ctx.fillStyle = strokeColour;
   ctx.fillRect(mouse.x, mouse.y, 1, 1);
@@ -181,7 +180,7 @@ function touchPos(e) {
   touch.y = e.touches[0].clientY - rect.top;
 }
 
-function touchdraw(e) {
+function touchdraw() {
   if (isDrawing) {
     ctx.lineTo(touch.x, touch.y);
     ctx.stroke();
@@ -195,14 +194,19 @@ const touchDownHandler = e => {
   ctx.beginPath();
   let arr = [];
   points.push(arr);
-  canvas.addEventListener("touchmove", touchdraw, { passive: false });
-
   // draws first pixel before mouse moves take over drawing job
   // -----------a single quick tap doesnt work with touch for some reason
   //se touchUpHandler below
   // ctx.fillStyle = strokeColour;
   // ctx.fillRect(touch.x, touch.y, 1, 1);
   // points[section].push({ x: touch.x, y: touch.y });
+
+  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+  setTimeout(() => {
+    if (isDrawing) {
+      canvas.addEventListener("touchmove", touchdraw, { passive: false });
+    }
+  }, 50);
 };
 
 const touchUpHandler = () => {
