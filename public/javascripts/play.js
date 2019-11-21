@@ -224,6 +224,7 @@ const touchDownHandler = e => {
     //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
     setTimeout(() => {
       if (e.touches.length < 2) {
+        ctx.closePath();
         let arr = [];
         points.push(arr);
         ctx.moveTo(touch.x, touch.y);
@@ -232,8 +233,7 @@ const touchDownHandler = e => {
         canvas.addEventListener("touchmove", touchdraw, { passive: false });
       } else {
         isDrawing = false;
-        //assuming 2 touches here...
-        // multitouchTracker = 2;
+        canvas.removeEventListener("touchmove", touchdraw, { passive: false });
       }
     }, 50);
   }
@@ -246,10 +246,6 @@ body.style.backgroundColor = "red";
 ///------
 
 const touchUpHandler = e => {
-  // if (multitouchTracker > 0) {
-  //   multitouchTracker--;
-  //   return;
-  // }
   ctx.closePath();
 
   setTimeout(() => {
