@@ -3,3 +3,4 @@ name (and change name) in local storage from home screens
 routes and error handling
 to empty squiggles from being submitted: submit handler
 add event listeners to window load function after squiggle has loaded
+doesn't section = points.length??!

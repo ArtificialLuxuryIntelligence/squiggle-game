@@ -92,20 +92,44 @@ const mouseDownHandler = () => {
   ctx.beginPath();
   let arr = [];
   points.push(arr);
-  canvas.addEventListener("mousemove", draw);
-  // draws first pixel before mouse moves take over drawing job
-  ctx.fillStyle = strokeColour;
-  ctx.fillRect(mouse.x, mouse.y, 1, 1);
-  points[section].push({ x: mouse.x, y: mouse.y });
+
+  setTimeout(() => {
+    canvas.addEventListener("mousemove", draw);
+    // draws first pixel before mouse moves take over drawing job
+    ctx.fillStyle = strokeColour;
+    ctx.fillRect(mouse.x, mouse.y, 1, 1);
+    points[section].push({ x: mouse.x, y: mouse.y });
+  }, 500);
 };
 
 const mouseUpHandler = () => {
-  // drawFromPoints(points);
-  canvas.removeEventListener("mousemove", draw);
-  if (isDrawing) {
-    section++;
+  {
+    console.log("up");
+    console.log("points " + points.length);
+    console.log("section " + section);
+    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+    if (points[points.length - 1].length < 1) {
+      // ctx.closePath();
+      points.pop();
+      if (section > 0) {
+        section--;
+      }
+    }
+    canvas.removeEventListener("mousemove", draw);
+    //rerender drawing: (not needed unless fancy smoothing is done)
+    // drawFromPoints(points);
+    if (isDrawing) {
+      section++;
+    }
+    isDrawing = false;
   }
-  isDrawing = false;
+
+  // // drawFromPoints(points);
+  // canvas.removeEventListener("mousemove", draw);
+  // if (isDrawing) {
+  //   section++;
+  // }
+  // isDrawing = false;
 };
 
 const mouseOutHandler = () => {
@@ -189,11 +213,15 @@ function touchdraw() {
 }
 
 const touchDownHandler = e => {
-  isDrawing = true;
-  ctx.moveTo(touch.x, touch.y);
-  ctx.beginPath();
+  console.log("down");
+  console.log("points " + points.length);
+  console.log("section " + section);
   let arr = [];
   points.push(arr);
+  ctx.moveTo(touch.x, touch.y);
+  ctx.beginPath();
+  isDrawing = true;
+
   // draws first pixel before mouse moves take over drawing job
   // -----------a single quick tap doesnt work with touch for some reason
   //se touchUpHandler below
@@ -203,22 +231,27 @@ const touchDownHandler = e => {
 
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
-    if (isDrawing) {
+    if (e.touches.length < 2) {
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
     }
   }, 500);
 };
 
 const touchUpHandler = () => {
+  console.log("up");
+  console.log("points " + points.length);
+  console.log("section " + section);
   //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
   if (points[points.length - 1].length < 1) {
+    // ctx.closePath();
     points.pop();
-    section--;
+    if (section > 0) {
+      section--;
+    }
   }
-
+  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
   //rerender drawing: (not needed unless fancy smoothing is done)
   // drawFromPoints(points);
-  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
   if (isDrawing) {
     section++;
   }
@@ -256,6 +289,7 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 document.body.addEventListener(
   "touchmove",
   function(e) {
+    console.log(e.touches.length);
     if (e.target == canvas && e.touches.length < 2) {
       e.preventDefault();
     }
