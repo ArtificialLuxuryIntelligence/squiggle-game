@@ -233,6 +233,8 @@ const touchDownHandler = e => {
   setTimeout(() => {
     if (e.touches.length < 2) {
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
+    } else {
+      isDrawing = false;
     }
   }, 500);
 };
@@ -266,30 +268,28 @@ canvas.addEventListener("touchend", touchUpHandler);
 canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 
 //
-// // Prevent scrolling when touching the canvas
-// document.body.addEventListener(
-//   "touchstart",
-//   function(e) {
-//     console.log(e.touches.length == 1);
-//     if (e.target == canvas && e.touches.length == 1) {
-//       e.preventDefault();
-//     }
-//   },
-//   { passive: false }
-// );
-// document.body.addEventListener(
-//   "touchend",
-//   function(e) {
-//     if (e.target == canvas && e.touches.length == 1) {
-//       e.preventDefault();
-//     }
-//   },
-//   { passive: false }
-// );
+// Prevent scrolling when touching the canvas
+document.body.addEventListener(
+  "touchstart",
+  function(e) {
+    if (e.target == canvas && e.touches.length < 2) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
+document.body.addEventListener(
+  "touchend",
+  function(e) {
+    if (e.target == canvas && e.touches.length < 2) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
 document.body.addEventListener(
   "touchmove",
   function(e) {
-    console.log(e.touches.length);
     if (e.target == canvas && e.touches.length < 2) {
       e.preventDefault();
     }
