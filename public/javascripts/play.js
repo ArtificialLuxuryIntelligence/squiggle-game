@@ -257,30 +257,35 @@ const touchUpHandler = e => {
   //   multitouchTracker--;
   //   return;
   // }
-  console.log("up");
-  console.log("points " + points.length);
-  console.log("section " + section);
+  setTimeout(() => (multitouchTracker = false), 100);
+  if (multitouchTracker == false) {
+    console.log("up");
+    console.log("points " + points.length);
+    console.log("section " + section);
 
-  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-  ctx.closePath();
+    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+    ctx.closePath();
 
-  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-  if (points[points.length - 1].length < 1) {
-    // ctx.closePath();
-    points.pop();
-    if (section > 0) {
-      section--;
+    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+    if (points[points.length - 1].length < 1) {
+      // ctx.closePath();
+      points.pop();
+      if (section > 0) {
+        section--;
+      }
     }
+    //rerender drawing: (not needed unless fancy smoothing is done)
+    // drawFromPoints(points);
+    if (isDrawing) {
+      section++;
+    }
+    isDrawing = false;
+
+    multitouchTracker = true;
   }
-  //rerender drawing: (not needed unless fancy smoothing is done)
-  // drawFromPoints(points);
-  if (isDrawing) {
-    section++;
-  }
-  isDrawing = false;
 };
 
-canvas.addEventListener("touchstart", e => touchDownHandler(e), {
+canvas.addEventListener("touchstart", touchDownHandler, {
   passive: false
 });
 canvas.addEventListener("touchend", touchUpHandler);
@@ -289,28 +294,28 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 
 //
 // Prevent scrolling when touching the canvas
-// document.body.addEventListener(
+// canvas.addEventListener(
 //   "touchstart",
 //   function(e) {
-//     if (e.target == canvas && e.touches.length < 2) {
+//     if (e.touches.length < 2) {
 //       e.preventDefault();
 //     }
 //   },
 //   { passive: false }
 // );
-// document.body.addEventListener(
+// canvas.addEventListener(
 //   "touchend",
 //   function(e) {
-//     if (e.target == canvas && e.touches.length < 2) {
+//     if (e.touches.length < 2) {
 //       e.preventDefault();
 //     }
 //   },
 //   { passive: false }
 // );
-document.body.addEventListener(
+canvas.addEventListener(
   "touchmove",
   function(e) {
-    if (e.target == canvas && e.touches.length < 2) {
+    if (e.touches.length < 2) {
       e.preventDefault();
     }
   },
