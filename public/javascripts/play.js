@@ -206,7 +206,7 @@ const touchDownHandler = e => {
     if (isDrawing) {
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
     }
-  }, 50);
+  }, 500);
 };
 
 const touchUpHandler = () => {
