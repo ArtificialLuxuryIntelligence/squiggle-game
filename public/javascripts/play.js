@@ -67,8 +67,8 @@ const drawFromPoints = (collection, strokecolour) => {
       //   collection[i][j + 2].y
       // );
       ctx.moveTo(collection[i][j].x, collection[i][j].y);
-
       ctx.stroke();
+      ctx.closePath();
     }
 
     ctx.closePath();
