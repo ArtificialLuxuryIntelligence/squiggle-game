@@ -33,7 +33,9 @@ function draw(e) {
   if (isDrawing) {
     ctx.lineTo(mouse.x, mouse.y);
     ctx.stroke();
-    points[section].push({ x: mouse.x, y: mouse.y });
+    if (points[section]) {
+      points[section].push({ x: mouse.x, y: mouse.y });
+    }
   }
 }
 
@@ -98,7 +100,9 @@ const mouseDownHandler = () => {
     // draws first pixel before mouse moves take over drawing job
     ctx.fillStyle = strokeColour;
     ctx.fillRect(mouse.x, mouse.y, 1, 1);
-    points[section].push({ x: mouse.x, y: mouse.y });
+    if (points[section]) {
+      points[section].push({ x: mouse.x, y: mouse.y });
+    }
   }, 500);
 };
 
@@ -208,7 +212,9 @@ function touchdraw() {
   if (isDrawing) {
     ctx.lineTo(touch.x, touch.y);
     ctx.stroke();
-    points[section].push({ x: touch.x, y: touch.y });
+    if (points[section]) {
+      points[section].push({ x: touch.x, y: touch.y });
+    }
   }
 }
 
@@ -236,30 +242,28 @@ const touchDownHandler = e => {
     } else {
       isDrawing = false;
     }
-  }, 500);
+  }, 50);
 };
 
 const touchUpHandler = () => {
-  if (e.touches.length < 2) {
-    console.log("up");
-    console.log("points " + points.length);
-    console.log("section " + section);
-    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-    if (points[points.length - 1].length < 1) {
-      // ctx.closePath();
-      points.pop();
-      if (section > 0) {
-        section--;
-      }
+  console.log("up");
+  console.log("points " + points.length);
+  console.log("section " + section);
+  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+  if (points[points.length - 1].length < 1) {
+    // ctx.closePath();
+    points.pop();
+    if (section > 0) {
+      section--;
     }
-    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-    //rerender drawing: (not needed unless fancy smoothing is done)
-    // drawFromPoints(points);
-    if (isDrawing) {
-      section++;
-    }
-    isDrawing = false;
   }
+  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+  //rerender drawing: (not needed unless fancy smoothing is done)
+  // drawFromPoints(points);
+  if (isDrawing) {
+    section++;
+  }
+  isDrawing = false;
 };
 
 canvas.addEventListener("touchstart", e => touchDownHandler(e), {
