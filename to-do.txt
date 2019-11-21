@@ -1,0 +1,5 @@
+fixed position zoom/pan controls (and undo) - mini canvas to show whole pic?!
+name (and change name) in local storage from home screens
+routes and error handling
+to empty squiggles from being submitted: submit handler
+add event listeners to window load function after squiggle has loaded

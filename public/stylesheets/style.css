@@ -38,6 +38,10 @@ button {
 form button {
   width: 100%;
 }
+form a {
+  padding: 0;
+  border: 0;
+}
 
 .link-container {
   height: 100%;
@@ -45,7 +49,15 @@ form button {
   flex-direction: column;
   align-items: center;
 }
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
 .canvas-container {
+  /* relativefor magnifier */
+  position: relative;
+
   display: flex;
   justify-content: center;
   margin-top: 5%;
@@ -72,6 +84,9 @@ canvas {
   border: 3px solid black;
   border-radius: 10px;
 }
+#zoom {
+  border-radius: 50%;
+}
 
 /* Smartphones (portrait and landscape) ----------- */
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
@@ -80,7 +95,6 @@ canvas {
     font-size: 2rem;
   }
   p,
-  a,
   button,
   form {
     width: 40%;
@@ -120,4 +134,16 @@ canvas {
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
   only screen and (min-device-pixel-ratio: 1.5) {
   /* Styles */
+}
+
+/* magnify test */
+
+.img-magnifier-glass {
+  position: absolute;
+  border: 3px solid #000;
+  border-radius: 50%;
+  cursor: none;
+  /*Set the size of the magnifier glass:*/
+  width: 100px;
+  height: 100px;
 }

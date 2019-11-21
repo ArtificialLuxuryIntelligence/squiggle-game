@@ -101,7 +101,7 @@ const mouseDownHandler = () => {
 };
 
 const mouseUpHandler = () => {
-  drawFromPoints(points);
+  // drawFromPoints(points);
   canvas.removeEventListener("mousemove", draw);
   if (isDrawing) {
     section++;
@@ -113,7 +113,6 @@ const mouseOutHandler = () => {
   canvas.removeEventListener("mousemove", draw);
   if (isDrawing) {
     section++;
-    console.log(section);
   }
   isDrawing = false;
 };
@@ -122,7 +121,6 @@ const undoHandler = points => {
   points.pop();
   if (section > 0) {
     section--;
-    console.log(section);
   }
   backgroundFill();
   drawFromPoints(squiggle, squiggleColour);
@@ -148,7 +146,6 @@ restart.addEventListener("click", resetCanvas);
 //submit completeSquiggle
 form.addEventListener("submit", async () => {
   let dataURL = await canvas.toDataURL();
-  console.log(dataURL);
   input.value = dataURL;
   // let data = await JSON.stringify(points);
   // console.log(data);
@@ -166,10 +163,8 @@ const fetchSquiggle = async () => {
 window.addEventListener("load", async () => {
   backgroundFill();
   squiggle = await fetchSquiggle();
-  console.log(squiggle);
   drawFromPoints(squiggle, squiggleColour);
   let dataURL = await canvas.toDataURL();
-  console.log(dataURL);
   input2.value = dataURL;
   ctx.strokeStyle = strokeColour;
 });
@@ -194,7 +189,7 @@ function touchdraw(e) {
   }
 }
 
-const touchDownHandler = () => {
+const touchDownHandler = e => {
   isDrawing = true;
   ctx.moveTo(touch.x, touch.y);
   ctx.beginPath();
@@ -203,13 +198,21 @@ const touchDownHandler = () => {
   canvas.addEventListener("touchmove", touchdraw, { passive: false });
 
   // draws first pixel before mouse moves take over drawing job
+  // -----------a single quick tap doesnt work with touch for some reason
   // ctx.fillStyle = strokeColour;
   // ctx.fillRect(touch.x, touch.y, 1, 1);
   // points[section].push({ x: touch.x, y: touch.y });
 };
 
 const touchUpHandler = () => {
-  drawFromPoints(points);
+  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+  if (points[points.length - 1].length < 1) {
+    points.pop();
+    section--;
+  }
+
+  //rerender drawing: (not needed unless fancy smoothing is done)
+  // drawFromPoints(points);
   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
   if (isDrawing) {
     section++;
@@ -232,7 +235,9 @@ const touchUpHandler = () => {
 // removed from inside touchstart and end handlers:
 // canvas.addEventListener("touchmove", touchdraw);
 //
-canvas.addEventListener("touchstart", touchDownHandler, { passive: false });
+canvas.addEventListener("touchstart", e => touchDownHandler(e), {
+  passive: false
+});
 canvas.addEventListener("touchend", touchUpHandler);
 // canvas.addEventListener("mouseout", mouseOutHandler);
 canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
@@ -266,3 +271,70 @@ document.body.addEventListener(
   },
   { passive: false }
 );
+
+///
+// ZOOM magnifying glass {inspiration: https://jsfiddle.net/powerc9000/G39W9/}
+
+const zoom = document.getElementById("zoom");
+const zoomCtx = zoom.getContext("2d");
+const zoomToggle = document.getElementById("zoomtoggle");
+
+zoomToggle.addEventListener("click", () => {
+  if (zoomToggle.classList.contains("zoom-on")) {
+    zoomToggle.classList.remove("zoom-on");
+    canvas.removeEventListener("mousemove", mouseMoveZoomHandler);
+    canvas.removeEventListener("mouseout", mouseOutZoomHandler);
+    canvas.removeEventListener("touchmove", touchMoveZoomHandler);
+    // canvas.removeEventListener("touchend", touchEndZoomHandler);
+  } else {
+    zoomToggle.classList.add("zoom-on");
+    canvas.addEventListener("mousemove", mouseMoveZoomHandler);
+    canvas.addEventListener("mouseout", mouseOutZoomHandler);
+    canvas.addEventListener("touchmove", touchMoveZoomHandler);
+    canvas.addEventListener("touchend", touchEndZoomHandler);
+  }
+});
+
+//Event Handlers
+const mouseMoveZoomHandler = function(e) {
+  // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+  zoomCtx.drawImage(
+    canvas,
+    mouse.x - 12.5,
+    mouse.y - 12.5,
+    25,
+    25,
+    0,
+    0,
+    150,
+    150
+  );
+  zoom.style.top = e.pageY + 10 + "px";
+  zoom.style.left = e.pageX + 10 + "px";
+  zoom.style.display = "block";
+};
+function mouseOutZoomHandler() {
+  zoom.style.display = "none";
+}
+const touchMoveZoomHandler = function(e) {
+  // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+  zoomCtx.drawImage(
+    canvas,
+    touch.x - 12.5,
+    touch.y - 12.5,
+    25,
+    25,
+    0,
+    0,
+    150,
+    150
+  );
+  var rect = canvas.getBoundingClientRect();
+
+  zoom.style.top = rect.bottom + "px";
+  zoom.style.left = rect.left + 75 + "px";
+  zoom.style.display = "block";
+};
+function touchEndZoomHandler() {
+  setTimeout(() => (zoom.style.display = "none"), 1000);
+}

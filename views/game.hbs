@@ -1,32 +1,40 @@
 
-    <div class="canvas-container">
-      <canvas width = 320 height = 320 id="canvas"></canvas>
+<div class="container">
+  <div class="canvas-container">
+    <canvas width = 320 height = 320 id="canvas"></canvas>
 
-    </div>
-    <div class="button-container">
-      {{#if newsquiggle}}
-        <h2>Now draw a new squiggle for someone else!</h2>
-        <button type="button" id="restart">RESTART</button>
-        <form id="submit-form" action="/newsquiggle/submit" method="post">
-          <input type='hidden' id= 'hiddenField' name='data' value='test' />
+  </div>
+  <canvas id="zoom" width="150" height="150" style="position:absolute; top:0; left:0; display:none"></canvas>
 
-          <button type="submit" id="submit" name="button">SUBMIT</button>
-        </form>
-        {{else}}
-        <h2>Complete the squiggle. </h2>
+  <div class="button-container">
+    {{#if newsquiggle}}
+      <h2>Now draw a new squiggle for someone else!</h2>
+      <button type="button" id="restart">RESTART</button>
+      <form id="submit-form" action="/newsquiggle/submit" method="post">
+        <input type='hidden' id= 'hiddenField' name='data' value='test' />
 
-        <button id="undo" type="button" name="undo">UNDO</button>
-        <button type="button" id="restart">RESTART</button>
-        <form id="submit-form" action="/play/submit" method="post">
-          <input type='hidden' id= 'hiddenField' name='data' value='hello' />
-          <input type='hidden' id= 'hiddenField2' name='png' value='test' />
-          <button type="submit" id="submit" name="button">SUBMIT</button>
+        <button type="submit" id="submit" name="button">SUBMIT</button>
+      </form>
+      {{else}}
+      <h2>Complete the squiggle. </h2>
 
-        </form>
-        <a href="/">HOME</a>
+      <button id="undo" type="button" name="undo">UNDO</button>
+      <button type="button" id="restart">RESTART</button>
+      <button type="button" id="zoomtoggle">TOGGLE ZOOM</button>
+      <form id="submit-form" action="/play/submit" method="post">
+        <input type='hidden' id= 'hiddenField' name='data' value='hello' />
+        <input type='hidden' id= 'hiddenField2' name='png' value='test' />
+        <button type="submit" id="submit" name="button">SUBMIT</button>
 
-      {{/if}}
-    </div>
+        <a id="link-button" href="/"><button  type="button"  name="button">HOME</button></a>
+
+      </form>
+
+
+    {{/if}}
+  </div>
+</div>
+
 
 
 
