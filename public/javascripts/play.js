@@ -210,7 +210,7 @@ function touchPos(e) {
 }
 
 function touchdraw() {
-  if (isDrawing && !multitouchTracker) {
+  if (isDrawing) {
     ctx.lineTo(touch.x, touch.y);
     ctx.stroke();
     if (points[section]) {
@@ -220,36 +220,28 @@ function touchdraw() {
 }
 
 const touchDownHandler = e => {
-  console.log("down");
-  console.log("points " + points.length);
-  console.log("section " + section);
-
-  // draws first pixel before mouse moves take over drawing job
-  // -----------a single quick tap doesnt work with touch for some reason
-  //se touchUpHandler below
-  // ctx.fillStyle = strokeColour;
-  // ctx.fillRect(touch.x, touch.y, 1, 1);
-  // points[section].push({ x: touch.x, y: touch.y });
-
-  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
-  setTimeout(() => {
-    if (e.touches.length < 2) {
-      let arr = [];
-      points.push(arr);
-      ctx.moveTo(touch.x, touch.y);
-      ctx.beginPath();
-      isDrawing = true;
-      canvas.addEventListener("touchmove", touchdraw, { passive: false });
-    } else {
-      isDrawing = false;
-      //assuming 2 touches here...
-      // multitouchTracker = 2;
-    }
-  }, 50);
+  if (multitouchTracker == false) {
+    //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+    setTimeout(() => {
+      if (e.touches.length < 2) {
+        let arr = [];
+        points.push(arr);
+        ctx.moveTo(touch.x, touch.y);
+        ctx.beginPath();
+        isDrawing = true;
+        canvas.addEventListener("touchmove", touchdraw, { passive: false });
+      } else {
+        isDrawing = false;
+        //assuming 2 touches here...
+        // multitouchTracker = 2;
+      }
+    }, 50);
+  }
 };
 
 //tracker to see if there was recently a multitouch(i.e. zoom). If there was, then normal touchend should not fillRect---
 let multitouchTracker = false;
+body.style.backgroundColor = "red";
 
 ///------
 
@@ -263,7 +255,7 @@ const touchUpHandler = e => {
   setTimeout(() => {
     multitouchTracker = false;
     body.style.backgroundColor = "red";
-  }, 1000);
+  }, 500);
   if (multitouchTracker == false) {
     console.log("up");
     console.log("points " + points.length);
