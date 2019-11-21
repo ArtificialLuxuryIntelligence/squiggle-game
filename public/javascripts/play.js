@@ -168,7 +168,7 @@ canvas.addEventListener("mousedown", mouseDownHandler);
 canvas.addEventListener("mouseup", mouseUpHandler);
 canvas.addEventListener("mouseout", mouseOutHandler);
 canvas.addEventListener("mousemove", e => mousePos(e));
-undo.addEventListener("click", () => undoHandler(points));
+// undo.addEventListener("click", () => undoHandler(points));
 restart.addEventListener("click", resetCanvas);
 
 //submit completeSquiggle
@@ -220,65 +220,46 @@ function touchdraw() {
 }
 
 const touchDownHandler = e => {
-  if (multitouchTracker == false) {
-    //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
-    setTimeout(() => {
-      if (e.touches.length < 2) {
-        ctx.closePath();
-        let arr = [];
-        points.push(arr);
-        ctx.moveTo(touch.x, touch.y);
-        ctx.beginPath();
-        isDrawing = true;
-        canvas.addEventListener("touchmove", touchdraw, { passive: false });
-      } else {
-        isDrawing = false;
-        canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-      }
-    }, 50);
-  }
+  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+  setTimeout(() => {
+    if (e.touches.length < 2) {
+      ctx.closePath();
+      let arr = [];
+      points.push(arr);
+      ctx.moveTo(touch.x, touch.y);
+      ctx.beginPath();
+      isDrawing = true;
+      canvas.addEventListener("touchmove", touchdraw, { passive: false });
+    } else {
+      isDrawing = false;
+      canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+    }
+  }, 50);
 };
-
-//tracker to see if there was recently a multitouch(i.e. zoom). If there was, then normal touchend should not fillRect---
-let multitouchTracker = false;
-body.style.backgroundColor = "red";
-
-///------
 
 const touchUpHandler = e => {
   ctx.closePath();
 
-  setTimeout(() => {
-    multitouchTracker = false;
-    body.style.backgroundColor = "red";
-  }, 500);
-  if (multitouchTracker == false) {
-    console.log("up");
-    console.log("points " + points.length);
-    console.log("section " + section);
+  console.log("up");
+  console.log("points " + points.length);
+  console.log("section " + section);
 
-    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
 
-    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-    if (points[points.length - 1].length < 1) {
-      // ctx.closePath();
-      points.pop();
-      if (section > 0) {
-        section--;
-      }
+  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+  if (points[points.length - 1].length < 1) {
+    // ctx.closePath();
+    points.pop();
+    if (section > 0) {
+      section--;
     }
-    //rerender drawing: (not needed unless fancy smoothing is done)
-    // drawFromPoints(points);
-    if (isDrawing) {
-      section++;
-    }
-    isDrawing = false;
-
-    multitouchTracker = true;
-    body.style.backgroundColor = "white";
-  } else {
-    console.log("multi");
   }
+  //rerender drawing: (not needed unless fancy smoothing is done)
+  // drawFromPoints(points);
+  if (isDrawing) {
+    section++;
+  }
+  isDrawing = false;
 };
 
 canvas.addEventListener("touchstart", touchDownHandler, {
@@ -321,68 +302,68 @@ canvas.addEventListener(
 ///
 // ZOOM magnifying glass {inspiration: https://jsfiddle.net/powerc9000/G39W9/}
 
-const zoom = document.getElementById("zoom");
-const zoomCtx = zoom.getContext("2d");
-const zoomToggle = document.getElementById("zoomtoggle");
-
-zoomToggle.addEventListener("click", () => {
-  if (zoomToggle.classList.contains("zoom-on")) {
-    zoomToggle.classList.remove("zoom-on");
-    canvas.removeEventListener("mousemove", mouseMoveZoomHandler);
-    canvas.removeEventListener("mouseout", mouseOutZoomHandler);
-    canvas.removeEventListener("touchmove", touchMoveZoomHandler);
-    // canvas.removeEventListener("touchend", touchEndZoomHandler);
-  } else {
-    zoomToggle.classList.add("zoom-on");
-    canvas.addEventListener("mousemove", mouseMoveZoomHandler);
-    canvas.addEventListener("mouseout", mouseOutZoomHandler);
-    canvas.addEventListener("touchmove", touchMoveZoomHandler);
-    canvas.addEventListener("touchend", touchEndZoomHandler);
-  }
-});
+// const zoom = document.getElementById("zoom");
+// const zoomCtx = zoom.getContext("2d");
+// const zoomToggle = document.getElementById("zoomtoggle");
+//
+// zoomToggle.addEventListener("click", () => {
+//   if (zoomToggle.classList.contains("zoom-on")) {
+//     zoomToggle.classList.remove("zoom-on");
+//     canvas.removeEventListener("mousemove", mouseMoveZoomHandler);
+//     canvas.removeEventListener("mouseout", mouseOutZoomHandler);
+//     canvas.removeEventListener("touchmove", touchMoveZoomHandler);
+//     // canvas.removeEventListener("touchend", touchEndZoomHandler);
+//   } else {
+//     zoomToggle.classList.add("zoom-on");
+//     canvas.addEventListener("mousemove", mouseMoveZoomHandler);
+//     canvas.addEventListener("mouseout", mouseOutZoomHandler);
+//     canvas.addEventListener("touchmove", touchMoveZoomHandler);
+//     canvas.addEventListener("touchend", touchEndZoomHandler);
+//   }
+// });
 
 //Event Handlers
-const mouseMoveZoomHandler = function(e) {
-  // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-  zoomCtx.drawImage(
-    canvas,
-    mouse.x - 12.5,
-    mouse.y - 12.5,
-    25,
-    25,
-    0,
-    0,
-    150,
-    150
-  );
-  zoom.style.top = e.pageY + 10 + "px";
-  zoom.style.left = e.pageX + 10 + "px";
-  zoom.style.display = "block";
-};
-function mouseOutZoomHandler() {
-  zoom.style.display = "none";
-}
-const touchMoveZoomHandler = function(e) {
-  // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-  zoomCtx.drawImage(
-    canvas,
-    touch.x - 12.5,
-    touch.y - 12.5,
-    25,
-    25,
-    0,
-    0,
-    150,
-    150
-  );
-  var rect = canvas.getBoundingClientRect();
-
-  zoom.style.top = rect.bottom + "px";
-  zoom.style.left = rect.left + 75 + "px";
-  zoom.style.display = "block";
-};
-function touchEndZoomHandler() {
-  setTimeout(() => (zoom.style.display = "none"), 1000);
-}
+// const mouseMoveZoomHandler = function(e) {
+//   // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+//   zoomCtx.drawImage(
+//     canvas,
+//     mouse.x - 12.5,
+//     mouse.y - 12.5,
+//     25,
+//     25,
+//     0,
+//     0,
+//     150,
+//     150
+//   );
+//   zoom.style.top = e.pageY + 10 + "px";
+//   zoom.style.left = e.pageX + 10 + "px";
+//   zoom.style.display = "block";
+// };
+// function mouseOutZoomHandler() {
+//   zoom.style.display = "none";
+// }
+// const touchMoveZoomHandler = function(e) {
+//   // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+//   zoomCtx.drawImage(
+//     canvas,
+//     touch.x - 12.5,
+//     touch.y - 12.5,
+//     25,
+//     25,
+//     0,
+//     0,
+//     150,
+//     150
+//   );
+//   var rect = canvas.getBoundingClientRect();
+//
+//   zoom.style.top = rect.bottom + "px";
+//   zoom.style.left = rect.left + 75 + "px";
+//   zoom.style.display = "block";
+// };
+// function touchEndZoomHandler() {
+//   setTimeout(() => (zoom.style.display = "none"), 1000);
+// }
 
 // canvas.style.transform = "scale(2,2)";
