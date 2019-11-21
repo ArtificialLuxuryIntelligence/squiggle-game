@@ -243,7 +243,7 @@ document.body.addEventListener(
 document.body.addEventListener(
   "touchend",
   function(e) {
-    if (e.target == canvas) {
+    if (e.target == canvas && e.touches.length == 1) {
       e.preventDefault();
     }
   },
@@ -252,7 +252,7 @@ document.body.addEventListener(
 document.body.addEventListener(
   "touchmove",
   function(e) {
-    if (e.target == canvas) {
+    if (e.target == canvas && e.touches.length == 1) {
       e.preventDefault();
     }
   },
