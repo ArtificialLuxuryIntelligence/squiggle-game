@@ -240,24 +240,26 @@ const touchDownHandler = e => {
 };
 
 const touchUpHandler = () => {
-  console.log("up");
-  console.log("points " + points.length);
-  console.log("section " + section);
-  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-  if (points[points.length - 1].length < 1) {
-    // ctx.closePath();
-    points.pop();
-    if (section > 0) {
-      section--;
+  if (e.touches.length < 2) {
+    console.log("up");
+    console.log("points " + points.length);
+    console.log("section " + section);
+    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+    if (points[points.length - 1].length < 1) {
+      // ctx.closePath();
+      points.pop();
+      if (section > 0) {
+        section--;
+      }
     }
+    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+    //rerender drawing: (not needed unless fancy smoothing is done)
+    // drawFromPoints(points);
+    if (isDrawing) {
+      section++;
+    }
+    isDrawing = false;
   }
-  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-  //rerender drawing: (not needed unless fancy smoothing is done)
-  // drawFromPoints(points);
-  if (isDrawing) {
-    section++;
-  }
-  isDrawing = false;
 };
 
 canvas.addEventListener("touchstart", e => touchDownHandler(e), {
