@@ -224,6 +224,7 @@ const touchDownHandler = e => {
   console.log("section " + section);
   let arr = [];
   points.push(arr);
+  ctx.closePath();
   ctx.moveTo(touch.x, touch.y);
   ctx.beginPath();
   isDrawing = true;
@@ -242,7 +243,7 @@ const touchDownHandler = e => {
     } else {
       isDrawing = false;
       //assuming 2 touches here...
-      multitouchTracker = 2;
+      // multitouchTracker = 2;
     }
   }, 50);
 };
@@ -253,10 +254,10 @@ let multitouchTracker;
 ///------
 
 const touchUpHandler = e => {
-  if (multitouchTracker > 0) {
-    multitouchTracker--;
-    return;
-  }
+  // if (multitouchTracker > 0) {
+  //   multitouchTracker--;
+  //   return;
+  // }
   console.log("up");
   console.log("points " + points.length);
   console.log("section " + section);
