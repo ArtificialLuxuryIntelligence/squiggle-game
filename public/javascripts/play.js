@@ -1,3 +1,4 @@
+const body = document.body;
 const canvas = document.getElementById("canvas");
 const undo = document.getElementById("undo");
 const restart = document.getElementById("restart");
@@ -209,7 +210,7 @@ function touchPos(e) {
 }
 
 function touchdraw() {
-  if (isDrawing) {
+  if (isDrawing && !multitouchTracker) {
     ctx.lineTo(touch.x, touch.y);
     ctx.stroke();
     if (points[section]) {
@@ -248,7 +249,7 @@ const touchDownHandler = e => {
 };
 
 //tracker to see if there was recently a multitouch(i.e. zoom). If there was, then normal touchend should not fillRect---
-let multitouchTracker;
+let multitouchTracker = false;
 
 ///------
 
@@ -257,14 +258,18 @@ const touchUpHandler = e => {
   //   multitouchTracker--;
   //   return;
   // }
-  setTimeout(() => (multitouchTracker = false), 100);
+  ctx.closePath();
+
+  setTimeout(() => {
+    multitouchTracker = false;
+    body.style.backgroundColor = "red";
+  }, 1000);
   if (multitouchTracker == false) {
     console.log("up");
     console.log("points " + points.length);
     console.log("section " + section);
 
     canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-    ctx.closePath();
 
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
     if (points[points.length - 1].length < 1) {
@@ -282,6 +287,9 @@ const touchUpHandler = e => {
     isDrawing = false;
 
     multitouchTracker = true;
+    body.style.backgroundColor = "white";
+  } else {
+    console.log("multi");
   }
 };
 
