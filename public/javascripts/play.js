@@ -269,24 +269,24 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 
 //
 // Prevent scrolling when touching the canvas
-document.body.addEventListener(
-  "touchstart",
-  function(e) {
-    if (e.target == canvas && e.touches.length < 2) {
-      e.preventDefault();
-    }
-  },
-  { passive: false }
-);
-document.body.addEventListener(
-  "touchend",
-  function(e) {
-    if (e.target == canvas && e.touches.length < 2) {
-      e.preventDefault();
-    }
-  },
-  { passive: false }
-);
+// document.body.addEventListener(
+//   "touchstart",
+//   function(e) {
+//     if (e.target == canvas && e.touches.length < 2) {
+//       e.preventDefault();
+//     }
+//   },
+//   { passive: false }
+// );
+// document.body.addEventListener(
+//   "touchend",
+//   function(e) {
+//     if (e.target == canvas && e.touches.length < 2) {
+//       e.preventDefault();
+//     }
+//   },
+//   { passive: false }
+// );
 document.body.addEventListener(
   "touchmove",
   function(e) {
