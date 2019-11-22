@@ -1,6 +1,9 @@
 const container = document.getElementById("gallery-container");
 const image = document.getElementById("test-image");
 const loader = document.getElementById("loader");
+const pageCont = document.querySelector(".container");
+
+pageCont.style.width = window.innerWidth;
 
 //fetch squiggle
 const fetchSquiggles = async () => {

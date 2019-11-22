@@ -70,20 +70,22 @@ form a {
 }
 
 #gallery-container {
+  width: 90%;
   justify-content: center;
   margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
 }
 #gallery-container img {
-  margin: 15px;
+  margin-bottom: 15px;
   border-radius: 10px;
   border: 2px solid black;
+  width: 100%;
 }
 canvas {
-  width: 300px;
-  height: 300px;
-  border: 3px solid black;
+  /* width: 300px;
+  height: 300px; */
+  border: 2px solid black;
   border-radius: 10px;
 }
 #zoom {
@@ -110,6 +112,9 @@ canvas {
   .button-container {
     align-items: center;
     flex-direction: column;
+  }
+  .container {
+    align-items: center;
   }
 }
 /* iPads (portrait and landscape) ----------- */

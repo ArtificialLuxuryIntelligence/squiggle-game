@@ -22,14 +22,28 @@ let fillColour = "white";
 // canvas.height = window.innerWidth * 0.8;
 // ctx.filter = "blur(1px)";
 
-//scales canvas down to 300 x 300 for better quality
-canvas.width = 900;
-canvas.height = 900;
-ctx.scale(3, 3);
-//smoothing radius
-const chain = 5;
+//scaling canvas for better resolution
+const cwidth = window.innerWidth - 4;
+const cheight = window.innerHeight - 4;
+canvas.style.width = cwidth + "px";
+canvas.style.height = cwidth + "px";
+canvas.width = 600;
+canvas.height = 600;
+const scaleFactor = 600 / cwidth;
 
-ctx.lineWidth = 2;
+ctx.scale(scaleFactor, scaleFactor);
+ctx.lineWidth = cwidth / 100;
+
+//fixed scaling
+// canvas.style.width = "300px";
+// canvas.style.height = "300px";
+// canvas.width = 600;
+// canvas.height = 600;
+// ctx.lineWidth = 3;
+// ctx.scale(2, 2);
+
+//smoothing radius
+const chain = 8;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 

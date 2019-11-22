@@ -4,3 +4,4 @@ routes and error handling
 to empty squiggles from being submitted: submit handler
 add event listeners to window load function after squiggle has loaded
 smoothing - use animation request frames
+mobile only message for desktops
