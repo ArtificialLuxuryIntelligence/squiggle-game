@@ -9,7 +9,7 @@ const ctx = canvas.getContext("2d");
 const mouse = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
-let section = 0;
+// let section = 0;
 let squiggle;
 
 //colour variables
@@ -215,9 +215,9 @@ const mouseOutHandler = () => {
 
 const undoHandler = points => {
   points.pop();
-  if (section > 0) {
-    section--;
-  }
+  // if (section > 0) {
+  //   section--;
+  // }
   backgroundFill();
   drawFromPoints(squiggle, squiggleColour);
   drawFromPoints(points, strokeColour);
@@ -236,7 +236,7 @@ canvas.addEventListener("mousedown", mouseDownHandler);
 canvas.addEventListener("mouseup", mouseUpHandler);
 canvas.addEventListener("mouseout", mouseOutHandler);
 canvas.addEventListener("mousemove", e => mousePos(e));
-// undo.addEventListener("click", () => undoHandler(points));
+undo.addEventListener("click", () => undoHandler(points));
 restart.addEventListener("click", resetCanvas);
 
 //submit completeSquiggle
@@ -276,21 +276,67 @@ function touchPos(e) {
   touch.y = e.touches[0].clientY - rect.top;
 }
 
+// function touchdraw() {
+//   if (isDrawing) {
+//     if (points[section].length == 0) {
+//       ctx.lineTo(touch.x, touch.y);
+//       ctx.stroke();
+//       points[section].push({ x: touch.x, y: touch.y });
+//     } else {
+//       //smoothing radius (chain) set globally
+//
+//       let x1 = points[section][points[section].length - 1].x;
+//       let y1 = points[section][points[section].length - 1].y;
+//       let x2 = touch.x;
+//       let y2 = touch.y;
+//       //if distance is less that some set distance (chain)
+//       // x = x1
+//
+//       //disatnce between points
+//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+//       //angle between drawFromPoints
+//       let alpha = Math.atan2(x2 - x1, y2 - y1);
+//
+//       if (dist < chain) {
+//         //do nothing (distance is too short)
+//       }
+//       if (dist >= chain) {
+//         //draw a new point in the direction of the mouse pointer
+//         x = (dist - chain) * Math.sin(alpha) + x1;
+//         y = (dist - chain) * Math.cos(alpha) + y1;
+//
+//         ctx.lineTo(x, y);
+//         ctx.stroke();
+//
+//         if (points[section]) {
+//           points[section].push({ x: x, y: y });
+//         }
+//       }
+//     }
+//   }
+// }
 function touchdraw() {
   if (isDrawing) {
-    if (points[section].length == 0) {
+    // if (!points[points.length - 1]) {
+    //   let arr = [];
+    //   points.push(arr);
+    // }
+    console.log(points);
+    let lastArray = points.slice(-1)[0];
+    if (lastArray.length == 0) {
       ctx.lineTo(touch.x, touch.y);
       ctx.stroke();
-      points[section].push({ x: touch.x, y: touch.y });
+      lastArray.push({ x: touch.x, y: touch.y });
     } else {
       //smoothing radius (chain) set globally
+      //x1 is last point in lastArray (of points)
+      let x1 = lastArray.slice(-1)[0].x;
+      let y1 = lastArray.slice(-1)[0].y;
 
-      let x1 = points[section][points[section].length - 1].x;
-      let y1 = points[section][points[section].length - 1].y;
+      // let x1 = points[section][points[section].length - 1].x;
+      // let y1 = points[section][points[section].length - 1].y;
       let x2 = touch.x;
       let y2 = touch.y;
-      //if distance is less that some set distance (chain)
-      // x = x1
 
       //disatnce between points
       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
@@ -308,24 +354,45 @@ function touchdraw() {
         ctx.lineTo(x, y);
         ctx.stroke();
 
-        if (points[section]) {
-          points[section].push({ x: x, y: y });
-        }
+        lastArray.push({ x: x, y: y });
+        // if (points[section]) {
+        //   points[section].push({ x: x, y: y });
+        // }
       }
     }
   }
 }
 
+// const touchDownHandler = e => {
+//   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+//   setTimeout(() => {
+//     if (e.touches.length < 2) {
+//       ctx.closePath();
+//       let arr = [];
+//       points.push(arr);
+//       ctx.moveTo(touch.x, touch.y);
+//       ctx.beginPath();
+//       isDrawing = true;
+//       canvas.addEventListener("touchmove", touchdraw, { passive: false });
+//     } else {
+//       isDrawing = false;
+//       canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+//     }
+//   }, 50);
+// };
+
 const touchDownHandler = e => {
+  console.log(points);
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
-    if (e.touches.length < 2) {
+    if (e.touches.length < 2 && e.touches.length > 0) {
       ctx.closePath();
       let arr = [];
       points.push(arr);
       ctx.moveTo(touch.x, touch.y);
       ctx.beginPath();
       isDrawing = true;
+      console.log(points);
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
     } else {
       isDrawing = false;
@@ -334,7 +401,29 @@ const touchDownHandler = e => {
   }, 50);
 };
 
+// const touchUpHandler = e => {
+//   ctx.closePath();
+//
+//   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+//
+//   //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+//   if (points[points.length - 1].length < 1) {
+//     // ctx.closePath();
+//     points.pop();
+//     if (section > 0) {
+//       section--;
+//     }
+//   }
+//   //rerender drawing: (not needed unless fancy smoothing is done)
+//   // drawFromPoints(points);
+//   if (isDrawing) {
+//     section++;
+//   }
+//   isDrawing = false;
+// };
 const touchUpHandler = e => {
+  console.log(points);
+
   ctx.closePath();
 
   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
@@ -343,15 +432,15 @@ const touchUpHandler = e => {
   if (points[points.length - 1].length < 1) {
     // ctx.closePath();
     points.pop();
-    if (section > 0) {
-      section--;
-    }
+    // if (section > 0) {
+    //   section--;
+    // }
   }
   //rerender drawing: (not needed unless fancy smoothing is done)
   // drawFromPoints(points);
-  if (isDrawing) {
-    section++;
-  }
+  // if (isDrawing) {
+  //   section++;
+  // }
   isDrawing = false;
 };
 
