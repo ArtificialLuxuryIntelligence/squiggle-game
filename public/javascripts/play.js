@@ -21,7 +21,13 @@ let fillColour = "white";
 // canvas.width = window.innerWidth * 0.8;
 // canvas.height = window.innerWidth * 0.8;
 // ctx.filter = "blur(1px)";
-ctx.imageSmoothingEnabled = true;
+
+//scales canvas down to 300 x 300 for better quality
+canvas.width = 900;
+canvas.height = 900;
+ctx.scale(3, 3);
+//smoothing radius
+const chain = 5;
 
 ctx.lineWidth = 2;
 ctx.lineCap = "round";
@@ -29,13 +35,42 @@ ctx.lineJoin = "round";
 
 //drawing mechanics
 
-//line as user draws - (line is rerendered after mouseup)
-function draw(e) {
+//SMOOTHED line as user draws -
+function draw() {
   if (isDrawing) {
-    ctx.lineTo(mouse.x, mouse.y);
-    ctx.stroke();
-    if (points[section]) {
+    if (points[section].length == 0) {
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
       points[section].push({ x: mouse.x, y: mouse.y });
+    } else {
+      //smoothing radius
+      let x1 = points[section][points[section].length - 1].x;
+      let y1 = points[section][points[section].length - 1].y;
+      let x2 = mouse.x;
+      let y2 = mouse.y;
+      //if distance is less that some set distance (chain)
+      // x = x1
+
+      //disatnce between points
+      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      //angle between drawFromPoints
+      let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+      if (dist < chain) {
+        //do nothing (distance is too short)
+      }
+      if (dist >= chain) {
+        //draw a new point in the direction of the mouse pointer
+        x = (dist - chain) * Math.sin(alpha) + x1;
+        y = (dist - chain) * Math.cos(alpha) + y1;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        if (points[section]) {
+          points[section].push({ x: x, y: y });
+        }
+      }
     }
   }
 }
@@ -104,14 +139,11 @@ const mouseDownHandler = () => {
     if (points[section]) {
       points[section].push({ x: mouse.x, y: mouse.y });
     }
-  }, 500);
+  }, 50);
 };
 
 const mouseUpHandler = () => {
   {
-    console.log("up");
-    console.log("points " + points.length);
-    console.log("section " + section);
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
     if (points[points.length - 1].length < 1) {
       // ctx.closePath();
@@ -121,7 +153,8 @@ const mouseUpHandler = () => {
       }
     }
     canvas.removeEventListener("mousemove", draw);
-    //rerender drawing: (not needed unless fancy smoothing is done)
+
+    // rerender drawing: (not needed unless fancy smoothing is done)
     // drawFromPoints(points);
     if (isDrawing) {
       section++;
@@ -176,7 +209,6 @@ form.addEventListener("submit", async () => {
   let dataURL = await canvas.toDataURL();
   input.value = dataURL;
   // let data = await JSON.stringify(points);
-  // console.log(data);
   // input.value = JSON.stringify(points);
 });
 
@@ -218,6 +250,45 @@ function touchdraw() {
     }
   }
 }
+function touchdraw() {
+  if (isDrawing) {
+    if (points[section].length == 0) {
+      ctx.lineTo(touch.x, touch.y);
+      ctx.stroke();
+      points[section].push({ x: touch.x, y: touch.y });
+    } else {
+      //smoothing radius (chain) set globally
+
+      let x1 = points[section][points[section].length - 1].x;
+      let y1 = points[section][points[section].length - 1].y;
+      let x2 = touch.x;
+      let y2 = touch.y;
+      //if distance is less that some set distance (chain)
+      // x = x1
+
+      //disatnce between points
+      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      //angle between drawFromPoints
+      let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+      if (dist < chain) {
+        //do nothing (distance is too short)
+      }
+      if (dist >= chain) {
+        //draw a new point in the direction of the mouse pointer
+        x = (dist - chain) * Math.sin(alpha) + x1;
+        y = (dist - chain) * Math.cos(alpha) + y1;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        if (points[section]) {
+          points[section].push({ x: x, y: y });
+        }
+      }
+    }
+  }
+}
 
 const touchDownHandler = e => {
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
@@ -239,10 +310,6 @@ const touchDownHandler = e => {
 
 const touchUpHandler = e => {
   ctx.closePath();
-
-  console.log("up");
-  console.log("points " + points.length);
-  console.log("section " + section);
 
   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
 

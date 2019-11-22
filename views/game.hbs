@@ -1,14 +1,20 @@
 
 <div class="container">
+  {{#if newsquiggle}}
+  <h2>Now draw a new squiggle for someone else!</h2>
+
+  {{else}}
+  <h2>Complete the squiggle. </h2>
+
+  {{/if}}
   <div class="canvas-container">
-    <canvas width = 320 height = 320 id="canvas"></canvas>
+    <canvas id="canvas"></canvas>
 
   </div>
   <canvas id="zoom" width="150" height="150" style="position:absolute; top:0; left:0; display:none"></canvas>
 
   <div class="button-container">
     {{#if newsquiggle}}
-      <h2>Now draw a new squiggle for someone else!</h2>
       <button type="button" id="restart">RESTART</button>
       <form id="submit-form" action="/newsquiggle/submit" method="post">
         <input type='hidden' id= 'hiddenField' name='data' value='test' />
@@ -16,7 +22,6 @@
         <button type="submit" id="submit" name="button">SUBMIT</button>
       </form>
       {{else}}
-      <h2>Complete the squiggle. </h2>
 
       <!-- <button id="undo" type="button" name="undo">UNDO</button> -->
       <button type="button" id="restart">RESTART</button>
@@ -29,7 +34,7 @@
         <a id="link-button" href="/"><button  type="button"  name="button">HOME</button></a>
 
       </form>
-
+      <p>Zoom in to add beautiful, pixelated details</p>
 
     {{/if}}
   </div>

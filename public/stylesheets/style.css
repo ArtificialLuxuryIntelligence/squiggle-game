@@ -81,6 +81,8 @@ form a {
   border: 2px solid black;
 }
 canvas {
+  width: 300px;
+  height: 300px;
   border: 3px solid black;
   border-radius: 10px;
 }
@@ -89,16 +91,21 @@ canvas {
 }
 
 /* Smartphones (portrait and landscape) ----------- */
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+@media only screen and (min-device-width: 320px) and (max-device-width: 850px) {
   /* Styles */
   h1 {
     font-size: 2rem;
+  }
+  h2 {
+    margin-top: 20%;
   }
   p,
   button,
   form {
     width: 40%;
     font-size: 1rem;
+  }
+  canvas {
   }
   .button-container {
     align-items: center;
