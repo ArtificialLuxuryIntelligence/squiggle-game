@@ -119,28 +119,14 @@ const backgroundFill = () => {
 const drawFromPoints = (collection, strokecolour) => {
   ctx.strokeStyle = strokecolour;
   for (let i = 0; i < collection.length; i++) {
-    ctx.moveTo(collection[i][0].x, collection[i][0].y);
+    // ctx.moveTo(collection[i][0].x, collection[i][0].y);
     ctx.beginPath();
     for (let j = 0; j < collection[i].length; j++) {
       // linear;
       ctx.lineTo(collection[i][j].x, collection[i][j].y);
-
-      // // //quadratic line for smoothing [ note: loop to collection[i].length-2]
-      // let a = collection[i][j + 1].x;
-      // let b = collection[i][j + 1].y;
-      // //
-      // // let a = (collection[i][j].x + collection[i][j + 1].x) / 2;
-      // // let b = (collection[i][j].y + collection[i][j + 1].y) / 2;
-      // ctx.quadraticCurveTo(
-      //   a,
-      //   b,
-      //   collection[i][j + 2].x,
-      //   collection[i][j + 2].y
-      // );
-      ctx.moveTo(collection[i][j].x, collection[i][j].y);
-      ctx.stroke();
-      ctx.closePath();
+      // ctx.moveTo(collection[i][j].x, collection[i][j].y);
     }
+    ctx.stroke();
 
     ctx.closePath();
   }
@@ -218,12 +204,15 @@ const undoHandler = points => {
   // if (section > 0) {
   //   section--;
   // }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   backgroundFill();
   drawFromPoints(squiggle, squiggleColour);
   drawFromPoints(points, strokeColour);
 };
 
 const resetCanvas = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   backgroundFill();
   drawFromPoints(squiggle, squiggleColour);
   ctx.strokeStyle = strokeColour;
@@ -321,7 +310,6 @@ function touchdraw() {
     //   let arr = [];
     //   points.push(arr);
     // }
-    console.log(points);
     let lastArray = points.slice(-1)[0];
     if (lastArray.length == 0) {
       ctx.lineTo(touch.x, touch.y);
@@ -382,7 +370,6 @@ function touchdraw() {
 // };
 
 const touchDownHandler = e => {
-  console.log(points);
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
     if (e.touches.length < 2 && e.touches.length > 0) {
@@ -392,7 +379,6 @@ const touchDownHandler = e => {
       ctx.moveTo(touch.x, touch.y);
       ctx.beginPath();
       isDrawing = true;
-      console.log(points);
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
     } else {
       isDrawing = false;
@@ -422,8 +408,6 @@ const touchDownHandler = e => {
 //   isDrawing = false;
 // };
 const touchUpHandler = e => {
-  console.log(points);
-
   ctx.closePath();
 
   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
