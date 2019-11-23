@@ -1,8 +1,17 @@
-fixed position zoom/pan controls (and undo) - 
+fixed undo button
+brush size changer?
+rotate button?
+finish line colour object
 name (and change name) in local storage from home screens
 routes and error handling
-to empty squiggles from being submitted: submit handler
+to stop empty squiggles from being submitted: submit handler
 add event listeners to window load function after squiggle has loaded
 smoothing - use animation request frames
 mobile only message for desktops
 reflow issue (probably caused by resizing canvas based on innerWidth...)
+border is clipped on iphone 5 for some reason
+add visual feedback for chain (it feels unresponsive like this?)7
+
+general JS rewrite:
+  modulalize (and use bundler?)
+  -> get stuff out of global namespace (create objects with methods and this.x etc)

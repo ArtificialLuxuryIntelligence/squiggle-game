@@ -67,6 +67,7 @@ form a {
   display: flex;
   margin-top: 1%;
   justify-content: center;
+  width: 100%;
 }
 
 #gallery-container {
@@ -110,6 +111,7 @@ canvas {
   canvas {
   }
   .button-container {
+    display: flex;
     align-items: center;
     flex-direction: column;
   }
