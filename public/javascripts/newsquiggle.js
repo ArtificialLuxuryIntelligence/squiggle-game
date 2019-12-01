@@ -1,3 +1,7 @@
+//// ///////////////////////////////// !!!
+
+// MAIN FILE IS CURRENTLY NEWSQUIGGLE2
+
 const canvas = document.getElementById("canvas");
 const save = document.getElementById("save");
 const restart = document.getElementById("restart");

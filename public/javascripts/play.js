@@ -25,6 +25,8 @@ const generateColourScheme = function(obj) {
   let randomStrokeIndex = (prop.stCol.length * Math.random()) << 0;
   strokeColour = prop.stCol[randomStrokeIndex];
 };
+
+//why is this not something like: const colours = [{col1:"red", col2:"pink"},{col1:"blue", col2:["orange", "yellow"},{etc}]
 const colours = {
   red: { sqCol: "red", stCol: ["orange", "yellow"] },
   blue: { sqCol: "blue", stCol: ["pink", "purple"] }
@@ -147,6 +149,7 @@ function mousePos(e) {
 
 const mouseDownHandler = () => {
   isDrawing = true;
+  ctx.strokeStyle = strokeColour;
   ctx.moveTo(mouse.x, mouse.y);
   ctx.beginPath();
   let arr = [];
@@ -243,14 +246,14 @@ const fetchSquiggle = async () => {
   return JSON.parse(json.line);
 };
 
-/// render squiggle
+/// render squiggle on load
 window.addEventListener("load", async () => {
   backgroundFill();
   squiggle = await fetchSquiggle();
-  drawFromPoints(squiggle, squiggleColour);
+  animateSquiggle();
+  // drawFromPoints(squiggle, squiggleColour);
   let dataURL = await canvas.toDataURL();
   input2.value = dataURL;
-  ctx.strokeStyle = strokeColour;
 });
 
 ////////////////////////////////////////////////// mobile touch controls
@@ -374,8 +377,10 @@ const touchDownHandler = e => {
   setTimeout(() => {
     if (e.touches.length < 2 && e.touches.length > 0) {
       ctx.closePath();
+      //creates new section of drawing
       let arr = [];
       points.push(arr);
+      ctx.strokeStyle = strokeColour;
       ctx.moveTo(touch.x, touch.y);
       ctx.beginPath();
       isDrawing = true;
@@ -533,3 +538,35 @@ canvas.addEventListener(
 // }
 
 // canvas.style.transform = "scale(2,2)";
+
+// ------- animate canvas
+const animateSquiggle = () => {
+  console.log("animating...");
+  // clear the canvas
+  ctx.strokeStyle = squiggleColour;
+  // ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // ctx.fill();
+
+  // start the animation
+  let t = 1;
+  let i = 0;
+  animate();
+
+  function animate() {
+    if (t < squiggle[i].length - 1) {
+      requestAnimationFrame(animate);
+      //increments i in order to move to next section of squiggle
+    } else if (i < squiggle.length - 1) {
+      setTimeout(() => {
+        i++;
+        t = 1;
+        requestAnimationFrame(animate);
+      }, 300);
+    }
+    ctx.beginPath();
+    ctx.moveTo(squiggle[i][t - 1].x, squiggle[i][t - 1].y);
+    ctx.lineTo(squiggle[i][t].x, squiggle[i][t].y);
+    ctx.stroke();
+    t++;
+  }
+};
