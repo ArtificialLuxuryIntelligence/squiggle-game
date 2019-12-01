@@ -11,6 +11,7 @@ mobile only message for desktops/ sort out mouse handlers (cf. touch functions b
 reflow issue (probably caused by resizing canvas based on innerWidth...)
 border is clipped on iphone 5 for some reason
 add visual feedback for chain (it feels unresponsive like this?)7
+infinite scroll/lazy load - (see intersection observers)
 
 general JS rewrite:
   modulalize (and use bundler webpack?)
