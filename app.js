@@ -13,7 +13,7 @@ var usersRouter = require("./routes/users");
 var app = express();
 
 // connect to database
-mongoose.connect("mongodb+srv://adg:mongodobo@cluster0-xsq9u.mongodb.net/squigglegame?retryWrites=true&w=majority", { useNewUrlParser: true });
+mongoose.connect(process.env.DB, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 

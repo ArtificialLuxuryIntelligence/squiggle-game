@@ -8,6 +8,7 @@ const restart = document.getElementById("restart");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
+const input3 = document.getElementById("hiddenField3");
 const ctx = canvas.getContext("2d");
 const mouse = { x: 0, y: 0 };
 let isDrawing = false;
@@ -36,9 +37,10 @@ canvas.style.width = cwidth + "px";
 canvas.style.height = cwidth + "px";
 canvas.width = 600;
 canvas.height = 600;
-const scaleFactor = 600 / cwidth;
 
+const scaleFactor = 600 / cwidth;
 ctx.scale(scaleFactor, scaleFactor);
+
 ctx.lineWidth = cwidth / 100;
 
 //fixed scaling
@@ -196,6 +198,7 @@ restart.addEventListener("click", resetCanvas);
 
 form.addEventListener("submit", async () => {
   input.value = JSON.stringify(points);
+  input3.value = cwidth;
 });
 
 //fetch squiggle

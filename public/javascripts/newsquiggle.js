@@ -19,8 +19,8 @@ let strokeColour = "#9E2A2B";
 let fillColour = "white";
 
 //context styling
-canvas.width = 300;
-canvas.height = 300;
+canvas.width = 600;
+canvas.height = 600;
 // ctx.filter = "blur(1px)";
 // ctx.imageSmoothingEnabled = true;
 

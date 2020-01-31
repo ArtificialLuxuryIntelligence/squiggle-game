@@ -37,7 +37,8 @@ router.get("/newsquiggle", function(req, res, next) {
 
 router.post("/newsquiggle/submit", function(req, res, next) {
   let squiggle = new Squiggle({
-    line: req.body.data
+    line: req.body.data,
+    size: req.body.originalSize
   });
   squiggle.save(err => {
     if (err) {

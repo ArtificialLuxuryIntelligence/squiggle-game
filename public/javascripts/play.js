@@ -47,19 +47,54 @@ let fillColour = "white";
 // ctx.filter = "blur(1px)";
 
 //scaling canvas for better resolution
-//this sets canvas width to window innerWidth so should only be used on mobile
-const cwidth = window.innerWidth - 4;
-const cheight = window.innerHeight - 4;
+//this sets canvas width to window innerWidth so should only be used on MOBILE
+
+//-4 below for box-sizing? set box-sizing global..
+
+//todo: set maximum
+
+const cwidth = window.innerWidth;
+const cheight = window.innerHeight;
 canvas.style.width = cwidth + "px";
 canvas.style.height = cwidth + "px";
+
 canvas.width = 600;
 canvas.height = 600;
-const scaleFactor = 600 / cwidth;
 
-ctx.scale(scaleFactor, scaleFactor);
-ctx.lineWidth = cwidth / 100;
+///SAVE THIS WITH EACH SQUIGGLE
+let originalSquiggleSize = 768;
 
-//fixed scaling
+//normalises canvas/device width ratio
+let scaleFactor1 = 600 / cwidth;
+ctx.scale(scaleFactor1, scaleFactor1);
+
+let scaleFactor = cwidth / originalSquiggleSize;
+
+//the canvas is rescaled when squiggle points (from any device width) are loaded
+
+// MAKE TEST SO THAT THE FUNCTIONS BELOW ONLY RUN ONCE
+let scaling = { renderScaling: true };
+
+//for rendering squiggle
+const renderScaling = () => {
+  // console.log(`render scaling called`);
+  ctx.scale(scaleFactor, scaleFactor);
+  ctx.lineWidth = originalSquiggleSize / 100;
+  scaling.renderScaling = true;
+  // console.log(`render scaling run`);
+};
+const drawScaling = () => {
+  let invScaleFactor = 1 / scaleFactor;
+  ctx.scale(invScaleFactor, invScaleFactor);
+  ctx.lineWidth = cwidth / 100;
+  scaling.renderScaling = false;
+};
+
+// ctx.lineWidth = cwidth / 100; //??
+
+// console.log(ctx);
+
+// fixed scaling
 // canvas.style.width = "300px";
 // canvas.style.height = "300px";
 // canvas.width = 600;
@@ -67,12 +102,12 @@ ctx.lineWidth = cwidth / 100;
 // ctx.lineWidth = 3;
 // ctx.scale(2, 2);
 
+//drawing mechanics
+
 //smoothing radius
 const chain = 8;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
-
-//drawing mechanics
 
 //SMOOTHED line as user draws -
 function draw() {
@@ -129,7 +164,6 @@ const drawFromPoints = (collection, strokecolour) => {
       // ctx.moveTo(collection[i][j].x, collection[i][j].y);
     }
     ctx.stroke();
-
     ctx.closePath();
   }
 };
@@ -207,17 +241,20 @@ const undoHandler = points => {
   // if (section > 0) {
   //   section--;
   // }
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, cwidth, cheight);
   backgroundFill();
+  renderScaling();
   drawFromPoints(squiggle, squiggleColour);
+  drawScaling();
   drawFromPoints(points, strokeColour);
 };
 
 const resetCanvas = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  ctx.clearRect(0, 0, cwidth, cheight);
   backgroundFill();
+  renderScaling();
   drawFromPoints(squiggle, squiggleColour);
+  drawScaling();
   ctx.strokeStyle = strokeColour;
   section = 0;
   points = [];
@@ -243,17 +280,22 @@ form.addEventListener("submit", async () => {
 const fetchSquiggle = async () => {
   const response = await fetch("/play/squiggle");
   const json = await response.json();
+
   return JSON.parse(json.line);
 };
 
-/// render squiggle on load
+/// render squiggle on load and save in form (formatted and ready to be submitted)
 window.addEventListener("load", async () => {
   backgroundFill();
   squiggle = await fetchSquiggle();
-  animateSquiggle();
-  // drawFromPoints(squiggle, squiggleColour);
+
+  // this section saves the complete squiggle to the form input before the squiggle is animated
+  drawFromPoints(squiggle, squiggleColour);
   let dataURL = await canvas.toDataURL();
   input2.value = dataURL;
+  ctx.clearRect(0, 0, cwidth, cheight);
+  //
+  animateSquiggle();
 });
 
 ////////////////////////////////////////////////// mobile touch controls
@@ -541,6 +583,7 @@ canvas.addEventListener(
 
 // ------- animate canvas
 const animateSquiggle = () => {
+  renderScaling();
   console.log("animating...");
   // clear the canvas
   ctx.strokeStyle = squiggleColour;
@@ -553,15 +596,20 @@ const animateSquiggle = () => {
   animate();
 
   function animate() {
-    if (t < squiggle[i].length - 1) {
+    if (squiggle[i] && t < squiggle[i].length - 1) {
       requestAnimationFrame(animate);
       //increments i in order to move to next section of squiggle
-    } else if (i < squiggle.length - 1) {
+    } else if (i < squiggle.length) {
       setTimeout(() => {
         i++;
         t = 1;
         requestAnimationFrame(animate);
       }, 300);
+    }
+    if (i == squiggle.length) {
+      console.log("...animation complete");
+      drawScaling();
+      return;
     }
     ctx.beginPath();
     ctx.moveTo(squiggle[i][t - 1].x, squiggle[i][t - 1].y);
