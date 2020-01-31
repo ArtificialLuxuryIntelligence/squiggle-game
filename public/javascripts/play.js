@@ -292,7 +292,9 @@ window.addEventListener("load", async () => {
   scaleFactor = cwidth / originalSize;
 
   // this section saves the complete squiggle to the form input before the squiggle is animated
+  renderScaling();
   drawFromPoints(squiggle, squiggleColour);
+  drawScaling();
   let dataURL = await canvas.toDataURL();
   input2.value = dataURL;
   ctx.clearRect(0, 0, cwidth, cheight);
