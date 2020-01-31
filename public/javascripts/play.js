@@ -61,14 +61,13 @@ canvas.style.height = cwidth + "px";
 canvas.width = 600;
 canvas.height = 600;
 
-///SAVE THIS WITH EACH SQUIGGLE
-let originalSquiggleSize = 768;
+///diminensions of original device that created squiggle
+let originalSize;
+let scaleFactor;
 
 //normalises canvas/device width ratio
 let scaleFactor1 = 600 / cwidth;
 ctx.scale(scaleFactor1, scaleFactor1);
-
-let scaleFactor = cwidth / originalSquiggleSize;
 
 //the canvas is rescaled when squiggle points (from any device width) are loaded
 
@@ -79,7 +78,7 @@ let scaling = { renderScaling: true };
 const renderScaling = () => {
   // console.log(`render scaling called`);
   ctx.scale(scaleFactor, scaleFactor);
-  ctx.lineWidth = originalSquiggleSize / 100;
+  ctx.lineWidth = originalSize / 100;
   scaling.renderScaling = true;
   // console.log(`render scaling run`);
 };
@@ -281,13 +280,16 @@ const fetchSquiggle = async () => {
   const response = await fetch("/play/squiggle");
   const json = await response.json();
 
-  return JSON.parse(json.line);
+  return json;
 };
 
 /// render squiggle on load and save in form (formatted and ready to be submitted)
 window.addEventListener("load", async () => {
   backgroundFill();
-  squiggle = await fetchSquiggle();
+  json = await fetchSquiggle();
+  squiggle = JSON.parse(json.line);
+  originalSize = json.size;
+  scaleFactor = cwidth / originalSize;
 
   // this section saves the complete squiggle to the form input before the squiggle is animated
   drawFromPoints(squiggle, squiggleColour);
