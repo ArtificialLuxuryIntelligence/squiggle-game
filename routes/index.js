@@ -16,7 +16,17 @@ router.get("/gallery", function(req, res, next) {
 router.get("/gallery/squiggles", async (req, res, next) => {
   let squiggles = await CompletedSquiggle.find({})
     .sort({ time: -1 })
-    .limit(10);
+    .limit(20);
+  res.json(squiggles);
+});
+
+router.get("/gallery/squiggles/:page", async (req, res, next) => {
+  let page = req.params.page;
+
+  let squiggles = await CompletedSquiggle.find({})
+    .sort({ time: -1 })
+    .skip(parseInt(page) * 5)
+    .limit(5);
   res.json(squiggles);
 });
 

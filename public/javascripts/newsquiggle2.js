@@ -31,8 +31,8 @@ let fillColour = "white";
 
 //scaling canvas for better resolution
 //this sets canvas width to window innerWidth so should only be used on mobile
-const cwidth = window.innerWidth - 4;
-const cheight = window.innerHeight - 4;
+const cwidth = window.innerWidth < 600 ? window.innerWidth : 600;
+const cheight = window.innerHeight;
 canvas.style.width = cwidth + "px";
 canvas.style.height = cwidth + "px";
 canvas.width = 600;
@@ -211,7 +211,6 @@ const fetchSquiggle = async () => {
 /// ..
 window.addEventListener("load", async () => {
   backgroundFill();
-
   ctx.strokeStyle = strokeColour;
 });
 

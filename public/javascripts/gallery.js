@@ -1,35 +1,57 @@
-const container = document.getElementById("gallery-container");
-const image = document.getElementById("test-image");
+const cont = document.getElementById("gallery-container");
 const loader = document.getElementById("loader");
 const pageCont = document.querySelector(".container");
 
 pageCont.style.width = window.innerWidth;
 
+let pageNum = 0;
+
 //fetch squiggle
-const fetchSquiggles = async () => {
-  const response = await fetch("/gallery/squiggles");
-  const json = await response.json();
-  return json;
+
+async function loadImages(page) {
+  const fetchSquiggles = async page => {
+    const response = await fetch(
+      "http://127.0.0.1:3000/gallery/squiggles/" + page
+    );
+    const json = await response.json();
+    return json;
+  };
+
+  function addImage(source1, source2) {
+    let i = document.createElement("img");
+    i.src = source1;
+    i.addEventListener("mouseover", () => {
+      i.setAttribute("src", source2);
+    });
+    i.addEventListener("mouseout", () => {
+      i.setAttribute("src", source1);
+    });
+    cont.insertBefore(i, loader);
+  }
+
+  let squiggles = await fetchSquiggles(page);
+
+  if (squiggles.length == 0) {
+    loader.innerHTML = "end of the squiggleverse";
+  }
+
+  squiggles.forEach(squiggle => {
+    addImage(squiggle.img2.data, squiggle.img.data);
+  });
+  console.log(pageNum);
+  console.log(squiggles);
+
+  pageNum++;
+}
+
+// intersection observer
+
+let options = {
+  root: null,
+  rootMargin: "100px",
+  threshold: 1.0
 };
 
-/// render squiggles
-(async () => {
-  const squiggles = await fetchSquiggles();
-  loader.style.display = "none";
+let observer = new IntersectionObserver(() => loadImages(pageNum));
 
-  console.log(squiggles);
-  for (let i = 0; i < squiggles.length; i++) {
-    let png = squiggles[i].img.data;
-    let png2 = squiggles[i].img2.data;
-
-    let squiggleImg = document.createElement("img");
-    squiggleImg.setAttribute("src", png2);
-    squiggleImg.addEventListener("mouseover", () => {
-      squiggleImg.setAttribute("src", png);
-    });
-    squiggleImg.addEventListener("mouseout", () => {
-      squiggleImg.setAttribute("src", png2);
-    });
-    container.append(squiggleImg);
-  }
-})();
+observer.observe(loader);

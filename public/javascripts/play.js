@@ -1,3 +1,10 @@
+//note: this file is now imported as a module in game.hbs
+
+import hello, { hi } from "./hello.mjs";
+hi();
+hello();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const body = document.body;
 const canvas = document.getElementById("canvas");
 const undo = document.getElementById("undo");
@@ -5,12 +12,15 @@ const restart = document.getElementById("restart");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
+const input3 = document.getElementById("hiddenField3");
 const ctx = canvas.getContext("2d");
 const mouse = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
-// let section = 0;
+let section;
 let squiggle;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //colour variables
 
@@ -41,37 +51,30 @@ generateColourScheme(colours);
 
 let fillColour = "white";
 
-//context styling
-// canvas.width = window.innerWidth * 0.8;
-// canvas.height = window.innerWidth * 0.8;
-// ctx.filter = "blur(1px)";
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //scaling canvas for better resolution
-//this sets canvas width to window innerWidth so should only be used on MOBILE
 
-//-4 below for box-sizing? set box-sizing global..
-
-//todo: set maximum
-
-const cwidth = window.innerWidth;
+const cwidth = window.innerWidth < 600 ? window.innerWidth : 600;
 const cheight = window.innerHeight;
-canvas.style.width = cwidth + "px";
-canvas.style.height = cwidth + "px";
+canvas.style.width = cwidth - 10 + "px";
+canvas.style.height = cwidth - 10 + "px";
 
+//decent quality/file-size
 canvas.width = 600;
 canvas.height = 600;
-
-///diminensions of original device that created squiggle
-let originalSize;
-let scaleFactor;
 
 //normalises canvas/device width ratio
 let scaleFactor1 = 600 / cwidth;
 ctx.scale(scaleFactor1, scaleFactor1);
 
+///diminensions of original device that created squiggle (fetched)
+let originalSize;
+let scaleFactor;
+
 //the canvas is rescaled when squiggle points (from any device width) are loaded
 
-// MAKE TEST SO THAT THE FUNCTIONS BELOW ONLY RUN ONCE
+//test so that functions don't run twice  (don't compound)
 let scaling = { renderScaling: true };
 
 //for rendering squiggle
@@ -100,6 +103,8 @@ const drawScaling = () => {
 // canvas.height = 600;
 // ctx.lineWidth = 3;
 // ctx.scale(2, 2);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //drawing mechanics
 
@@ -146,6 +151,7 @@ function draw() {
   }
 }
 
+//currently using white so might not be need at all
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -167,19 +173,17 @@ const drawFromPoints = (collection, strokecolour) => {
   }
 };
 
-// Event Handlers
-// function mousePos(e) {
-//   mouse.x = e.clientX - this.offsetLeft;
-//   mouse.y = e.clientY - this.offsetTop;
-// }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Handlers
+// MOUSE HANDLERS - TO REVIEW. (see touch handling code which works and only really needs to be simplified (no multitouch/prevent default etc))
+
 function mousePos(e) {
   var rect = canvas.getBoundingClientRect();
   mouse.x = e.clientX - rect.left;
   mouse.y = e.clientY - rect.top;
 }
 
+//  --------------------  Handlers
 const mouseDownHandler = () => {
   isDrawing = true;
   ctx.strokeStyle = strokeColour;
@@ -250,30 +254,64 @@ const undoHandler = points => {
 
 const resetCanvas = () => {
   ctx.clearRect(0, 0, cwidth, cheight);
-  backgroundFill();
-  renderScaling();
-  drawFromPoints(squiggle, squiggleColour);
-  drawScaling();
-  ctx.strokeStyle = strokeColour;
-  section = 0;
-  points = [];
+
+  if (window.location.pathname.split("/")[1] == "play") {
+    backgroundFill();
+    renderScaling();
+    drawFromPoints(squiggle, squiggleColour);
+    drawScaling();
+    ctx.strokeStyle = strokeColour;
+    section = 0;
+    points = [];
+  }
 };
 
-//event listeners
-canvas.addEventListener("mousedown", mouseDownHandler);
-canvas.addEventListener("mouseup", mouseUpHandler);
-canvas.addEventListener("mouseout", mouseOutHandler);
-canvas.addEventListener("mousemove", e => mousePos(e));
-undo.addEventListener("click", () => undoHandler(points));
-restart.addEventListener("click", resetCanvas);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//submit completeSquiggle
-form.addEventListener("submit", async () => {
-  let dataURL = await canvas.toDataURL();
-  input.value = dataURL;
-  // let data = await JSON.stringify(points);
-  // input.value = JSON.stringify(points);
-});
+//event listeners
+
+const addListeners = path => {
+  console.log("event listeners added");
+  restart.addEventListener("click", resetCanvas);
+
+  canvas.addEventListener("touchstart", touchDownHandler, {
+    passive: false
+  });
+  canvas.addEventListener("touchend", touchUpHandler);
+  // canvas.addEventListener("mouseout", mouseOutHandler);
+  canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+  canvas.addEventListener(
+    "touchmove",
+    function(e) {
+      if (e.touches.length < 2) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
+
+  canvas.addEventListener("mousedown", mouseDownHandler);
+  canvas.addEventListener("mouseup", mouseUpHandler);
+  canvas.addEventListener("mouseout", mouseOutHandler);
+  canvas.addEventListener("mousemove", e => mousePos(e));
+
+  if (path === "play") {
+    undo.addEventListener("click", () => undoHandler(points));
+    form.addEventListener("submit", async () => {
+      let dataURL = await canvas.toDataURL();
+      input.value = dataURL;
+      // let data = await JSON.stringify(points);
+      // input.value = JSON.stringify(points);
+    });
+  } else if (path === "newsquiggle") {
+    form.addEventListener("submit", async () => {
+      input.value = JSON.stringify(points);
+      input3.value = cwidth;
+    });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //fetch squiggle
 const fetchSquiggle = async () => {
@@ -283,24 +321,39 @@ const fetchSquiggle = async () => {
   return json;
 };
 
-/// render squiggle on load and save in form (formatted and ready to be submitted)
-window.addEventListener("load", async () => {
-  backgroundFill();
-  json = await fetchSquiggle();
-  squiggle = JSON.parse(json.line);
-  originalSize = json.size;
-  scaleFactor = cwidth / originalSize;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // this section saves the complete squiggle to the form input before the squiggle is animated
-  renderScaling();
-  drawFromPoints(squiggle, squiggleColour);
-  drawScaling();
-  let dataURL = await canvas.toDataURL();
-  input2.value = dataURL;
-  ctx.clearRect(0, 0, cwidth, cheight);
-  //
-  animateSquiggle();
+window.addEventListener("load", async () => {
+  // run different function depending on pathname: newsquiggle or play
+  if (window.location.pathname.split("/")[1] == "newsquiggle") {
+    // let squiggleColour = "#36494E";
+    // let strokeColour = "#9E2A2B";
+    // let fillColour = "white";
+    backgroundFill();
+    ctx.strokeStyle = strokeColour;
+    drawScaling();
+    addListeners("newsquiggle");
+
+    // load eventlisteners immediately
+  } else if (window.location.pathname.split("/")[1] == "play") {
+    backgroundFill();
+    let json = await fetchSquiggle();
+    squiggle = JSON.parse(json.line);
+    originalSize = json.size;
+    scaleFactor = cwidth / originalSize;
+
+    // this section saves the complete squiggle to the form input before the squiggle is animated
+    renderScaling();
+    drawFromPoints(squiggle, squiggleColour);
+    drawScaling();
+    let dataURL = await canvas.toDataURL();
+    input2.value = dataURL;
+    ctx.clearRect(0, 0, cwidth, cheight);
+    animateSquiggle();
+  }
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////// mobile touch controls
 
@@ -385,8 +438,8 @@ function touchdraw() {
       }
       if (dist >= chain) {
         //draw a new point in the direction of the mouse pointer
-        x = (dist - chain) * Math.sin(alpha) + x1;
-        y = (dist - chain) * Math.cos(alpha) + y1;
+        let x = (dist - chain) * Math.sin(alpha) + x1;
+        let y = (dist - chain) * Math.cos(alpha) + y1;
 
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -479,12 +532,7 @@ const touchUpHandler = e => {
   isDrawing = false;
 };
 
-canvas.addEventListener("touchstart", touchDownHandler, {
-  passive: false
-});
-canvas.addEventListener("touchend", touchUpHandler);
-// canvas.addEventListener("mouseout", mouseOutHandler);
-canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
 // Prevent scrolling when touching the canvas
@@ -506,15 +554,8 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 //   },
 //   { passive: false }
 // );
-canvas.addEventListener(
-  "touchmove",
-  function(e) {
-    if (e.touches.length < 2) {
-      e.preventDefault();
-    }
-  },
-  { passive: false }
-);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///
 // ZOOM magnifying glass {inspiration: https://jsfiddle.net/powerc9000/G39W9/}
@@ -585,6 +626,8 @@ canvas.addEventListener(
 
 // canvas.style.transform = "scale(2,2)";
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // ------- animate canvas
 const animateSquiggle = () => {
   renderScaling();
@@ -612,6 +655,7 @@ const animateSquiggle = () => {
     }
     if (i == squiggle.length) {
       console.log("...animation complete");
+      addListeners("play");
       drawScaling();
       return;
     }
@@ -622,3 +666,5 @@ const animateSquiggle = () => {
     t++;
   }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

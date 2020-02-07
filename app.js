@@ -5,12 +5,14 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var mongodb = require("mongodb");
 var mongoose = require("mongoose");
+var cors = require("cors");
 require("dotenv").config();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
+app.use(cors());
 
 // connect to database
 mongoose.connect(process.env.DB, { useNewUrlParser: true });

@@ -13,31 +13,30 @@
 
   </div>
   {{!-- <canvas id="zoom" width="150" height="150" style="position:absolute; top:0; left:0; display:none"></canvas> --}}
-  <canvas id="scale" width="300" height="300" style="position:absolute; top:0; left:0; display:none"></canvas>
+  {{!-- <canvas id="scale" width="300" height="300" style="position:absolute; top:0; left:0; display:none"></canvas> --}}
 
 
   <div class="button-container">
     {{#if newsquiggle}}
-      <button type="button" id="restart">RESTART</button>
       <form id="submit-form" action="/newsquiggle/submit" method="post">
-        <input type='hidden' id= 'hiddenField' name='data' value='test' />
-                <input type='hidden' id= 'hiddenField3' name='originalSize' value='test' />
-
-
+        <button type="button" id="restart">RESTART</button>
         <button type="submit" id="submit" name="button">SUBMIT</button>
+      
+        <input type='hidden' id= 'hiddenField' name='data'  />
+        <input type='hidden' id= 'hiddenField3' name='originalSize'  />
       </form>
+
       {{else}}
 
-      <button id="undo" type="button" name="undo">UNDO</button>
-      <button type="button" id="restart">RESTART</button>
       <!-- <button type="button" id="zoomtoggle">TOGGLE ZOOM</button> -->
       <form id="submit-form" action="/play/submit" method="post">
-        <input type='hidden' id= 'hiddenField' name='data' value='hello' />
-        <input type='hidden' id= 'hiddenField2' name='png' value='test' />
-
+        <button id="undo" type="button" name="undo">UNDO</button>
+        <button type="button" id="restart">RESTART</button>
         <button type="submit" id="submit" name="button">SUBMIT</button>
-
         <a id="link-button" href="/"><button  type="button"  name="button">HOME</button></a>
+        
+        <input type='hidden' id= 'hiddenField' name='data'  />
+        <input type='hidden' id= 'hiddenField2' name='png'  />
 
       </form>
 
@@ -48,9 +47,5 @@
 
 
 
-    {{#if newsquiggle}}
-    <script type="text/javascript" src="javascripts/newsquiggle2.js"></script>
-    {{else}}
-    <script type="text/javascript" src="javascripts/play.js"></script>
+        <script type="module" src="javascripts/play.js"></script>
 
-    {{/if}}
