@@ -1,19 +1,35 @@
 //note: this file is now imported as a module in game.hbs
 
-import hello, { hi } from "./hello.mjs";
-hi();
-hello();
+// import hello, { hi } from "./hello.mjs";
+// hi();
+// hello();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONTENTS
+// colour;
+// scaling;
+// drawing;
+//   touch
+//   mouse
+// fetch;
+// animate;
+// event listeners
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const body = document.body;
+const canvas2 = document.getElementById("canvas2");
 const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+//overlay canvas
+const ctx2 = canvas2.getContext("2d");
+
 const undo = document.getElementById("undo");
 const restart = document.getElementById("restart");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
 const input3 = document.getElementById("hiddenField3");
-const ctx = canvas.getContext("2d");
 const mouse = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
@@ -22,7 +38,7 @@ let squiggle;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//colour variables
+//COLOUR
 
 //maybe save these in an object with
 // squiggle colours will have corresponding stroke colour (even if it's not identical)
@@ -53,20 +69,30 @@ let fillColour = "white";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//scaling canvas for better resolution
+//SCALING canvas for better resolution
+
+//canvas2 is for circle overlay
 
 const cwidth = window.innerWidth < 600 ? window.innerWidth : 600;
 const cheight = window.innerHeight;
-canvas.style.width = cwidth - 10 + "px";
-canvas.style.height = cwidth - 10 + "px";
+canvas.style.width = cwidth + "px";
+canvas.style.height = cwidth + "px";
+
+canvas2.style.width = cwidth + "px";
+canvas2.style.height = cwidth + "px";
 
 //decent quality/file-size
 canvas.width = 600;
 canvas.height = 600;
 
+canvas2.width = 600;
+canvas2.height = 600;
+
 //normalises canvas/device width ratio
 let scaleFactor1 = 600 / cwidth;
 ctx.scale(scaleFactor1, scaleFactor1);
+
+ctx2.scale(scaleFactor1, scaleFactor1);
 
 ///diminensions of original device that created squiggle (fetched)
 let originalSize;
@@ -81,14 +107,22 @@ let scaling = { renderScaling: true };
 const renderScaling = () => {
   // console.log(`render scaling called`);
   ctx.scale(scaleFactor, scaleFactor);
+  ctx2.scale(scaleFactor, scaleFactor);
+
   ctx.lineWidth = originalSize / 100;
+  ctx2.lineWidth = originalSize / 300;
+
   scaling.renderScaling = true;
   // console.log(`render scaling run`);
 };
 const drawScaling = () => {
   let invScaleFactor = 1 / scaleFactor;
   ctx.scale(invScaleFactor, invScaleFactor);
+  ctx2.scale(invScaleFactor, invScaleFactor);
+
   ctx.lineWidth = cwidth / 100;
+  ctx2.lineWidth = cwidth / 300;
+
   scaling.renderScaling = false;
 };
 
@@ -106,50 +140,12 @@ const drawScaling = () => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//drawing mechanics
+//DRAWING mechanics
 
 //smoothing radius
-const chain = 8;
+const chain = 7;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
-
-//SMOOTHED line as user draws -
-function draw() {
-  if (isDrawing) {
-    if (points[section].length == 0) {
-      ctx.lineTo(mouse.x, mouse.y);
-      ctx.stroke();
-      points[section].push({ x: mouse.x, y: mouse.y });
-    } else {
-      //smoothing
-      let x1 = points[section][points[section].length - 1].x;
-      let y1 = points[section][points[section].length - 1].y;
-      let x2 = mouse.x;
-      let y2 = mouse.y;
-
-      //disatnce between points
-      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-      //angle between points
-      let alpha = Math.atan2(x2 - x1, y2 - y1);
-
-      if (dist < chain) {
-        //do nothing (distance is too short)
-      }
-      if (dist >= chain) {
-        //draw a new point in the direction of the mouse pointer
-        x = (dist - chain) * Math.sin(alpha) + x1;
-        y = (dist - chain) * Math.cos(alpha) + y1;
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-
-        if (points[section]) {
-          points[section].push({ x: x, y: y });
-        }
-      }
-    }
-  }
-}
 
 //currently using white so might not be need at all
 const backgroundFill = () => {
@@ -158,6 +154,7 @@ const backgroundFill = () => {
   ctx.fill();
 };
 
+//SMOOTHED line as user draws -
 const drawFromPoints = (collection, strokecolour) => {
   ctx.strokeStyle = strokecolour;
   for (let i = 0; i < collection.length; i++) {
@@ -173,9 +170,107 @@ const drawFromPoints = (collection, strokecolour) => {
   }
 };
 
+// TOUCH drawing
+
+const touch = { x: 0, y: 0 };
+
+// Get the position of touch on canvas
+function touchPos(e) {
+  var rect = canvas.getBoundingClientRect();
+  touch.x = e.touches[0].clientX - rect.left;
+  touch.y = e.touches[0].clientY - rect.top;
+}
+
+function touchdraw() {
+  if (isDrawing) {
+    let lastArray = points.slice(-1)[0];
+    drawCircle(lastArray, touch);
+
+    if (lastArray.length == 0) {
+      ctx.lineTo(touch.x, touch.y);
+      ctx.stroke();
+      lastArray.push({ x: touch.x, y: touch.y });
+    } else {
+      //smoothing radius (chain) set globally
+      //x1 is last point in lastArray (of points)
+      let x1 = lastArray.slice(-1)[0].x;
+      let y1 = lastArray.slice(-1)[0].y;
+      let x2 = touch.x;
+      let y2 = touch.y;
+
+      //disatnce between points
+      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      //angle between drawFromPoints
+      let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+      if (dist < chain) {
+        //do nothing (distance is too short)
+      }
+      if (dist >= chain) {
+        //draw a new point in the direction of the mouse pointer
+        let x = (dist - chain) * Math.sin(alpha) + x1;
+        let y = (dist - chain) * Math.cos(alpha) + y1;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        lastArray.push({ x: x, y: y });
+        // if (points[section]) {
+        //   points[section].push({ x: x, y: y });
+        // }
+      }
+    }
+  }
+}
+
+//  --------------------  Handlers
+
+const touchDownHandler = e => {
+  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+  setTimeout(() => {
+    if (e.touches.length < 2 && e.touches.length > 0) {
+      ctx.closePath();
+      //creates new section of drawing
+      let arr = [];
+      points.push(arr);
+      ctx.strokeStyle = strokeColour;
+      ctx.moveTo(touch.x, touch.y);
+      ctx.beginPath();
+      isDrawing = true;
+      canvas.addEventListener("touchmove", touchdraw, { passive: false });
+    } else {
+      isDrawing = false;
+      canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+    }
+  }, 50);
+};
+
+const touchUpHandler = e => {
+  ctx2.clearRect(0, 0, cwidth, cheight);
+
+  ctx.closePath();
+
+  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+
+  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+  if (points[points.length - 1].length < 1) {
+    // ctx.closePath();
+    points.pop();
+    // if (section > 0) {
+    //   section--;
+    // }
+  }
+  //rerender drawing: (not needed unless fancy smoothing is done)
+  // drawFromPoints(points);
+  // if (isDrawing) {
+  //   section++;
+  // }
+  isDrawing = false;
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// MOUSE HANDLERS - TO REVIEW. (see touch handling code which works and only really needs to be simplified (no multitouch/prevent default etc))
+// MOUSE drawing
 
 function mousePos(e) {
   var rect = canvas.getBoundingClientRect();
@@ -183,43 +278,111 @@ function mousePos(e) {
   mouse.y = e.clientY - rect.top;
 }
 
+function draw() {
+  if (isDrawing) {
+    let lastArray = points.slice(-1)[0];
+    drawCircle(lastArray, mouse);
+
+    if (lastArray.length == 0) {
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+      lastArray.push({ x: mouse.x, y: mouse.y });
+    } else {
+      //smoothing radius (chain) set globally
+      //x1 is last point in lastArray (of points)
+      let x1 = lastArray.slice(-1)[0].x;
+      let y1 = lastArray.slice(-1)[0].y;
+      let x2 = mouse.x;
+      let y2 = mouse.y;
+
+      //disatnce between points
+      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      //angle between drawFromPoints
+      let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+      if (dist < chain) {
+        //do nothing (distance is too short)
+      }
+      if (dist >= chain) {
+        //draw a new point in the direction of the mouse pointer
+        let x = (dist - chain) * Math.sin(alpha) + x1;
+        let y = (dist - chain) * Math.cos(alpha) + y1;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        lastArray.push({ x: x, y: y });
+        // if (points[section]) {
+        //   points[section].push({ x: x, y: y });
+        // }
+      }
+    }
+  }
+}
+
 //  --------------------  Handlers
+
+//////////////////////////////
+// test
+
+const drawCircle = (lastArray, pointer) => {
+  let lastPoint = lastArray.slice(-1)[0];
+  console.log(lastPoint);
+
+  ctx2.clearRect(0, 0, cwidth, cheight);
+
+  if (lastArray.length == 0) {
+    return;
+  }
+  ctx2.beginPath();
+
+  ctx2.arc(pointer.x, pointer.y, chain, 0, 2 * Math.PI);
+
+  ctx2.fillRect(lastPoint.x, lastPoint.y, 1, 1);
+  ctx2.stroke();
+
+  ctx2.closePath();
+};
+
+//////////////////////////////
+
 const mouseDownHandler = () => {
-  isDrawing = true;
+  let arr = [];
+  points.push(arr);
   ctx.strokeStyle = strokeColour;
   ctx.moveTo(mouse.x, mouse.y);
   ctx.beginPath();
-  let arr = [];
-  points.push(arr);
+  isDrawing = true;
 
-  setTimeout(() => {
-    canvas.addEventListener("mousemove", draw);
-    // draws first pixel before mouse moves take over drawing job
-    ctx.fillStyle = strokeColour;
-    ctx.fillRect(mouse.x, mouse.y, 1, 1);
-    if (points[section]) {
-      points[section].push({ x: mouse.x, y: mouse.y });
-    }
-  }, 50);
+  canvas.addEventListener("mousemove", draw);
+  // draws first pixel before mouse moves take over drawing job
+  ctx.fillStyle = strokeColour;
+  //needs to be with of stroke width , not 1
+  // ctx.fillRect(mouse.x, mouse.y, 1, 1);
+  if (points[section]) {
+    points[section].push({ x: mouse.x, y: mouse.y });
+  }
 };
 
 const mouseUpHandler = () => {
+  ctx2.clearRect(0, 0, cwidth, cheight);
+
   {
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
     if (points[points.length - 1].length < 1) {
       // ctx.closePath();
       points.pop();
-      if (section > 0) {
-        section--;
-      }
+      // if (section > 0) {
+      //   section--;
+      // }
     }
     canvas.removeEventListener("mousemove", draw);
 
     // rerender drawing: (not needed unless fancy smoothing is done)
     // drawFromPoints(points);
-    if (isDrawing) {
-      section++;
-    }
+    // if (isDrawing) {
+    //   section++;
+    // }
     isDrawing = false;
   }
 
@@ -238,6 +401,8 @@ const mouseOutHandler = () => {
   }
   isDrawing = false;
 };
+
+//  --------------------  general button handlers
 
 const undoHandler = points => {
   points.pop();
@@ -265,10 +430,84 @@ const resetCanvas = () => {
     points = [];
   }
 };
+//
+// Prevent scrolling when touching the canvas
+// canvas.addEventListener(
+//   "touchstart",
+//   function(e) {
+//     if (e.touches.length < 2) {
+//       e.preventDefault();
+//     }
+//   },
+//   { passive: false }
+// );
+// canvas.addEventListener(
+//   "touchend",
+//   function(e) {
+//     if (e.touches.length < 2) {
+//       e.preventDefault();
+//     }
+//   },
+//   { passive: false }
+// );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//event listeners
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FETCH squiggle
+const fetchSquiggle = async () => {
+  const response = await fetch("/play/squiggle");
+  const json = await response.json();
+
+  return json;
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ANIMATE canvas
+const animateSquiggle = () => {
+  renderScaling();
+  console.log("animating...");
+  // clear the canvas
+  ctx.strokeStyle = squiggleColour;
+  // ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // ctx.fill();
+
+  // start the animation
+  let t = 1;
+  let i = 0;
+  animate();
+
+  function animate() {
+    if (squiggle[i] && t < squiggle[i].length - 1) {
+      requestAnimationFrame(animate);
+      //increments i in order to move to next section of squiggle
+    } else if (i < squiggle.length) {
+      setTimeout(() => {
+        i++;
+        t = 1;
+        requestAnimationFrame(animate);
+      }, 300);
+    }
+    if (i == squiggle.length) {
+      console.log("...animation complete");
+      addListeners("play");
+      drawScaling();
+      return;
+    }
+    ctx.beginPath();
+    ctx.moveTo(squiggle[i][t - 1].x, squiggle[i][t - 1].y);
+    ctx.lineTo(squiggle[i][t].x, squiggle[i][t].y);
+    ctx.stroke();
+    t++;
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// EVENT LISTENERS
 
 const addListeners = path => {
   console.log("event listeners added");
@@ -292,8 +531,8 @@ const addListeners = path => {
 
   canvas.addEventListener("mousedown", mouseDownHandler);
   canvas.addEventListener("mouseup", mouseUpHandler);
-  canvas.addEventListener("mouseout", mouseOutHandler);
   canvas.addEventListener("mousemove", e => mousePos(e));
+  canvas.addEventListener("mouseout", mouseOutHandler);
 
   if (path === "play") {
     undo.addEventListener("click", () => undoHandler(points));
@@ -311,17 +550,7 @@ const addListeners = path => {
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//fetch squiggle
-const fetchSquiggle = async () => {
-  const response = await fetch("/play/squiggle");
-  const json = await response.json();
-
-  return json;
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ON LOAD
 
 window.addEventListener("load", async () => {
   // run different function depending on pathname: newsquiggle or play
@@ -352,208 +581,6 @@ window.addEventListener("load", async () => {
     animateSquiggle();
   }
 });
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////// mobile touch controls
-
-const touch = { x: 0, y: 0 };
-
-// Handlers
-// Get the position of touch on canvas
-function touchPos(e) {
-  var rect = canvas.getBoundingClientRect();
-  touch.x = e.touches[0].clientX - rect.left;
-  touch.y = e.touches[0].clientY - rect.top;
-}
-
-// function touchdraw() {
-//   if (isDrawing) {
-//     if (points[section].length == 0) {
-//       ctx.lineTo(touch.x, touch.y);
-//       ctx.stroke();
-//       points[section].push({ x: touch.x, y: touch.y });
-//     } else {
-//       //smoothing radius (chain) set globally
-//
-//       let x1 = points[section][points[section].length - 1].x;
-//       let y1 = points[section][points[section].length - 1].y;
-//       let x2 = touch.x;
-//       let y2 = touch.y;
-//       //if distance is less that some set distance (chain)
-//       // x = x1
-//
-//       //disatnce between points
-//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-//       //angle between drawFromPoints
-//       let alpha = Math.atan2(x2 - x1, y2 - y1);
-//
-//       if (dist < chain) {
-//         //do nothing (distance is too short)
-//       }
-//       if (dist >= chain) {
-//         //draw a new point in the direction of the mouse pointer
-//         x = (dist - chain) * Math.sin(alpha) + x1;
-//         y = (dist - chain) * Math.cos(alpha) + y1;
-//
-//         ctx.lineTo(x, y);
-//         ctx.stroke();
-//
-//         if (points[section]) {
-//           points[section].push({ x: x, y: y });
-//         }
-//       }
-//     }
-//   }
-// }
-function touchdraw() {
-  if (isDrawing) {
-    // if (!points[points.length - 1]) {
-    //   let arr = [];
-    //   points.push(arr);
-    // }
-    let lastArray = points.slice(-1)[0];
-    if (lastArray.length == 0) {
-      ctx.lineTo(touch.x, touch.y);
-      ctx.stroke();
-      lastArray.push({ x: touch.x, y: touch.y });
-    } else {
-      //smoothing radius (chain) set globally
-      //x1 is last point in lastArray (of points)
-      let x1 = lastArray.slice(-1)[0].x;
-      let y1 = lastArray.slice(-1)[0].y;
-
-      // let x1 = points[section][points[section].length - 1].x;
-      // let y1 = points[section][points[section].length - 1].y;
-      let x2 = touch.x;
-      let y2 = touch.y;
-
-      //disatnce between points
-      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-      //angle between drawFromPoints
-      let alpha = Math.atan2(x2 - x1, y2 - y1);
-
-      if (dist < chain) {
-        //do nothing (distance is too short)
-      }
-      if (dist >= chain) {
-        //draw a new point in the direction of the mouse pointer
-        let x = (dist - chain) * Math.sin(alpha) + x1;
-        let y = (dist - chain) * Math.cos(alpha) + y1;
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-
-        lastArray.push({ x: x, y: y });
-        // if (points[section]) {
-        //   points[section].push({ x: x, y: y });
-        // }
-      }
-    }
-  }
-}
-
-// const touchDownHandler = e => {
-//   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
-//   setTimeout(() => {
-//     if (e.touches.length < 2) {
-//       ctx.closePath();
-//       let arr = [];
-//       points.push(arr);
-//       ctx.moveTo(touch.x, touch.y);
-//       ctx.beginPath();
-//       isDrawing = true;
-//       canvas.addEventListener("touchmove", touchdraw, { passive: false });
-//     } else {
-//       isDrawing = false;
-//       canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-//     }
-//   }, 50);
-// };
-
-const touchDownHandler = e => {
-  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
-  setTimeout(() => {
-    if (e.touches.length < 2 && e.touches.length > 0) {
-      ctx.closePath();
-      //creates new section of drawing
-      let arr = [];
-      points.push(arr);
-      ctx.strokeStyle = strokeColour;
-      ctx.moveTo(touch.x, touch.y);
-      ctx.beginPath();
-      isDrawing = true;
-      canvas.addEventListener("touchmove", touchdraw, { passive: false });
-    } else {
-      isDrawing = false;
-      canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-    }
-  }, 50);
-};
-
-// const touchUpHandler = e => {
-//   ctx.closePath();
-//
-//   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-//
-//   //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-//   if (points[points.length - 1].length < 1) {
-//     // ctx.closePath();
-//     points.pop();
-//     if (section > 0) {
-//       section--;
-//     }
-//   }
-//   //rerender drawing: (not needed unless fancy smoothing is done)
-//   // drawFromPoints(points);
-//   if (isDrawing) {
-//     section++;
-//   }
-//   isDrawing = false;
-// };
-const touchUpHandler = e => {
-  ctx.closePath();
-
-  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-
-  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-  if (points[points.length - 1].length < 1) {
-    // ctx.closePath();
-    points.pop();
-    // if (section > 0) {
-    //   section--;
-    // }
-  }
-  //rerender drawing: (not needed unless fancy smoothing is done)
-  // drawFromPoints(points);
-  // if (isDrawing) {
-  //   section++;
-  // }
-  isDrawing = false;
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//
-// Prevent scrolling when touching the canvas
-// canvas.addEventListener(
-//   "touchstart",
-//   function(e) {
-//     if (e.touches.length < 2) {
-//       e.preventDefault();
-//     }
-//   },
-//   { passive: false }
-// );
-// canvas.addEventListener(
-//   "touchend",
-//   function(e) {
-//     if (e.touches.length < 2) {
-//       e.preventDefault();
-//     }
-//   },
-//   { passive: false }
-// );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -625,46 +652,3 @@ const touchUpHandler = e => {
 // }
 
 // canvas.style.transform = "scale(2,2)";
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// ------- animate canvas
-const animateSquiggle = () => {
-  renderScaling();
-  console.log("animating...");
-  // clear the canvas
-  ctx.strokeStyle = squiggleColour;
-  // ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // ctx.fill();
-
-  // start the animation
-  let t = 1;
-  let i = 0;
-  animate();
-
-  function animate() {
-    if (squiggle[i] && t < squiggle[i].length - 1) {
-      requestAnimationFrame(animate);
-      //increments i in order to move to next section of squiggle
-    } else if (i < squiggle.length) {
-      setTimeout(() => {
-        i++;
-        t = 1;
-        requestAnimationFrame(animate);
-      }, 300);
-    }
-    if (i == squiggle.length) {
-      console.log("...animation complete");
-      addListeners("play");
-      drawScaling();
-      return;
-    }
-    ctx.beginPath();
-    ctx.moveTo(squiggle[i][t - 1].x, squiggle[i][t - 1].y);
-    ctx.lineTo(squiggle[i][t].x, squiggle[i][t].y);
-    ctx.stroke();
-    t++;
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

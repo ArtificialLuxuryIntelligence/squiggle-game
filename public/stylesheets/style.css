@@ -71,6 +71,13 @@ canvas {
   height: 300px; */
   border: 2px solid black;
   border-radius: 10px;
+  z-index: 1;
+}
+#canvas2 {
+  position: absolute;
+  border: 1px solid red;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .button-container {
