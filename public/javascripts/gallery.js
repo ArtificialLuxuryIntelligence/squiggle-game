@@ -10,9 +10,7 @@ let pageNum = 0;
 
 async function loadImages(page) {
   const fetchSquiggles = async page => {
-    const response = await fetch(
-      "http://127.0.0.1:3000/gallery/squiggles/" + page
-    );
+    const response = await fetch("/gallery/squiggles/" + page);
     const json = await response.json();
     return json;
   };
