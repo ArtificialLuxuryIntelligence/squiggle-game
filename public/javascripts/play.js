@@ -12,16 +12,18 @@
 // drawing;
 //   touch
 //   mouse
+// button handlers
 // fetch;
 // animate;
 // event listeners
+// on window load
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const body = document.body;
 const canvas2 = document.getElementById("canvas2");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-//overlay canvas
+//circle overlay canvas
 const ctx2 = canvas2.getContext("2d");
 
 const undo = document.getElementById("undo");
@@ -39,25 +41,27 @@ let squiggle;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //COLOUR
-
-//maybe save these in an object with
-// squiggle colours will have corresponding stroke colour (even if it's not identical)
-//generate random squiggleColour then generate strokeColour from the REMAINING colours
 let squiggleColour, strokeColour;
-const generateColourScheme = function(obj) {
-  var keys = Object.keys(obj);
-  let prop = obj[keys[(keys.length * Math.random()) << 0]];
-  squiggleColour = prop.sqCol;
-  let randomStrokeIndex = (prop.stCol.length * Math.random()) << 0;
-  strokeColour = prop.stCol[randomStrokeIndex];
+
+const colours = [
+  { sqCol: "red", stCol: ["orange", "yellow"] },
+  { sqCol: "blue", stCol: ["pink", "purple"] },
+  { sqCol: "green", stCol: ["blue", "turquoise"] }
+];
+
+const generateColourScheme = function(arr) {
+  let obj = arr[Math.floor(Math.random() * arr.length)];
+  squiggleColour = obj.sqCol;
+  let rand = Math.floor(obj.stCol.length * Math.random());
+  strokeColour = obj.stCol[rand];
+  // var keys = Object.keys(obj);
+  // let prop = obj[keys[(keys.length * Math.random()) << 0]];
+  // squiggleColour = prop.sqCol;
+  // let randomStrokeIndex = (prop.stCol.length * Math.random()) << 0;
+  // strokeColour = prop.stCol[randomStrokeIndex];
 };
 
-//why is this not something like: const colours = [{col1:"red", col2:"pink"},{col1:"blue", col2:["orange", "yellow"},{etc}]
-const colours = {
-  red: { sqCol: "red", stCol: ["orange", "yellow"] },
-  blue: { sqCol: "blue", stCol: ["pink", "purple"] }
-};
-
+///
 generateColourScheme(colours);
 
 // let squiggleColour =
@@ -71,27 +75,27 @@ let fillColour = "white";
 
 //SCALING canvas for better resolution
 
-//canvas2 is for circle overlay
+//(canvas2 is for circle overlay)
 
-const cwidth = window.innerWidth < 600 ? window.innerWidth : 600;
+const maxWidth = 600;
+
+const cwidth = window.innerWidth < maxWidth ? window.innerWidth - 10 : maxWidth; //max canvas width 600
 const cheight = window.innerHeight;
+
 canvas.style.width = cwidth + "px";
 canvas.style.height = cwidth + "px";
-
 canvas2.style.width = cwidth + "px";
 canvas2.style.height = cwidth + "px";
 
 //decent quality/file-size
 canvas.width = 600;
 canvas.height = 600;
-
 canvas2.width = 600;
 canvas2.height = 600;
 
 //normalises canvas/device width ratio
 let scaleFactor1 = 600 / cwidth;
 ctx.scale(scaleFactor1, scaleFactor1);
-
 ctx2.scale(scaleFactor1, scaleFactor1);
 
 ///diminensions of original device that created squiggle (fetched)
@@ -143,7 +147,7 @@ const drawScaling = () => {
 //DRAWING mechanics
 
 //smoothing radius
-const chain = 7;
+const chain = 6;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 
@@ -154,7 +158,7 @@ const backgroundFill = () => {
   ctx.fill();
 };
 
-//SMOOTHED line as user draws -
+// draw from array of array of points
 const drawFromPoints = (collection, strokecolour) => {
   ctx.strokeStyle = strokecolour;
   for (let i = 0; i < collection.length; i++) {
@@ -246,26 +250,26 @@ const touchDownHandler = e => {
 };
 
 const touchUpHandler = e => {
-  ctx2.clearRect(0, 0, cwidth, cheight);
+  if (isDrawing) {
+    ctx2.clearRect(0, 0, cwidth, cheight);
+    ctx.closePath();
+    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
 
-  ctx.closePath();
-
-  canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-
-  //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-  if (points[points.length - 1].length < 1) {
-    // ctx.closePath();
-    points.pop();
-    // if (section > 0) {
-    //   section--;
+    //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
+    if (points[points.length - 1].length === 0) {
+      // ctx.closePath();
+      points.pop();
+      // if (section > 0) {
+      //   section--;
+      // }
+    }
+    //rerender drawing: (not needed unless fancy smoothing is done)
+    // drawFromPoints(points);
+    // if (isDrawing) {
+    //   section++;
     // }
+    isDrawing = false;
   }
-  //rerender drawing: (not needed unless fancy smoothing is done)
-  // drawFromPoints(points);
-  // if (isDrawing) {
-  //   section++;
-  // }
-  isDrawing = false;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,6 +284,8 @@ function mousePos(e) {
 
 function draw() {
   if (isDrawing) {
+    console.log(points);
+
     let lastArray = points.slice(-1)[0];
     drawCircle(lastArray, mouse);
 
@@ -287,6 +293,7 @@ function draw() {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.stroke();
       lastArray.push({ x: mouse.x, y: mouse.y });
+      console.log("LastArray length 0");
     } else {
       //smoothing radius (chain) set globally
       //x1 is last point in lastArray (of points)
@@ -323,75 +330,43 @@ function draw() {
 //  --------------------  Handlers
 
 //////////////////////////////
-// test
-
-const drawCircle = (lastArray, pointer) => {
-  let lastPoint = lastArray.slice(-1)[0];
-  console.log(lastPoint);
-
-  ctx2.clearRect(0, 0, cwidth, cheight);
-
-  if (lastArray.length == 0) {
-    return;
-  }
-  ctx2.beginPath();
-
-  ctx2.arc(pointer.x, pointer.y, chain, 0, 2 * Math.PI);
-
-  ctx2.fillRect(lastPoint.x, lastPoint.y, 1, 1);
-  ctx2.stroke();
-
-  ctx2.closePath();
-};
-
-//////////////////////////////
 
 const mouseDownHandler = () => {
-  let arr = [];
-  points.push(arr);
   ctx.strokeStyle = strokeColour;
+  ctx.fillStyle = strokeColour;
+  ctx.closePath();
+  points.push([]);
   ctx.moveTo(mouse.x, mouse.y);
   ctx.beginPath();
   isDrawing = true;
 
   canvas.addEventListener("mousemove", draw);
   // draws first pixel before mouse moves take over drawing job
-  ctx.fillStyle = strokeColour;
   //needs to be with of stroke width , not 1
   // ctx.fillRect(mouse.x, mouse.y, 1, 1);
-  if (points[section]) {
-    points[section].push({ x: mouse.x, y: mouse.y });
-  }
+  // if (points[section]) {
+  //   points[section].push({ x: mouse.x, y: mouse.y });
+  // }
 };
 
 const mouseUpHandler = () => {
-  ctx2.clearRect(0, 0, cwidth, cheight);
+  canvas.removeEventListener("mousemove", draw);
 
-  {
+  console.log(points);
+
+  if (isDrawing) {
+    ctx2.clearRect(0, 0, cwidth, cheight);
+    ctx.closePath();
+    isDrawing = false;
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
-    if (points[points.length - 1].length < 1) {
+    if (points[points.length - 1].length === 0) {
+      console.log("removing last array");
       // ctx.closePath();
       points.pop();
-      // if (section > 0) {
-      //   section--;
-      // }
     }
-    canvas.removeEventListener("mousemove", draw);
-
-    // rerender drawing: (not needed unless fancy smoothing is done)
-    // drawFromPoints(points);
-    // if (isDrawing) {
-    //   section++;
-    // }
-    isDrawing = false;
+  } else {
+    console.log("not drawing");
   }
-
-  // // drawFromPoints(points);
-  // canvas.removeEventListener("mousemove", draw);
-  // if (isDrawing) {
-  //   section++;
-  // }
-  // isDrawing = false;
 };
 
 const mouseOutHandler = () => {
@@ -428,6 +403,7 @@ const resetCanvas = () => {
     ctx.strokeStyle = strokeColour;
     section = 0;
     points = [];
+    isDrawing = false;
   }
 };
 //
@@ -504,6 +480,27 @@ const animateSquiggle = () => {
   }
 };
 
+//////////////////////////////
+// circle at cursor/touch - helps with UI of smoothing radius (chain)
+const drawCircle = (lastArray, pointer) => {
+  let lastPoint = lastArray.slice(-1)[0];
+  // console.log(lastPoint);
+
+  ctx2.clearRect(0, 0, cwidth, cheight);
+
+  if (lastArray.length == 0) {
+    return;
+  }
+  ctx2.beginPath();
+
+  ctx2.arc(pointer.x, pointer.y, chain, 0, 2 * Math.PI);
+
+  ctx2.fillRect(lastPoint.x, lastPoint.y, 1, 1);
+  ctx2.stroke();
+
+  ctx2.closePath();
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -550,7 +547,7 @@ const addListeners = path => {
   }
 };
 
-// ON LOAD
+// ON LOAD ------------------
 
 window.addEventListener("load", async () => {
   // run different function depending on pathname: newsquiggle or play

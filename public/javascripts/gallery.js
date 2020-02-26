@@ -2,7 +2,7 @@ const cont = document.getElementById("gallery-container");
 const loader = document.getElementById("loader");
 const pageCont = document.querySelector(".container");
 
-pageCont.style.width = window.innerWidth;
+// pageCont.style.width = window.innerWidth;
 
 let pageNum = 0;
 
@@ -43,6 +43,7 @@ async function loadImages(page) {
 }
 
 // intersection observer
+// (lasy load images on scroll)
 
 let options = {
   root: null,

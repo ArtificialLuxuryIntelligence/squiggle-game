@@ -1,11 +1,11 @@
-
+<div class="game">
 <div class="container">
   {{#if newsquiggle}}
   <h2>Now draw a new squiggle for someone else!</h2>
 
   {{else}}
   <h2>Complete the squiggle. </h2>
-  <h4>Use two fingers to zoom and pan</h4>
+  <p>Use two fingers to zoom and pan</p>
 
   {{/if}}
   <div class="canvas-container">
@@ -17,11 +17,11 @@
   {{!-- <canvas id="scale" width="300" height="300" style="position:absolute; top:0; left:0; display:none"></canvas> --}}
 
 
-  <div class="button-container">
+  <div class="">
     {{#if newsquiggle}}
-      <form id="submit-form" action="/newsquiggle/submit" method="post">
-        <button type="button" id="restart">RESTART</button>
-        <button type="submit" id="submit" name="button">SUBMIT</button>
+      <form class="button-container" id="submit-form" action="/newsquiggle/submit" method="post">
+        <button class="button" type="button" id="restart">RESTART</button>
+        <button class="button" type="submit" id="submit" name="button">SUBMIT</button>
       
         <input type='hidden' id= 'hiddenField' name='data'  />
         <input type='hidden' id= 'hiddenField3' name='originalSize'  />
@@ -30,11 +30,11 @@
       {{else}}
 
       <!-- <button type="button" id="zoomtoggle">TOGGLE ZOOM</button> -->
-      <form id="submit-form" action="/play/submit" method="post">
-        <button id="undo" type="button" name="undo">UNDO</button>
-        <button type="button" id="restart">RESTART</button>
-        <button type="submit" id="submit" name="button">SUBMIT</button>
-        <a id="link-button" href="/"><button  type="button"  name="button">HOME</button></a>
+      <form class="button-container" id="submit-form" action="/play/submit" method="post">
+        <button class="button" id="undo" type="button" name="undo">U</button>
+        <button class="button" type="button" id="restart">R</button>
+        <button class="button" type="submit" id="submit" name="button">S</button>
+        <a id="link-button" href="/"><button  class="button"  type="button"  name="button">H</button></a>
         
         <input type='hidden' id= 'hiddenField' name='data'  />
         <input type='hidden' id= 'hiddenField2' name='png'  />
@@ -45,8 +45,6 @@
   </div>
 </div>
 
-
-
-
-        <script src="javascripts/play.js"></script>
+</div>
+<script src="javascripts/play.js"></script>
 
