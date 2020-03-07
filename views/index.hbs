@@ -1,14 +1,22 @@
 <div class="home">
 
   <div class="container">
+  {{!-- <header class="title">
+    <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
+  </header> --}}
 
-    <h1>The squiggle game</h1>
+{{#if animate}}
+  <img> </img>
 
-    <div class="button-container">
-      <a class="button" href="/play">Play</a>
-      <a class = "button" href="/gallery">Gallery</a>
+{{else}}
+<p>no anim</p>
+{{/if}}
 
-    </div>
+  <div class="button-container">
+    <a class="button" href="/play">Play</a>
+    <a class = "button" href="/gallery">Gallery</a>
+
+  </div>
 
   </div>
 

@@ -14,7 +14,12 @@ body {
 h1,
 h2 {
   margin-top: 2rem;
+  color: black;
   font-size: 2rem; }
+  h1 span,
+  h2 span {
+    display: block;
+    text-align: center; }
 
 .button {
   color: black;
@@ -29,8 +34,11 @@ h2 {
   text-align: center;
   border-radius: 10px;
   margin: 1px;
-  padding: 2rem;
+  padding: 1rem;
   cursor: pointer; }
+  .button img {
+    width: 30px;
+    height: 30px; }
 
 .container {
   display: flex;
@@ -46,37 +54,57 @@ h2 {
   align-items: center; }
   .game .container {
     justify-content: space-between; }
-    .game .container .canvas-container {
-      display: flex;
-      justify-content: center;
-      width: 100%; }
-      .game .container .canvas-container canvas {
-        border: 2px solid black;
-        border-radius: 10px;
-        z-index: 1; }
-      .game .container .canvas-container #canvas2 {
-        position: absolute;
-        z-index: 2;
-        pointer-events: none; }
-    .game .container form .button {
-      width: 5rem;
-      height: 5rem; }
+    .game .container .drawing {
+      text-align: center; }
+      .game .container .drawing .canvas-container {
+        padding: 4rem 0 1rem 0;
+        display: flex;
+        justify-content: center;
+        width: 100%; }
+        .game .container .drawing .canvas-container canvas {
+          border: 2px solid black;
+          border-radius: 10px;
+          z-index: 1; }
+        .game .container .drawing .canvas-container #canvas2 {
+          position: absolute;
+          z-index: 2;
+          pointer-events: none; }
+      .game .container .drawing .form-container .button {
+        width: 5rem;
+        height: 5rem; }
+    .game .container .text-container {
+      text-align: center; }
 
 .home {
   height: 100%;
   width: 100%;
   display: flex;
   align-items: center; }
-  .home .container .button-container {
-    margin-top: 40vh;
+  .home .container {
     display: flex;
     flex-direction: column;
-    width: 60%; }
-    .home .container .button-container .button {
-      margin-bottom: 2rem; }
+    justify-content: space-evenly; }
+    .home .container img {
+      border: 2px solid red;
+      margin: 2px;
+      width: 100%;
+      height: 40%; }
+    .home .container .button-container {
+      display: flex;
+      flex-direction: column; }
+      .home .container .button-container .button {
+        margin-bottom: 2rem; }
 
-.gallery .button {
-  margin-left: auto; }
+#home-link {
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 50%; }
+
+.gallery nav {
+  display: flex;
+  padding: 1rem 1rem 0 1rem;
+  justify-content: flex-end;
+  width: 100%; }
 
 .gallery #gallery-container {
   width: 95vw;

@@ -1,4 +1,6 @@
 var express = require("express");
+var session = require("express-session");
+
 var router = express.Router();
 
 var Squiggle = require("../models/squiggle");
@@ -6,7 +8,18 @@ var CompletedSquiggle = require("../models/completeSquiggle");
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
-  res.render("index");
+  if (req.app.get("animate") && req.app.get("animate").animate === false) {
+    req.app.set("animate", { animate: true });
+
+    res.render("index", { animate: false });
+  }
+  res.render("index", { animate: true });
+});
+
+//home page with no animation
+router.get("/home", function(req, res, next) {
+  req.app.set("animate", { animate: false });
+  return res.redirect("/");
 });
 
 router.get("/gallery", function(req, res, next) {
