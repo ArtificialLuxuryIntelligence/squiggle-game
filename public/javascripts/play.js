@@ -33,6 +33,7 @@ const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
 const input3 = document.getElementById("hiddenField3");
 const mouse = { x: 0, y: 0 };
+const touch = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
 let section;
@@ -176,13 +177,30 @@ const drawFromPoints = (collection, strokecolour) => {
 
 // TOUCH drawing
 
-const touch = { x: 0, y: 0 };
-
 // Get the position of touch on canvas
 function touchPos(e) {
   var rect = canvas.getBoundingClientRect();
-  touch.x = e.touches[0].clientX - rect.left;
-  touch.y = e.touches[0].clientY - rect.top;
+
+  switch ((turns % 4) + 1) {
+    case 1:
+      touch.x = e.touches[0].clientX - rect.left;
+      touch.y = e.touches[0].clientY - rect.top;
+      return;
+    case 2:
+      touch.x = e.touches[0].clientY - rect.top;
+      touch.y = -e.touches[0].clientX + rect.right;
+      return;
+    case 3:
+      touch.x = rect.right - e.touches[0].clientX;
+      touch.y = rect.bottom - e.touches[0].clientY;
+      return;
+    case 4:
+      touch.x = rect.bottom - e.touches[0].clientY;
+      touch.y = rect.left + e.touches[0].clientX;
+      return;
+    default:
+      null;
+  }
 }
 
 function touchdraw() {
@@ -278,8 +296,27 @@ const touchUpHandler = e => {
 
 function mousePos(e) {
   var rect = canvas.getBoundingClientRect();
-  mouse.x = e.clientX - rect.left;
-  mouse.y = e.clientY - rect.top;
+
+  switch ((turns % 4) + 1) {
+    case 1:
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      return;
+    case 2:
+      mouse.x = e.clientY - rect.top;
+      mouse.y = -e.clientX + rect.right;
+      return;
+    case 3:
+      mouse.x = rect.right - e.clientX;
+      mouse.y = rect.bottom - e.clientY;
+      return;
+    case 4:
+      mouse.x = rect.bottom - e.clientY;
+      mouse.y = rect.left + e.clientX;
+      return;
+    default:
+      null;
+  }
 }
 
 function draw() {
@@ -398,6 +435,34 @@ const resetCanvas = () => {
     isDrawing = false;
   }
 };
+let turns = 0;
+const rotate = async () => {
+  turns++;
+  console.log((turns % 4) + 1);
+
+  ctx.clearRect(0, 0, cwidth, cwidth);
+
+  //rotate canvas and rerender
+  ctx.translate(cwidth / 2, cwidth / 2); //both cwidth (is a square)
+  ctx.rotate(Math.PI / 2);
+  ctx.translate(-cwidth / 2, -cwidth / 2);
+
+  ctx2.translate(cwidth / 2, cwidth / 2);
+  ctx2.rotate(Math.PI / 2);
+  ctx2.translate(-cwidth / 2, -cwidth / 2);
+
+  //
+  renderScaling();
+  drawFromPoints(squiggle, squiggleColour);
+  drawScaling();
+  ctx.strokeStyle = strokeColour;
+  let dataURL = await canvas.toDataURL(); //saves newly rotated squiggle
+  input2.value = dataURL;
+  drawFromPoints(points, strokeColour);
+  isDrawing = false;
+  //
+};
+
 //
 // Prevent scrolling when touching the canvas
 // canvas.addEventListener(
@@ -500,7 +565,7 @@ const drawCircle = (lastArray, pointer) => {
 
 const addListeners = path => {
   console.log("event listeners added");
-  restart.addEventListener("click", resetCanvas);
+  restart.addEventListener("click", rotate); //CHANGED FOR TESTING!!!!!!
 
   canvas.addEventListener("touchstart", touchDownHandler, {
     passive: false
@@ -560,7 +625,7 @@ window.addEventListener("load", async () => {
     originalSize = json.size;
     scaleFactor = cwidth / originalSize;
 
-    // this section saves the complete squiggle to the form input before the squiggle is animated
+    // this section saves the squiggle to the form input before the squiggle is animated
     renderScaling();
     drawFromPoints(squiggle, squiggleColour);
     drawScaling();
