@@ -16,8 +16,9 @@
        
         {{!-- <button class="button" type="button" id="restart"><img src="assets/svg/restart.svg" alt=""></button> --}}
         {{!-- <button class="button" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button> --}}
-       
-        <button class="button" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
+
+        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>       
+        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
       
         <input type='hidden' id= 'hiddenField' name='data'  />
         <input type='hidden' id= 'hiddenField3' name='originalSize'  />
@@ -28,12 +29,12 @@
       <form class="button-container" id="submit-form" action="/play/submit" method="post">
 
         {{!-- <button class="button" type="button" id="restart"><img src="assets/svg/restart.svg" alt=""></button> --}}
-        <button class="button" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button>
+        <button class="button disabled" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button>
 
-        <button class="button"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>
+        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>
        
-        <button class="button" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
-        <a id="link-button" href="/home"><button  class="button"  type="button"  name="button"><img src="assets/svg/home.svg" alt=""></button></a>
+        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
+        <a id="link-button" href="/home"><button  class="button disabled"  type="button"  name="button"><img src="assets/svg/home.svg" alt=""></button></a>
         
         <input type='hidden' id= 'hiddenField' name='data'  />
         <input type='hidden' id= 'hiddenField2' name='png'  />

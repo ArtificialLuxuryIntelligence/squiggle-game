@@ -6,6 +6,14 @@ const pageCont = document.querySelector(".container");
 
 let pageNum = 0;
 
+// touch-screen only content
+if ("ontouchstart" in document.documentElement) {
+  document
+    .querySelectorAll(".touch-only")
+    .forEach(e => (e.style.display = "block"));
+} else {
+}
+
 //fetch squiggle
 
 async function loadImages(page) {

@@ -40,6 +40,8 @@ let points = [];
 let section;
 let squiggle;
 
+const buttons = document.querySelectorAll(".button");
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //COLOUR
@@ -566,6 +568,8 @@ const drawCircle = (lastArray, pointer) => {
 // EVENT LISTENERS
 
 const addListeners = path => {
+  buttons.forEach(button => button.classList.remove("disabled")); //REMOVE DISABLED CLASS HERE (need to make that class)
+
   console.log("event listeners added");
 
   canvas.addEventListener("touchstart", touchDownHandler, {
@@ -588,9 +592,9 @@ const addListeners = path => {
   canvas.addEventListener("mouseup", mouseUpHandler);
   canvas.addEventListener("mousemove", e => mousePos(e));
   canvas.addEventListener("mouseout", mouseOutHandler);
+  undo.addEventListener("click", () => undoHandler(points));
 
   if (path === "play") {
-    undo.addEventListener("click", () => undoHandler(points));
     rotate.addEventListener("click", rotateCanvas);
 
     form.addEventListener("submit", async () => {
