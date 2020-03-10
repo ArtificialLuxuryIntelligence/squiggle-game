@@ -81,6 +81,20 @@ h2 {
   width: 100%;
   display: flex;
   align-items: center; }
+  .home .squig {
+    height: 100px;
+    width: 300px;
+    stroke-width: 15px; }
+  .home .animate {
+    stroke-dasharray: 350;
+    stroke-dashoffset: 0;
+    animation: dash 3s linear; }
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 350; }
+  100% {
+    stroke-dashoffset: 0; } }
   .home .container {
     display: flex;
     flex-direction: column;
@@ -127,3 +141,9 @@ h2 {
       border-radius: 10px;
       border: 2px solid black;
       width: 100%; }
+
+@media (min-width: 600px) {
+  .home .container .button-container {
+    flex-direction: row; }
+    .home .container .button-container .button {
+      margin: 1rem; } }

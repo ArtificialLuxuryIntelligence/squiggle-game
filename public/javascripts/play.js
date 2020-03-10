@@ -27,7 +27,8 @@ const ctx = canvas.getContext("2d");
 const ctx2 = canvas2.getContext("2d");
 
 const undo = document.getElementById("undo");
-const restart = document.getElementById("restart");
+// const restart = document.getElementById("restart");
+const rotate = document.getElementById("rotate");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
@@ -196,7 +197,7 @@ function touchPos(e) {
       return;
     case 4:
       touch.x = rect.bottom - e.touches[0].clientY;
-      touch.y = rect.left + e.touches[0].clientX;
+      touch.y = -rect.left + e.touches[0].clientX;
       return;
     default:
       null;
@@ -312,7 +313,7 @@ function mousePos(e) {
       return;
     case 4:
       mouse.x = rect.bottom - e.clientY;
-      mouse.y = rect.left + e.clientX;
+      mouse.y = -rect.left + e.clientX;
       return;
     default:
       null;
@@ -435,8 +436,9 @@ const resetCanvas = () => {
     isDrawing = false;
   }
 };
+
 let turns = 0;
-const rotate = async () => {
+const rotateCanvas = async () => {
   turns++;
   console.log((turns % 4) + 1);
 
@@ -565,7 +567,6 @@ const drawCircle = (lastArray, pointer) => {
 
 const addListeners = path => {
   console.log("event listeners added");
-  restart.addEventListener("click", rotate); //CHANGED FOR TESTING!!!!!!
 
   canvas.addEventListener("touchstart", touchDownHandler, {
     passive: false
@@ -590,6 +591,8 @@ const addListeners = path => {
 
   if (path === "play") {
     undo.addEventListener("click", () => undoHandler(points));
+    rotate.addEventListener("click", rotateCanvas);
+
     form.addEventListener("submit", async () => {
       let dataURL = await canvas.toDataURL();
       input.value = dataURL;
