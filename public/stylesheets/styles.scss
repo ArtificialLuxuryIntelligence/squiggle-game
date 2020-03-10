@@ -1,5 +1,6 @@
 html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth;
 }
 
 * {
@@ -115,6 +116,8 @@ h2 {
     justify-content: space-evenly;
 
     img {
+      max-width: 600px;
+
       border: 2px solid red;
       margin: 2px;
       width: 100%;
@@ -141,6 +144,7 @@ h2 {
 }
 
 .gallery {
+  position: relative;
   nav {
     display: flex;
     padding: 1rem 1rem 0 1rem;
@@ -149,6 +153,14 @@ h2 {
     a {
       // margin-left: auto;
     }
+  }
+
+  #to-top {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    transition: all 1s;
+    opacity: 0;
   }
 
   #gallery-container {

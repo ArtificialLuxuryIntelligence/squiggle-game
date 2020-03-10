@@ -1,5 +1,6 @@
 html {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth; }
 
 * {
   box-sizing: border-box;
@@ -85,6 +86,7 @@ h2 {
     flex-direction: column;
     justify-content: space-evenly; }
     .home .container img {
+      max-width: 600px;
       border: 2px solid red;
       margin: 2px;
       width: 100%;
@@ -100,21 +102,28 @@ h2 {
   border: 2px solid black;
   border-radius: 50%; }
 
-.gallery nav {
-  display: flex;
-  padding: 1rem 1rem 0 1rem;
-  justify-content: flex-end;
-  width: 100%; }
-
-.gallery #gallery-container {
-  width: 95vw;
-  max-width: 600px;
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  flex-wrap: wrap; }
-  .gallery #gallery-container img {
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 2px solid black;
+.gallery {
+  position: relative; }
+  .gallery nav {
+    display: flex;
+    padding: 1rem 1rem 0 1rem;
+    justify-content: flex-end;
     width: 100%; }
+  .gallery #to-top {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    transition: all 1s;
+    opacity: 0; }
+  .gallery #gallery-container {
+    width: 95vw;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap; }
+    .gallery #gallery-container img {
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 2px solid black;
+      width: 100%; }

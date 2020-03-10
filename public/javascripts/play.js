@@ -147,7 +147,7 @@ const drawScaling = () => {
 //DRAWING mechanics
 
 //smoothing radius
-const chain = 6;
+const chain = 4;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 

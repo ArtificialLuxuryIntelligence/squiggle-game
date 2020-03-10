@@ -42,8 +42,9 @@ async function loadImages(page) {
   pageNum++;
 }
 
-// intersection observer
-// (lasy load images on scroll)
+// intersection observers
+
+// (lazy load images on scroll)
 
 let options = {
   root: null,
@@ -54,3 +55,32 @@ let options = {
 let observer = new IntersectionObserver(() => loadImages(pageNum));
 
 observer.observe(loader);
+
+// scroll to top button
+const toTopButton = document.getElementById("to-top");
+
+const showScrollToTop = () => {
+  toTopButton.style.opacity = 1;
+  toTopButton.style.pointerEvents = all;
+};
+
+const hideScrollToTop = () => {
+  toTopButton.style.opacity = 0;
+  toTopButton.style.pointerEvents = none;
+};
+
+let toTopOptions = {
+  root: null,
+  rootMargin: "300px"
+};
+
+const homeButton = document.querySelector("#home-link");
+
+let toTopObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry =>
+    entry.isIntersecting ? hideScrollToTop() : showScrollToTop()
+  );
+}, toTopOptions);
+// console.log("it works"), toTopOptions;
+
+toTopObserver.observe(homeButton);
