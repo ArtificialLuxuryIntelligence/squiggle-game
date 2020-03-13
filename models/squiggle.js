@@ -5,7 +5,8 @@ const squiggleSchema = new Schema({
   author: { type: String, default: "anon" },
   time: { type: Date, default: Date.now },
   line: { type: String, required: true },
-  size: { type: String }
+  size: { type: String },
+  reports: { type: Number, default: 0 }
 });
 
 module.exports = mongoose.model("squiggle", squiggleSchema);

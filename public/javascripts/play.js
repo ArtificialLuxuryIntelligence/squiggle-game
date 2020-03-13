@@ -568,38 +568,56 @@ const drawCircle = (lastArray, pointer) => {
 // EVENT LISTENERS
 
 const addListeners = path => {
-  buttons.forEach(button => button.classList.remove("disabled")); //REMOVE DISABLED CLASS HERE (need to make that class)
+  buttons.forEach(button => button.classList.remove("disabled"));
 
-  console.log("event listeners added");
+  if (
+    "ontouchstart" in window ||
+    navigator.MaxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  ) {
+    undo.addEventListener("touchstart", () => undoHandler(points));
+    canvas.addEventListener("touchstart", touchDownHandler, {
+      passive: false
+    });
+    canvas.addEventListener("touchend", touchUpHandler);
+    canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+    canvas.addEventListener(
+      "touchmove",
+      function(e) {
+        if (e.touches.length < 2) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+  } else {
+    undo.addEventListener("click", () => undoHandler(points));
+    canvas.addEventListener("mousedown", mouseDownHandler);
+    canvas.addEventListener("mouseup", mouseUpHandler);
+    canvas.addEventListener("mousemove", e => mousePos(e));
+  }
 
-  canvas.addEventListener("touchstart", touchDownHandler, {
-    passive: false
-  });
-  canvas.addEventListener("touchend", touchUpHandler);
   // canvas.addEventListener("mouseout", mouseOutHandler);
-  canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
-  canvas.addEventListener(
-    "touchmove",
-    function(e) {
-      if (e.touches.length < 2) {
-        e.preventDefault();
-      }
-    },
-    { passive: false }
-  );
+  // undo.addEventListener("click", () => undoHandler(points));
 
-  canvas.addEventListener("mousedown", mouseDownHandler);
-  canvas.addEventListener("mouseup", mouseUpHandler);
-  canvas.addEventListener("mousemove", e => mousePos(e));
-  canvas.addEventListener("mouseout", mouseOutHandler);
-  undo.addEventListener("click", () => undoHandler(points));
-
+  // ---------------- page specific listeners
   if (path === "play") {
-    rotate.addEventListener("click", rotateCanvas);
+    if (
+      "ontouchstart" in window ||
+      navigator.MaxTouchPoints > 0 ||
+      navigator.msMaxTouchPoints > 0
+    ) {
+      rotate.addEventListener("touchstart", rotateCanvas);
+    } else {
+      rotate.addEventListener("click", rotateCanvas);
+    }
 
-    form.addEventListener("submit", async () => {
+    form.addEventListener("submit", async e => {
+      // e.preventDefault();
       let dataURL = await canvas.toDataURL();
       input.value = dataURL;
+
+      // file = dataURLtoBlob(canvas.toDataURL())
       // let data = await JSON.stringify(points);
       // input.value = JSON.stringify(points);
     });
@@ -609,6 +627,8 @@ const addListeners = path => {
       input3.value = cwidth;
     });
   }
+
+  console.log("event listeners added");
 };
 
 // ON LOAD ------------------
@@ -628,6 +648,12 @@ window.addEventListener("load", async () => {
   } else if (window.location.pathname.split("/")[1] == "play") {
     backgroundFill();
     let json = await fetchSquiggle();
+
+    //set id in report form
+    document
+      .querySelector("#report-squiggle")
+      .setAttribute("action", `/report/squiggle/${json._id}`);
+    //
     squiggle = JSON.parse(json.line);
     originalSize = json.size;
     scaleFactor = cwidth / originalSize;
@@ -636,7 +662,7 @@ window.addEventListener("load", async () => {
     renderScaling();
     drawFromPoints(squiggle, squiggleColour);
     drawScaling();
-    let dataURL = await canvas.toDataURL();
+    let dataURL = await canvas.toDataURL("image/png");
     input2.value = dataURL;
     ctx.clearRect(0, 0, cwidth, cheight);
     animateSquiggle();
@@ -644,3 +670,11 @@ window.addEventListener("load", async () => {
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// touch-screen only content
+if ("ontouchstart" in document.documentElement) {
+  document
+    .querySelectorAll(".touch-only")
+    .forEach(e => (e.style.display = "block"));
+} else {
+}

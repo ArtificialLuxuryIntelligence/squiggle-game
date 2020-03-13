@@ -20,6 +20,8 @@ async function loadImages(page) {
   const fetchSquiggles = async page => {
     const response = await fetch("/gallery/squiggles/" + page);
     const json = await response.json();
+    console.log(json);
+
     return json;
   };
 
@@ -27,12 +29,27 @@ async function loadImages(page) {
     let i = document.createElement("img");
     i.src = source1;
     i.addEventListener("mouseover", () => {
+      // i.setAttribute("src", "data:image/jpeg;base64," + source2);
       i.setAttribute("src", source2);
     });
     i.addEventListener("mouseout", () => {
+      // i.setAttribute("src", "data:image/jpeg;base64," + source1);
       i.setAttribute("src", source1);
     });
-    cont.insertBefore(i, loader);
+    return i;
+    // cont.insertBefore(i, loader);
+  }
+
+  function addReportButton(id) {
+    let f = document.createElement("form");
+    f.setAttribute("method", "POST");
+    f.setAttribute("action", `/report/completedsquiggle/${id}`);
+    let s = document.createElement("input");
+    s.setAttribute("type", "submit");
+    s.setAttribute("value", "report");
+    f.appendChild(s);
+    // cont.insertBefore(f, loader);
+    return f;
   }
 
   let squiggles = await fetchSquiggles(page);
@@ -42,10 +59,14 @@ async function loadImages(page) {
   }
 
   squiggles.forEach(squiggle => {
-    addImage(squiggle.img2.data, squiggle.img.data);
+    let imgcont = document.createElement("div");
+    imgcont.appendChild(addImage(squiggle.img2.data, squiggle.img.data));
+    imgcont.appendChild(addReportButton(squiggle._id));
+    cont.insertBefore(imgcont, loader);
   });
-  console.log(pageNum);
-  console.log(squiggles);
+
+  // console.log(pageNum);
+  // console.log(squiggles);
 
   pageNum++;
 }
@@ -69,12 +90,12 @@ const toTopButton = document.getElementById("to-top");
 
 const showScrollToTop = () => {
   toTopButton.style.opacity = 1;
-  toTopButton.style.pointerEvents = all;
+  toTopButton.style.pointerEvents = "all";
 };
 
 const hideScrollToTop = () => {
   toTopButton.style.opacity = 0;
-  toTopButton.style.pointerEvents = none;
+  toTopButton.style.pointerEvents = "none";
 };
 
 let toTopOptions = {
