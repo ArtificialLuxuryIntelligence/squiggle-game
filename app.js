@@ -14,9 +14,6 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-app.use(cors());
 
 // connect to database
 mongoose.connect(process.env.DB, { useNewUrlParser: true });
@@ -27,6 +24,35 @@ db.on("error", console.error.bind(console, "connection error:"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+
+// //production
+// app.use(cors({
+//   origin: 'http://squiggle-game.herokuapp.com/'
+// }));
+
+var allowedOrigins = [
+  "http://localhost:3000",
+  "http://squiggle-game.herokuapp.com/"
+];
+
+app.use(
+  cors({
+    origin: function(origin, callback) {
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not " +
+          "allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    }
+  })
+);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

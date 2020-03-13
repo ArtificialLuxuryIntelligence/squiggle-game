@@ -83,7 +83,7 @@ let fillColour = "white";
 
 const maxWidth = 600;
 
-const cwidth = window.innerWidth < maxWidth ? window.innerWidth - 10 : maxWidth; //max canvas width 600
+const cwidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth; //max canvas width 600px in brower
 const cheight = window.innerHeight;
 
 canvas.style.width = cwidth + "px";
@@ -92,13 +92,15 @@ canvas2.style.width = cwidth + "px";
 canvas2.style.height = cwidth + "px";
 
 //decent quality/file-size
-canvas.width = 600;
-canvas.height = 600;
-canvas2.width = 600;
-canvas2.height = 600;
+size = 1200;
+
+canvas.width = size;
+canvas.height = size;
+canvas2.width = size;
+canvas2.height = size;
 
 //normalises canvas/device width ratio
-let scaleFactor1 = 600 / cwidth;
+let scaleFactor1 = size / cwidth;
 ctx.scale(scaleFactor1, scaleFactor1);
 ctx2.scale(scaleFactor1, scaleFactor1);
 
@@ -151,7 +153,7 @@ const drawScaling = () => {
 //DRAWING mechanics
 
 //smoothing radius
-const chain = 4;
+const chain = 6;
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 
@@ -595,9 +597,9 @@ const addListeners = path => {
     canvas.addEventListener("mousedown", mouseDownHandler);
     canvas.addEventListener("mouseup", mouseUpHandler);
     canvas.addEventListener("mousemove", e => mousePos(e));
+    // canvas.addEventListener("mouseout", mouseOutHandler);
   }
 
-  // canvas.addEventListener("mouseout", mouseOutHandler);
   // undo.addEventListener("click", () => undoHandler(points));
 
   // ---------------- page specific listeners
