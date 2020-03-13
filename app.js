@@ -15,18 +15,6 @@ var usersRouter = require("./routes/users");
 
 var app = express();
 
-// connect to database
-mongoose.connect(process.env.DB, { useNewUrlParser: true });
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "hbs");
-
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-
 // //production
 // app.use(cors({
 //   origin: 'http://squiggle-game.herokuapp.com/'
@@ -40,8 +28,6 @@ var allowedOrigins = [
 app.use(
   cors({
     origin: function(origin, callback) {
-      // allow requests with no origin
-      // (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         var msg =
@@ -53,6 +39,20 @@ app.use(
     }
   })
 );
+
+// connect to database
+mongoose.connect(process.env.DB, { useNewUrlParser: true });
+var db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
+
+// increased limit
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
