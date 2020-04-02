@@ -36,7 +36,7 @@ h2 {
   border: 2px solid black;
   background-color: white;
   text-align: center;
-  border-radius: 10px;
+  border-radius: 50%;
   margin: 1px;
   padding: 1rem;
   cursor: pointer; }
@@ -67,8 +67,8 @@ h2 {
         justify-content: center;
         width: 100%; }
         .game .container .drawing .canvas-container canvas {
-          border: 2px solid black;
-          border-radius: 10px;
+          border-top: 2px solid black;
+          border-bottom: 2px solid black;
           z-index: 1; }
         .game .container .drawing .canvas-container #canvas2 {
           position: absolute;
@@ -79,6 +79,14 @@ h2 {
         height: 5rem; }
     .game .container .text-container {
       text-align: center; }
+
+#report-squiggle {
+  display: flex; }
+  #report-squiggle #report-squiggle-btn {
+    margin-left: auto;
+    border: none;
+    padding: 0.4rem;
+    background-color: white; }
 
 .home {
   height: 100%;
@@ -114,12 +122,18 @@ h2 {
       display: flex;
       flex-direction: column; }
       .home .container .button-container .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30vw;
+        height: 30vw;
         margin-bottom: 2rem; }
 
 #home-link {
-  padding: 5px;
-  border: 2px solid black;
-  border-radius: 50%; }
+  font-size: 1rem; }
+  #home-link img {
+    width: 20px;
+    height: 20px; }
 
 .gallery {
   position: relative; }
@@ -129,6 +143,8 @@ h2 {
     justify-content: flex-end;
     width: 100%; }
   .gallery #to-top {
+    color: rgba(0, 0, 0, 0.8);
+    text-decoration: none;
     position: fixed;
     bottom: 1rem;
     right: 1rem;
@@ -141,11 +157,22 @@ h2 {
     justify-content: center;
     margin-top: 40px;
     flex-wrap: wrap; }
+    .gallery #gallery-container .touch-only {
+      margin-bottom: 1rem; }
     .gallery #gallery-container img {
-      margin-bottom: 15px;
       border-radius: 10px;
       border: 2px solid black;
-      width: 100%; }
+      width: 100%;
+      image-rendering: smooth; }
+    .gallery #gallery-container form {
+      display: flex;
+      margin-bottom: 1.5rem; }
+      .gallery #gallery-container form #report-squiggle-btn {
+        color: rgba(0, 0, 0, 0.8);
+        margin-left: auto;
+        padding: 0.4rem;
+        background-color: rgba(0, 0, 0, 0);
+        border: none; }
 
 .admin h1 {
   font-size: 2rem; }
@@ -162,8 +189,8 @@ h2 {
   flex-direction: column;
   align-items: center; }
   .admin #squiggle-container canvas {
-    width: 600px;
-    height: 600px; }
+    max-width: 100vw;
+    max-height: 100vw; }
 
 @media (min-width: 1000px) {
   body {

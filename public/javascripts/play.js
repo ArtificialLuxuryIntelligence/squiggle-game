@@ -92,7 +92,7 @@ canvas2.style.width = cwidth + "px";
 canvas2.style.height = cwidth + "px";
 
 //decent quality/file-size
-size = 1200;
+const size = 600;
 
 canvas.width = size;
 canvas.height = size;
@@ -160,8 +160,10 @@ ctx.lineJoin = "round";
 //currently using white so might not be need at all
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
+  console.log("FC", fillColour);
+
+  ctx.fillRect(0, 0, cwidth, cwidth);
+  // ctx.fill();
 };
 
 // draw from array of array of points
@@ -640,7 +642,7 @@ window.addEventListener("load", async () => {
   if (window.location.pathname.split("/")[1] == "newsquiggle") {
     // let squiggleColour = "#36494E";
     // let strokeColour = "#9E2A2B";
-    // let fillColour = "white";
+    let fillColour = "white";
     backgroundFill();
     ctx.strokeStyle = strokeColour;
     drawScaling();
@@ -664,7 +666,7 @@ window.addEventListener("load", async () => {
     renderScaling();
     drawFromPoints(squiggle, squiggleColour);
     drawScaling();
-    let dataURL = await canvas.toDataURL("image/png");
+    let dataURL = await canvas.toDataURL();
     input2.value = dataURL;
     ctx.clearRect(0, 0, cwidth, cheight);
     animateSquiggle();

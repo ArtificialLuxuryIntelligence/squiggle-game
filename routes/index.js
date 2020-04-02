@@ -158,8 +158,25 @@ router.post("/report/squiggle/:id", (req, res) => {
 // });
 
 router.get("/admin", function(req, res, next) {
-  res.render("admin");
+  res.render("admin", { loggedIn: true });
 });
+
+// VERY bad login just for now
+
+// router.get("/admin", function(req, res, next) {
+//   if (req.params.token && req.params.token === "secret") {
+//     res.render("admin", { loggedIn: true });
+//   }
+//   res.render("admin");
+// });
+
+// router.post("/admin/login", (req, res) => {
+//   if (req.body.password === "asdf") {
+//     //send session
+//     res.redirect("/admin");
+//   }
+//   res.redirect("/admin");
+// });
 
 router.get("/admin/removedcompletedsquiggles", async (req, res, next) => {
   let page = req.params.page;
@@ -205,7 +222,6 @@ router.post("/admin/undoreport/completedsquiggle/:id", (req, res) => {
       }
       if (doc) {
         res.redirect("/admin");
-        console.log(doc);
       }
     }
   );

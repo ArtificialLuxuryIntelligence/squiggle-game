@@ -2,6 +2,7 @@
 
 <div>admin area</div>
 
+{{#if loggedIn}}
 <div class="gallery">
 
   <div class="container">      
@@ -32,6 +33,17 @@
   </div>
 
 </div>
+
+
+{{else}}
+
+<form method="POST" action="/admin/login">
+  <input type="password" name="password">
+  <input type="submit" value="login">
+</form>
+
+{{/if}}
+
 
 
 

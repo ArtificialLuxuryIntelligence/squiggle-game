@@ -47,6 +47,7 @@ async function loadImages(page) {
     let s = document.createElement("input");
     s.setAttribute("type", "submit");
     s.setAttribute("value", "report");
+    s.setAttribute("id", "report-squiggle-btn");
     f.appendChild(s);
     // cont.insertBefore(f, loader);
     return f;

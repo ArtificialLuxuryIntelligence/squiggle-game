@@ -40,11 +40,7 @@
         <input type='hidden' id= 'hiddenField2' name='png'  />
 
       </form>
-      {{!-- action dynamically added depending on squiggle id --}}
-      <form id="report-squiggle" action="" method="POST"> 
-        <input type="submit" value="report squiggle">
-      </form>
-      
+   
 
     {{/if}}
   </div>
@@ -63,10 +59,23 @@
     <h2>Complete the squiggle. </h2>
     <p class="touch-only" >Use two fingers to zoom and pan</p>
     </div>
+       {{!-- action dynamically added depending on squiggle id --}}
+    
+      
 {{/if}}
 
 </div>
 
 </div>
+
+{{#if newsquiggle}}
+
+{{else}}
+
+      <form id="report-squiggle" action="" method="POST"> 
+        <input id="report-squiggle-btn" type="submit" value="report squiggle">
+      </form>
+      
+{{/if}}
 <script src="javascripts/play.js"></script>
 
