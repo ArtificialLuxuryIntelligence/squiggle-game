@@ -676,9 +676,8 @@ window.addEventListener("load", async () => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // touch-screen only content
-if ("ontouchstart" in document.documentElement) {
-  document
-    .querySelectorAll(".touch-only")
-    .forEach(e => (e.style.display = "block"));
-} else {
-}
+// if ("ontouchstart" in document.documentElement) {
+//   document
+//     .querySelectorAll(".touch-only")
+//     .forEach(e => (e.style.display = "block"));
+// }

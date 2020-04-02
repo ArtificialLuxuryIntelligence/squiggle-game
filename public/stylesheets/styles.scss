@@ -287,11 +287,40 @@ h2 {
 }
 
 //-------------MEDIA QUERIES
+@media (min-width: 600px) {
+  .home {
+    .container .button-container {
+      flex-direction: row;
+      .button {
+        width: 10rem;
+        height: 10rem;
+        margin: 1rem;
+      }
+    }
+  }
+  .game {
+    // flex-direction: column;
+    .container {
+      .drawing {
+        .canvas-container {
+          canvas {
+            border: 2px solid black;
+          }
+        }
+      }
+    }
+  }
+  #report-squiggle {
+    align-items: flex-end;
+    margin-top: 5rem;
+  }
+}
 
 @media (min-width: 1000px) {
   body {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
   body > div:first-child {
     height: 100%;
@@ -322,8 +351,22 @@ h2 {
         .button {
           margin: 1rem;
         }
-        flex-direction: row;
       }
     }
+  }
+
+  .play {
+    // #report-squiggle {
+    //   background-color: red;
+    //   display: flex;
+
+    //   // margin-top: 104rem;
+    //   #report-squiggle-btn {
+    //     margin-left: auto;
+    //     border: none;
+    //     padding: 0.4rem;
+    //     background-color: white;
+    //   }
+    // }
   }
 }
