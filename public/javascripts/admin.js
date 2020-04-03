@@ -8,9 +8,12 @@ const loader3 = document.getElementById("loader3");
 
 const pageCont = document.querySelector(".container");
 
-window.onload = function() {
-  loadImages();
-  loadSquiggles();
+const token = localStorage.getItem("token");
+
+window.onload = async function() {
+  await loadImages();
+  await loadSquiggles();
+  addHeaders();
 };
 
 const formButton = (squiggle, buttonValue, action) => {
@@ -29,8 +32,18 @@ const formButton = (squiggle, buttonValue, action) => {
 
 async function loadImages() {
   const fetchSquiggles = async () => {
-    const response = await fetch("/admin/removedcompletedsquiggles");
+    // const response = await fetch("/admin/removedcompletedsquiggles");
+    const response = await fetch("/admin/removedcompletedsquiggles", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${token}`
+      }
+    });
     const json = await response.json();
+    if (json.message == "auth failed") {
+      window.location.href = "/";
+    }
     return json;
   };
 
@@ -85,7 +98,14 @@ const drawFromPoints = (collection, strokecolour, ctx) => {
 
 async function loadSquiggles() {
   const fetchSquiggles = async () => {
-    const response = await fetch("/admin/removedsquiggles");
+    // const response = await fetch("/admin/removedsquiggles");
+    const response = await fetch("/admin/removedsquiggles", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${token}`
+      }
+    });
     const json = await response.json();
     return json;
   };
@@ -107,7 +127,7 @@ async function loadSquiggles() {
   if (squiggles.length == 0) {
     loader2.innerHTML = "no squiggles reported";
   }
-  squiggles.forEach(async squiggle => {
+  await squiggles.forEach(async squiggle => {
     let imgcont = document.createElement("div");
     let canvas = await addCanvas(squiggle);
     imgcont.appendChild(canvas);
@@ -124,8 +144,17 @@ async function loadSquiggles() {
 
 async function loadAllSquiggles() {
   const fetchSquiggles = async () => {
-    const response = await fetch("/admin/allsquiggles");
+    // const response = await fetch("/admin/allsquiggles");
+    const response = await fetch("/admin/allsquiggles", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${token}`
+      }
+    });
     const json = await response.json();
+    console.log(json);
+
     return json;
   };
 
@@ -136,7 +165,6 @@ async function loadAllSquiggles() {
     canvas.style.border = "1px solid";
     let ctx = canvas.getContext("2d");
     let line = await JSON.parse(squiggle.line);
-
     drawFromPoints(line, "blue", ctx);
     return canvas;
   }
@@ -145,21 +173,59 @@ async function loadAllSquiggles() {
 
   if (squiggles.length == 0) {
     loader2.innerHTML = "squiggles all good";
+    return;
   }
-  squiggles.forEach(async squiggle => {
-    let imgcont = document.createElement("div");
-    let canvas = await addCanvas(squiggle);
-    imgcont.appendChild(canvas);
+  await (async () => {
+    squiggles.forEach(async squiggle => {
+      let imgcont = document.createElement("div");
+      let canvas = await addCanvas(squiggle);
+      imgcont.appendChild(canvas);
+      imgcont.appendChild(
+        formButton(squiggle, "remove", "/admin/delete/squiggle/")
+      );
+      imgcont.appendChild(
+        formButton(squiggle, "restore", "/admin/undoreport/squiggle/")
+      );
+      let forms = imgcont.querySelectorAll("form");
+      forms.forEach(form => {
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          let action = e.target.action;
+          fetch(action, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${token}`
+            }
+          });
+        });
+      });
 
-    imgcont.appendChild(
-      formButton(squiggle, "remove", "/admin/delete/squiggle/")
-    );
-    imgcont.appendChild(
-      formButton(squiggle, "restore", "/admin/undoreport/squiggle/")
-    );
-    squigAllCont.insertBefore(imgcont, loader3);
-  });
+      squigAllCont.insertBefore(imgcont, loader3);
+    });
+  })();
+  addHeaders();
 }
+
+// add auth headers to all button API calls
+const addHeaders = () => {
+  let forms = document.querySelectorAll("form");
+
+  forms.forEach(form => {
+    console.log(form);
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      let action = e.target.action;
+      fetch(action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${token}`
+        }
+      });
+    });
+  });
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

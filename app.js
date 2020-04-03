@@ -12,6 +12,7 @@ require("dotenv").config();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var adminRouter = require("./routes/admin");
 
 var app = express();
 
@@ -52,8 +53,8 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
 // increased limit
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -66,6 +67,7 @@ app.get("/favicon.ico", (req, res) => res.status(204));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/admin", adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -2,7 +2,6 @@
 
 <div>admin area</div>
 
-{{#if loggedIn}}
 <div class="gallery">
 
   <div class="container">      
@@ -25,6 +24,7 @@
     </div>
 
     <h1>all squiggles</h1>
+    
     <button onclick="loadAllSquiggles()">load</button>
      <div id="allsquiggle-container">
      <h2 id="loader2">end</h1>
@@ -33,19 +33,6 @@
   </div>
 
 </div>
-
-
-{{else}}
-
-<form method="POST" action="/admin/login">
-  <input type="password" name="password">
-  <input type="submit" value="login">
-</form>
-
-{{/if}}
-
-
-
 
 </div>
 

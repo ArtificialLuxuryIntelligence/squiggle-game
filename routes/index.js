@@ -1,10 +1,12 @@
-var express = require("express");
-var session = require("express-session");
+const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+// const session = require("express-session");
+const router = express.Router();
 
-var router = express.Router();
-
-var Squiggle = require("../models/squiggle");
-var CompletedSquiggle = require("../models/completeSquiggle");
+const Squiggle = require("../models/squiggle");
+const CompletedSquiggle = require("../models/completeSquiggle");
+const User = require("../models/user");
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -14,6 +16,92 @@ router.get("/", function(req, res, next) {
     res.render("index", { animate: false });
   }
   res.render("index", { animate: true });
+});
+
+router.get("/login", (req, res) => {
+  res.render("login");
+});
+
+router.post("/login/login", (req, res) => {
+  User.find({ name: req.body.name })
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
+        return res.status(401).json({
+          message: "login failed"
+        });
+      } else {
+        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+          if (err) {
+            return res.status(401).json({
+              message: "login failed" //same fail msg as above for security
+            });
+          }
+          if (result) {
+            const token = jwt.sign(
+              { name: user.name, id: user._id },
+              process.env.JWT_KEY,
+              {
+                expiresIn: "1h"
+              }
+            );
+            return res.status(200).json({
+              message: "login successful",
+              token
+            });
+          }
+          return res.status(401).json({
+            message: "login failed"
+          });
+        });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(500).json({
+        error: err
+      });
+    });
+});
+
+//only used for creating users
+router.post("/login/signup", (req, res) => {
+  User.find({ name: req.body.name })
+    .exec()
+    .then(user => {
+      if (user.length >= 1) {
+        return res.status(409).json({
+          message: "name taken"
+        });
+      } else {
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+          if (err) {
+            return res.status(500).json({
+              error: err
+            });
+          } else {
+            const user = new User({
+              name: req.body.name,
+              password: hash
+            });
+            user
+              .save()
+              .then(result => {
+                console.log(result);
+                res.status(201).json({
+                  message: "User created"
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                  error: err
+                });
+              });
+          }
+        });
+      }
+    });
 });
 
 //home page with no animation
@@ -156,114 +244,5 @@ router.post("/report/squiggle/:id", (req, res) => {
 //     res.redirect("/");
 //   }
 // });
-
-router.get("/admin", function(req, res, next) {
-  res.render("admin", { loggedIn: true });
-});
-
-// VERY bad login just for now
-
-// router.get("/admin", function(req, res, next) {
-//   if (req.params.token && req.params.token === "secret") {
-//     res.render("admin", { loggedIn: true });
-//   }
-//   res.render("admin");
-// });
-
-// router.post("/admin/login", (req, res) => {
-//   if (req.body.password === "asdf") {
-//     //send session
-//     res.redirect("/admin");
-//   }
-//   res.redirect("/admin");
-// });
-
-router.get("/admin/removedcompletedsquiggles", async (req, res, next) => {
-  let page = req.params.page;
-
-  let squiggles = await CompletedSquiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
-  });
-  // .skip(parseInt(page) * 5)
-  // .limit(5);
-  res.json(squiggles);
-});
-
-router.get("/admin/removedsquiggles", async (req, res, next) => {
-  let page = req.params.page;
-
-  let squiggles = await Squiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
-  });
-  // .skip(parseInt(page) * 5)
-  // .limit(5);
-  res.json(squiggles);
-});
-
-router.get("/admin/allsquiggles", async (req, res, next) => {
-  let page = req.params.page;
-
-  let squiggles = await Squiggle.find().sort({
-    time: -1
-  });
-  // .skip(parseInt(page) * 5)
-  // .limit(5);
-  res.json(squiggles);
-});
-
-router.post("/admin/undoreport/completedsquiggle/:id", (req, res) => {
-  CompletedSquiggle.update(
-    { _id: req.params.id },
-    { reports: 0 },
-    (err, doc) => {
-      if (err) {
-        res.redirect("/admin");
-        console.log(err);
-      }
-      if (doc) {
-        res.redirect("/admin");
-      }
-    }
-  );
-});
-
-router.post("/admin/delete/completedsquiggle/:id", (req, res) => {
-  CompletedSquiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
-    if (err) {
-      res.redirect("/admin");
-      console.log(err);
-    }
-    if (doc) {
-      res.redirect("/admin");
-      console.log(doc);
-    }
-  });
-});
-
-router.post("/admin/undoreport/squiggle/:id", (req, res) => {
-  Squiggle.update({ _id: req.params.id }, { reports: 0 }, (err, doc) => {
-    if (err) {
-      res.redirect("/admin");
-      console.log(err);
-    }
-    if (doc) {
-      res.redirect("/admin");
-      console.log(doc);
-    }
-  });
-});
-
-router.post("/admin/delete/squiggle/:id", (req, res) => {
-  Squiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
-    if (err) {
-      res.redirect("/admin");
-      console.log(err);
-    }
-    if (doc) {
-      res.redirect("/admin");
-      console.log(doc);
-    }
-  });
-});
 
 module.exports = router;
