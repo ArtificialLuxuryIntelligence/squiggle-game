@@ -467,7 +467,9 @@ const rerender = () => {
   ctx.clearRect(0, 0, cwidth, cheight);
   backgroundFill();
   renderScaling();
-  drawFromPoints(squiggle, squiggleColour);
+  if (squiggle) {
+    drawFromPoints(squiggle, squiggleColour);
+  }
   drawScaling();
   drawFromPoints(points, strokeColour);
 };
