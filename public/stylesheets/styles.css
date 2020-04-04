@@ -53,7 +53,7 @@ h2 {
   flex-direction: column; }
 
 .game {
-  background-color: #ececec;
+  background-color: white;
   width: 100%;
   display: flex;
   align-items: center; }
@@ -93,7 +93,7 @@ h2 {
     background-color: white; }
 
 .home {
-  background-color: #eeeeee;
+  background-color: white;
   height: 100%;
   width: 100%;
   display: flex;
@@ -141,7 +141,7 @@ h2 {
     height: 20px; }
 
 .gallery {
-  background-color: #ececec;
+  background-color: white;
   position: relative; }
   .gallery nav {
     display: flex;

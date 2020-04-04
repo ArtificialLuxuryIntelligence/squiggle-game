@@ -30,7 +30,7 @@ const input3 = document.getElementById("hiddenField3");
 const buttons = document.querySelectorAll(".button");
 
 const mouse = { x: 0, y: 0 };
-const touch = { x: null, y: null };
+const touch = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
 let section;
@@ -85,9 +85,8 @@ canvas.style.height = cwidth + "px";
 canvas2.style.width = cwidth + "px";
 canvas2.style.height = cwidth + "px";
 
-//adjust for dpi
-const size = cwidth * window.devicePixelRatio;
-// const size = 1800;
+//decent quality/file-size
+const size = 1800;
 
 canvas.width = size;
 canvas.height = size;
@@ -120,14 +119,12 @@ const renderScaling = () => {
   scaling.renderScaling = true;
   // console.log(`render scaling run`);
 };
-
-//inverses renderscaling
 const drawScaling = () => {
   let invScaleFactor = 1 / scaleFactor;
   ctx.scale(invScaleFactor, invScaleFactor);
   ctx2.scale(invScaleFactor, invScaleFactor);
 
-  ctx.lineWidth = cwidth / 60;
+  ctx.lineWidth = cwidth / 100;
   ctx2.lineWidth = cwidth / 300;
 
   scaling.renderScaling = false;
@@ -154,7 +151,7 @@ const chain = 8;
 
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
-// ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingEnabled = true;
 
 //currently using white so might not be need at all
 const backgroundFill = () => {
@@ -211,14 +208,9 @@ function touchPos(e) {
 function touchdraw() {
   if (isDrawing) {
     let lastArray = points.slice(-1)[0];
-    console.log("la", lastArray);
-
     drawCircle(lastArray, touch);
 
     if (lastArray.length == 0) {
-      console.log("first point!", touch.x, touch.y);
-
-      // ctx.moveTo(touch.x, touch.y);
       ctx.lineTo(touch.x, touch.y);
       ctx.stroke();
       lastArray.push({ x: touch.x, y: touch.y });
@@ -260,24 +252,16 @@ function touchdraw() {
 const touchDownHandler = (e) => {
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
-    if (e.touches.length === 1) {
-      // ctx.closePath();
+    if (e.touches.length < 2 && e.touches.length > 0) {
+      ctx.closePath();
       //creates new section of drawing
       let arr = [];
       points.push(arr);
       ctx.strokeStyle = strokeColour;
-
       ctx.moveTo(touch.x, touch.y);
       ctx.beginPath();
-
       isDrawing = true;
       canvas.addEventListener("touchmove", touchdraw, { passive: false });
-
-      // const drawingLoop = () => {
-      //   touchdraw();
-      //   drawAnim = requestAnimationFrame(drawingLoop);
-      // };
-      // requestAnimationFrame(drawingLoop);
     } else {
       isDrawing = false;
       canvas.removeEventListener("touchmove", touchdraw, { passive: false });
@@ -287,13 +271,9 @@ const touchDownHandler = (e) => {
 
 const touchUpHandler = (e) => {
   if (isDrawing) {
-    console.log("end touch");
-
     ctx2.clearRect(0, 0, cwidth, cheight);
     ctx.closePath();
     canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-
-    // cancelAnimationFrame(drawAnim);
 
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
     if (points[points.length - 1].length === 0) {
@@ -342,9 +322,6 @@ function mousePos(e) {
 }
 
 function draw() {
-  //helper
-
-  //shouldnt need this check
   if (isDrawing) {
     console.log(points);
 
@@ -391,7 +368,6 @@ function draw() {
 
 //  -------------------- MOUSE  Handlers
 
-let drawAnim;
 //////////////////////////////
 
 const mouseDownHandler = () => {
@@ -404,13 +380,6 @@ const mouseDownHandler = () => {
   isDrawing = true;
 
   canvas.addEventListener("mousemove", draw);
-
-  // const drawingLoop = () => {
-  //   draw();
-  //   drawAnim = requestAnimationFrame(drawingLoop);
-  // };
-  // requestAnimationFrame(drawingLoop);
-
   // draws first pixel before mouse moves take over drawing job
   //needs to be with of stroke width , not 1
   // ctx.fillRect(mouse.x, mouse.y, 1, 1);
@@ -421,7 +390,6 @@ const mouseDownHandler = () => {
 
 const mouseUpHandler = () => {
   canvas.removeEventListener("mousemove", draw);
-  // cancelAnimationFrame(drawAnim);
 
   if (isDrawing) {
     ctx2.clearRect(0, 0, cwidth, cheight);
