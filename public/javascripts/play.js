@@ -114,7 +114,7 @@ const renderScaling = () => {
   ctx.scale(scaleFactor, scaleFactor);
   ctx2.scale(scaleFactor, scaleFactor);
 
-  ctx.lineWidth = originalSize / 100;
+  ctx.lineWidth = originalSize / 60;
   ctx2.lineWidth = originalSize / 300;
 
   scaling.renderScaling = true;
@@ -267,7 +267,7 @@ const touchDownHandler = (e) => {
       points.push(arr);
       ctx.strokeStyle = strokeColour;
 
-      ctx.moveTo(touch.x, touch.y);
+      ctx.moveTo(touch.x, touch.y); // move this outside of timeout? (to avoid x:0, y:0 issue in animation frame)
       ctx.beginPath();
 
       isDrawing = true;
@@ -291,6 +291,7 @@ const touchUpHandler = (e) => {
 
     ctx2.clearRect(0, 0, cwidth, cheight);
     ctx.closePath();
+
     canvas.removeEventListener("touchmove", touchdraw, { passive: false });
 
     // cancelAnimationFrame(drawAnim);
@@ -421,6 +422,7 @@ const mouseDownHandler = () => {
 
 const mouseUpHandler = () => {
   canvas.removeEventListener("mousemove", draw);
+
   // cancelAnimationFrame(drawAnim);
 
   if (isDrawing) {
