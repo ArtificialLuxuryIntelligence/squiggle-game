@@ -150,7 +150,7 @@ const drawScaling = () => {
 //DRAWING mechanics
 
 //smoothing radius
-const chain = 8;
+const chain = 4;
 
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
@@ -211,12 +211,12 @@ function touchPos(e) {
 function touchdraw() {
   if (isDrawing) {
     let lastArray = points.slice(-1)[0];
-    console.log("la", lastArray);
+    // console.log("la", lastArray);
 
     drawCircle(lastArray, touch);
 
     if (lastArray.length == 0) {
-      console.log("first point!", touch.x, touch.y);
+      // console.log("first point!", touch.x, touch.y);
 
       // ctx.moveTo(touch.x, touch.y);
       ctx.lineTo(touch.x, touch.y);
@@ -237,6 +237,7 @@ function touchdraw() {
 
       if (dist < chain) {
         //do nothing (distance is too short)
+        return;
       }
       if (dist >= chain) {
         //draw a new point in the direction of the mouse pointer
@@ -310,6 +311,7 @@ const touchUpHandler = (e) => {
     //   section++;
     // }
     isDrawing = false;
+    rerender();
   }
 };
 
@@ -431,6 +433,7 @@ const mouseUpHandler = () => {
     isDrawing = false;
     //remove any point arrays with no content (a quick click or touch doesn't draw anything)
     points = points.filter((arr) => arr.length !== 0);
+    rerender();
   }
 };
 
@@ -449,6 +452,18 @@ const undoHandler = (points) => {
   // if (section > 0) {
   //   section--;
   // }
+  ctx.clearRect(0, 0, cwidth, cheight);
+  backgroundFill();
+  renderScaling();
+  drawFromPoints(squiggle, squiggleColour);
+  drawScaling();
+  drawFromPoints(points, strokeColour);
+};
+
+//use this fn above
+
+//drawing from points uses stroke once per line => smoother than drawing
+const rerender = () => {
   ctx.clearRect(0, 0, cwidth, cheight);
   backgroundFill();
   renderScaling();
