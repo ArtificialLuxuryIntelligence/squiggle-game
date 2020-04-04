@@ -1,3 +1,5 @@
+//FILE NOT IN USE -> All content now condensed into play.js file
+
 //same as play.js with:
 //different submit function
 //different load function (no squiggle rendered)
@@ -171,7 +173,7 @@ const mouseOutHandler = () => {
   isDrawing = false;
 };
 
-const undoHandler = points => {
+const undoHandler = (points) => {
   points.pop();
   if (section > 0) {
     section--;
@@ -192,7 +194,7 @@ const resetCanvas = () => {
 canvas.addEventListener("mousedown", mouseDownHandler);
 canvas.addEventListener("mouseup", mouseUpHandler);
 canvas.addEventListener("mouseout", mouseOutHandler);
-canvas.addEventListener("mousemove", e => mousePos(e));
+canvas.addEventListener("mousemove", (e) => mousePos(e));
 // undo.addEventListener("click", () => undoHandler(points));
 restart.addEventListener("click", resetCanvas);
 
@@ -275,7 +277,7 @@ function touchdraw() {
   }
 }
 
-const touchDownHandler = e => {
+const touchDownHandler = (e) => {
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
     if (e.touches.length < 2) {
@@ -293,7 +295,7 @@ const touchDownHandler = e => {
   }, 50);
 };
 
-const touchUpHandler = e => {
+const touchUpHandler = (e) => {
   ctx.closePath();
 
   canvas.removeEventListener("touchmove", touchdraw, { passive: false });
@@ -315,11 +317,11 @@ const touchUpHandler = e => {
 };
 
 canvas.addEventListener("touchstart", touchDownHandler, {
-  passive: false
+  passive: false,
 });
 canvas.addEventListener("touchend", touchUpHandler);
 // canvas.addEventListener("mouseout", mouseOutHandler);
-canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+canvas.addEventListener("touchmove", (e) => touchPos(e), { passive: false });
 
 //
 // Prevent scrolling when touching the canvas
@@ -343,7 +345,7 @@ canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
 // );
 canvas.addEventListener(
   "touchmove",
-  function(e) {
+  function (e) {
     if (e.touches.length < 2) {
       e.preventDefault();
     }

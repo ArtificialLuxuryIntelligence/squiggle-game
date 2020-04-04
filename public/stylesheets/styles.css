@@ -40,6 +40,8 @@ h2 {
   margin: 1px;
   padding: 1rem;
   cursor: pointer; }
+  .button:focus {
+    outline: none; }
   .button img {
     width: 30px;
     height: 30px; }
@@ -51,13 +53,14 @@ h2 {
   flex-direction: column; }
 
 .game {
-  height: 100%;
+  background-color: #ececec;
   width: 100%;
   display: flex;
   align-items: center; }
   .game .disabled {
     opacity: 0.4; }
   .game .container {
+    height: 100%;
     justify-content: space-between; }
     .game .container .drawing {
       text-align: center; }
@@ -78,7 +81,8 @@ h2 {
         width: 5rem;
         height: 5rem; }
     .game .container .text-container {
-      text-align: center; }
+      text-align: center;
+      margin-bottom: 4rem; }
 
 #report-squiggle {
   display: flex; }
@@ -89,6 +93,7 @@ h2 {
     background-color: white; }
 
 .home {
+  background-color: #eeeeee;
   height: 100%;
   width: 100%;
   display: flex;
@@ -136,6 +141,7 @@ h2 {
     height: 20px; }
 
 .gallery {
+  background-color: #ececec;
   position: relative; }
   .gallery nav {
     display: flex;
@@ -202,8 +208,8 @@ h2 {
   .game .container .drawing .canvas-container canvas {
     border: 2px solid black; }
   #report-squiggle {
-    align-items: flex-end;
-    margin-top: 5rem; } }
+    align-self: flex-end;
+    margin-right: 10%; } }
 
 @media (min-width: 1000px) {
   body {
@@ -211,10 +217,9 @@ h2 {
     flex-direction: column;
     align-items: center; }
   body > div:first-child {
-    height: 100%;
     width: 80%; }
     body > div:first-child .container {
-      min-height: 100%;
+      height: 100%;
       border-left: 3px solid black;
       border-right: 3px solid black; }
   .home .container .button-container .button {

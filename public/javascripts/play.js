@@ -1,9 +1,3 @@
-//note: this file is now imported as a module in game.hbs
-
-// import hello, { hi } from "./hello.mjs";
-// hi();
-// hello();
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CONTENTS
@@ -33,14 +27,14 @@ const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
 const input3 = document.getElementById("hiddenField3");
+const buttons = document.querySelectorAll(".button");
+
 const mouse = { x: 0, y: 0 };
 const touch = { x: 0, y: 0 };
 let isDrawing = false;
 let points = [];
 let section;
 let squiggle;
-
-const buttons = document.querySelectorAll(".button");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,10 +44,10 @@ let squiggleColour, strokeColour;
 const colours = [
   { sqCol: "red", stCol: ["orange", "yellow"] },
   { sqCol: "blue", stCol: ["pink", "purple"] },
-  { sqCol: "green", stCol: ["blue", "turquoise"] }
+  { sqCol: "green", stCol: ["blue", "turquoise"] },
 ];
 
-const generateColourScheme = function(arr) {
+const generateColourScheme = function (arr) {
   let obj = arr[Math.floor(Math.random() * arr.length)];
   squiggleColour = obj.sqCol;
   let rand = Math.floor(obj.stCol.length * Math.random());
@@ -65,8 +59,7 @@ const generateColourScheme = function(arr) {
   // strokeColour = prop.stCol[randomStrokeIndex];
 };
 
-///
-generateColourScheme(colours);
+/// on load
 
 // let squiggleColour =
 //   squiggleColours[Math.floor(Math.random() * squiggleColours.length)];
@@ -77,7 +70,8 @@ let fillColour = "white";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//SCALING canvas for better resolution
+//SCALING
+// for better resolution and scaling canvas for devices of different sizes
 
 //(canvas2 is for circle overlay)
 
@@ -154,6 +148,7 @@ const drawScaling = () => {
 
 //smoothing radius
 const chain = 6;
+
 ctx.lineCap = "round";
 ctx.lineJoin = "round";
 
@@ -161,7 +156,6 @@ ctx.lineJoin = "round";
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
   console.log("FC", fillColour);
-
   ctx.fillRect(0, 0, cwidth, cwidth);
   // ctx.fill();
 };
@@ -254,7 +248,7 @@ function touchdraw() {
 
 //  -------------------- TOUCH Handlers
 
-const touchDownHandler = e => {
+const touchDownHandler = (e) => {
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
     if (e.touches.length < 2 && e.touches.length > 0) {
@@ -274,7 +268,7 @@ const touchDownHandler = e => {
   }, 50);
 };
 
-const touchUpHandler = e => {
+const touchUpHandler = (e) => {
   if (isDrawing) {
     ctx2.clearRect(0, 0, cwidth, cheight);
     ctx.closePath();
@@ -401,7 +395,7 @@ const mouseUpHandler = () => {
     ctx.closePath();
     isDrawing = false;
     //remove any point arrays with no content (a quick click or touch doesn't draw anything)
-    points = points.filter(arr => arr.length !== 0);
+    points = points.filter((arr) => arr.length !== 0);
   }
 };
 
@@ -415,7 +409,7 @@ const mouseOutHandler = () => {
 
 //  --------------------  GENERAL button handlers
 
-const undoHandler = points => {
+const undoHandler = (points) => {
   points.pop();
   // if (section > 0) {
   //   section--;
@@ -449,6 +443,7 @@ const rotateCanvas = async () => {
   console.log((turns % 4) + 1);
 
   ctx.clearRect(0, 0, cwidth, cwidth);
+  backgroundFill();
 
   //rotate canvas and rerender
   ctx.translate(cwidth / 2, cwidth / 2); //both cwidth (is a square)
@@ -571,8 +566,8 @@ const drawCircle = (lastArray, pointer) => {
 
 // EVENT LISTENERS
 
-const addListeners = path => {
-  buttons.forEach(button => button.classList.remove("disabled"));
+const addListeners = (path) => {
+  buttons.forEach((button) => button.classList.remove("disabled"));
 
   if (
     "ontouchstart" in window ||
@@ -581,13 +576,15 @@ const addListeners = path => {
   ) {
     undo.addEventListener("touchstart", () => undoHandler(points));
     canvas.addEventListener("touchstart", touchDownHandler, {
-      passive: false
+      passive: false,
     });
     canvas.addEventListener("touchend", touchUpHandler);
-    canvas.addEventListener("touchmove", e => touchPos(e), { passive: false });
+    canvas.addEventListener("touchmove", (e) => touchPos(e), {
+      passive: false,
+    });
     canvas.addEventListener(
       "touchmove",
-      function(e) {
+      function (e) {
         if (e.touches.length < 2) {
           e.preventDefault();
         }
@@ -598,7 +595,7 @@ const addListeners = path => {
     undo.addEventListener("click", () => undoHandler(points));
     canvas.addEventListener("mousedown", mouseDownHandler);
     canvas.addEventListener("mouseup", mouseUpHandler);
-    canvas.addEventListener("mousemove", e => mousePos(e));
+    canvas.addEventListener("mousemove", (e) => mousePos(e));
     // canvas.addEventListener("mouseout", mouseOutHandler);
   }
 
@@ -616,7 +613,7 @@ const addListeners = path => {
       rotate.addEventListener("click", rotateCanvas);
     }
 
-    form.addEventListener("submit", async e => {
+    form.addEventListener("submit", async (e) => {
       // e.preventDefault();
       let dataURL = await canvas.toDataURL();
       input.value = dataURL;
@@ -642,7 +639,9 @@ window.addEventListener("load", async () => {
   if (window.location.pathname.split("/")[1] == "newsquiggle") {
     // let squiggleColour = "#36494E";
     // let strokeColour = "#9E2A2B";
-    let fillColour = "white";
+    // let fillColour = "white";
+    generateColourScheme(colours);
+
     backgroundFill();
     ctx.strokeStyle = strokeColour;
     drawScaling();
@@ -650,10 +649,11 @@ window.addEventListener("load", async () => {
 
     // load eventlisteners immediately
   } else if (window.location.pathname.split("/")[1] == "play") {
+    generateColourScheme(colours);
     backgroundFill();
     let json = await fetchSquiggle();
 
-    //set id in report form
+    //set squiggle id in report form
     document
       .querySelector("#report-squiggle")
       .setAttribute("action", `/report/squiggle/${json._id}`);
@@ -669,6 +669,7 @@ window.addEventListener("load", async () => {
     let dataURL = await canvas.toDataURL();
     input2.value = dataURL;
     ctx.clearRect(0, 0, cwidth, cheight);
+    backgroundFill();
     animateSquiggle();
   }
 });
@@ -676,6 +677,7 @@ window.addEventListener("load", async () => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // touch-screen only content
+
 // if ("ontouchstart" in document.documentElement) {
 //   document
 //     .querySelectorAll(".touch-only")
