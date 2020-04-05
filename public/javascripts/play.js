@@ -148,6 +148,8 @@ const drawScaling = () => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //DRAWING mechanics
+//variable to hold user line drawing (animation)
+let drawAnim;
 
 //smoothing radius
 const chain = 4;
@@ -159,7 +161,7 @@ ctx.lineJoin = "round";
 //currently using white so might not be need at all
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
-  console.log("FC", fillColour);
+  // console.log("FC", fillColour);
   ctx.fillRect(0, 0, cwidth, cwidth);
   // ctx.fill();
 };
@@ -180,10 +182,22 @@ const drawFromPoints = (collection, strokecolour) => {
   }
 };
 
+const drawLoop = () => {
+  console.log("rerender loop");
+  console.log(points);
+
+  drawFromPoints(points, strokeColour);
+  drawCircle(points.slice(-1)[0], touch);
+
+  drawAnim = requestAnimationFrame(drawLoop);
+};
+
 // TOUCH drawing
 
 // Get the position of touch on canvas
 function touchPos(e) {
+  console.log("getting pos", isDrawing);
+
   var rect = canvas.getBoundingClientRect();
 
   switch ((turns % 4) + 1) {
@@ -208,19 +222,119 @@ function touchPos(e) {
   }
 }
 
-function touchdraw() {
-  if (isDrawing) {
-    let lastArray = points.slice(-1)[0];
-    // console.log("la", lastArray);
+// function touchdraw() {
+//   console.log("drawing");
 
-    drawCircle(lastArray, touch);
+//   if (isDrawing) {
+//     let lastArray = points.slice(-1)[0];
+//     // console.log("la", lastArray);
+
+//     drawCircle(lastArray, touch);
+
+//     if (lastArray.length == 0) {
+//       // console.log("first point!", touch.x, touch.y);
+
+//       // ctx.moveTo(touch.x, touch.y);
+//       ctx.lineTo(touch.x, touch.y);
+//       ctx.stroke();
+//       lastArray.push({ x: touch.x, y: touch.y });
+//     } else {
+//       //smoothing radius (chain) set globally
+//       //x1 is last point in lastArray (of points)
+//       let x1 = lastArray.slice(-1)[0].x;
+//       let y1 = lastArray.slice(-1)[0].y;
+//       let x2 = touch.x;
+//       let y2 = touch.y;
+
+//       //disatnce between points
+//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+//       //angle between drawFromPoints
+//       let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+//       if (dist < chain) {
+//         //do nothing (distance is too short)
+//         // return;
+//       }
+//       if (dist >= chain) {
+//         //draw a new point in the direction of the mouse pointer
+//         let x = (dist - chain) * Math.sin(alpha) + x1;
+//         let y = (dist - chain) * Math.cos(alpha) + y1;
+
+//         ctx.lineTo(x, y);
+//         ctx.stroke();
+
+//         lastArray.push({ x: x, y: y });
+//         // if (points[section]) {
+//         //   points[section].push({ x: x, y: y });
+//         // }
+//       }
+//     }
+//   }
+//   drawAnim = requestAnimationFrame(touchdraw);
+// }
+
+//  -------------------- TOUCH Handlers
+
+const touchDownHandler = (e) => {
+  canvas.addEventListener("touchmove", touchMoveHandler, {
+    passive: false,
+  });
+
+  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
+  setTimeout(() => {
+    if (e.touches.length === 1) {
+      isDrawing = true;
+      drawAnim = requestAnimationFrame(drawLoop);
+
+      // ctx.closePath();
+      //creates new section of drawing
+      let arr = [];
+      points.push(arr);
+      ctx.strokeStyle = strokeColour;
+
+      ctx.moveTo(touch.x, touch.y); // move this outside of timeout? (to avoid x:0, y:0 issue in animation frame)
+      ctx.beginPath();
+
+      // canvas.addEventListener("touchmove", touchdraw, { passive: false });
+      // canvas.addEventListener("touchmove", drawingLoop, { passive: false });
+      // const drawingLoop = () => {
+      //   touchdraw();
+      //   drawAnim = requestAnimationFrame(drawingLoop);
+      // };
+      // requestAnimationFrame(drawingLoop);
+
+      // drawAnim = requestAnimationFrame(touchdraw);
+    } else {
+      console.log("ended drawing");
+
+      isDrawing = false;
+      // canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+      canvas.removeEventListener("touchmove", touchMoveHandler, {
+        passive: false,
+      });
+    }
+  }, 50);
+};
+
+//test
+
+const touchMoveHandler = (e) => {
+  // e.preventDefault();
+  // e.stopPropagation();
+
+  console.log("drawing");
+
+  if (isDrawing) {
+    console.log(points);
+
+    let lastArray = points.slice(-1)[0];
 
     if (lastArray.length == 0) {
       // console.log("first point!", touch.x, touch.y);
 
       // ctx.moveTo(touch.x, touch.y);
-      ctx.lineTo(touch.x, touch.y);
-      ctx.stroke();
+      // ctx.lineTo(touch.x, touch.y);
+      // ctx.stroke();
       lastArray.push({ x: touch.x, y: touch.y });
     } else {
       //smoothing radius (chain) set globally
@@ -237,53 +351,23 @@ function touchdraw() {
 
       if (dist < chain) {
         //do nothing (distance is too short)
-        return;
+        // return;
       }
       if (dist >= chain) {
         //draw a new point in the direction of the mouse pointer
         let x = (dist - chain) * Math.sin(alpha) + x1;
         let y = (dist - chain) * Math.cos(alpha) + y1;
 
-        ctx.lineTo(x, y);
-        ctx.stroke();
+        // ctx.lineTo(x, y);
+        // ctx.stroke();
 
-        lastArray.push({ x: x, y: y });
+        lastArray.push({ x, y });
         // if (points[section]) {
         //   points[section].push({ x: x, y: y });
         // }
       }
     }
   }
-}
-
-//  -------------------- TOUCH Handlers
-
-const touchDownHandler = (e) => {
-  //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
-  setTimeout(() => {
-    if (e.touches.length === 1) {
-      // ctx.closePath();
-      //creates new section of drawing
-      let arr = [];
-      points.push(arr);
-      ctx.strokeStyle = strokeColour;
-
-      ctx.moveTo(touch.x, touch.y); // move this outside of timeout? (to avoid x:0, y:0 issue in animation frame)
-      ctx.beginPath();
-
-      isDrawing = true;
-      canvas.addEventListener("touchmove", touchdraw, { passive: false });
-
-      // const drawingLoop = () => {
-      //   touchdraw();
-      //   drawAnim = requestAnimationFrame(drawingLoop);
-      // };
-      // requestAnimationFrame(drawingLoop);
-    } else {
-      isDrawing = false;
-      canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-    }
-  }, 50);
 };
 
 const touchUpHandler = (e) => {
@@ -293,9 +377,8 @@ const touchUpHandler = (e) => {
     ctx2.clearRect(0, 0, cwidth, cheight);
     ctx.closePath();
 
-    canvas.removeEventListener("touchmove", touchdraw, { passive: false });
-
-    // cancelAnimationFrame(drawAnim);
+    // canvas.removeEventListener("touchmove", touchdraw, { passive: false });
+    // canvas.removeEventListener("touchmove", drawingLoop, { passive: false });
 
     //if nothing was drawn (i.e. just a quick tap which does not draw with touch) -see touchDownHandler
     if (points[points.length - 1].length === 0) {
@@ -313,6 +396,9 @@ const touchUpHandler = (e) => {
     isDrawing = false;
     rerender();
   }
+  console.log("cancel anim ");
+
+  cancelAnimationFrame(drawAnim);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -394,10 +480,12 @@ function draw() {
 
 //  -------------------- MOUSE  Handlers
 
-let drawAnim;
 //////////////////////////////
 
 const mouseDownHandler = () => {
+  canvas.addEventListener("mousemove", mouseMoveHandler);
+  drawAnim = requestAnimationFrame(drawLoop);
+
   ctx.strokeStyle = strokeColour;
   ctx.fillStyle = strokeColour;
   ctx.closePath();
@@ -406,7 +494,7 @@ const mouseDownHandler = () => {
   ctx.beginPath();
   isDrawing = true;
 
-  canvas.addEventListener("mousemove", draw);
+  // canvas.addEventListener("mousemove", draw);
 
   // const drawingLoop = () => {
   //   draw();
@@ -423,9 +511,8 @@ const mouseDownHandler = () => {
 };
 
 const mouseUpHandler = () => {
-  canvas.removeEventListener("mousemove", draw);
-
-  // cancelAnimationFrame(drawAnim);
+  canvas.removeEventListener("mousemove", mouseMoveHandler);
+  cancelAnimationFrame(drawAnim);
 
   if (isDrawing) {
     ctx2.clearRect(0, 0, cwidth, cheight);
@@ -437,8 +524,56 @@ const mouseUpHandler = () => {
   }
 };
 
+const mouseMoveHandler = () => {
+  //helper
+
+  //shouldnt need this check
+  if (isDrawing) {
+    console.log(points);
+
+    let lastArray = points.slice(-1)[0];
+
+    if (lastArray.length == 0) {
+      // ctx.lineTo(mouse.x, mouse.y);
+      // ctx.stroke();
+      lastArray.push({ x: mouse.x, y: mouse.y });
+      console.log("LastArray length 0");
+    } else {
+      //smoothing radius (chain) set globally
+      //x1 is last point in lastArray (of points)
+      let x1 = lastArray.slice(-1)[0].x;
+      let y1 = lastArray.slice(-1)[0].y;
+      let x2 = mouse.x;
+      let y2 = mouse.y;
+
+      //disatnce between points
+      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      //angle between drawFromPoints
+      let alpha = Math.atan2(x2 - x1, y2 - y1);
+
+      if (dist < chain) {
+        //do nothing (distance is too short)
+      }
+      if (dist >= chain) {
+        //draw a new point in the direction of the mouse pointer
+        let x = (dist - chain) * Math.sin(alpha) + x1;
+        let y = (dist - chain) * Math.cos(alpha) + y1;
+
+        // ctx.lineTo(x, y);
+        // ctx.stroke();
+
+        lastArray.push({ x: x, y: y });
+        // if (points[section]) {
+        //   points[section].push({ x: x, y: y });
+        // }
+      }
+    }
+  }
+};
+
 const mouseOutHandler = () => {
-  canvas.removeEventListener("mousemove", draw);
+  canvas.removeEventListener("mousemove", mouseMoveHandler);
+  cancelAnimationFrame(drawAnim);
   if (isDrawing) {
     section++;
   }
@@ -462,7 +597,7 @@ const undoHandler = (points) => {
 
 //use this fn above
 
-//drawing from points uses stroke once per line => smoother than drawing
+//drawing from points uses stroke once per complete line => smoother than drawing
 const rerender = () => {
   ctx.clearRect(0, 0, cwidth, cheight);
   backgroundFill();
@@ -630,7 +765,7 @@ const addListeners = (path) => {
     canvas.addEventListener("touchstart", touchDownHandler, {
       passive: false,
     });
-    canvas.addEventListener("touchend", touchUpHandler);
+    window.addEventListener("touchend", touchUpHandler);
     canvas.addEventListener("touchmove", (e) => touchPos(e), {
       passive: false,
     });
@@ -648,7 +783,7 @@ const addListeners = (path) => {
     canvas.addEventListener("mousedown", mouseDownHandler);
     canvas.addEventListener("mouseup", mouseUpHandler);
     canvas.addEventListener("mousemove", (e) => mousePos(e));
-    // canvas.addEventListener("mouseout", mouseOutHandler);
+    canvas.addEventListener("mouseout", mouseOutHandler);
   }
 
   // undo.addEventListener("click", () => undoHandler(points));
