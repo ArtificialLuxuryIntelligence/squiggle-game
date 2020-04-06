@@ -7,31 +7,14 @@ const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
-router.get("/", function(req, res, next) {
+router.get("/", auth, function (req, res, next) {
   res.render("admin");
 });
-
-// VERY bad login just for now
-
-// router.get("/admin", function(req, res, next) {
-//   if (req.params.token && req.params.token === "secret") {
-//     res.render("admin", { loggedIn: true });
-//   }
-//   res.render("admin");
-// });
-
-// router.post("/login", (req, res) => {
-//   if (req.body.password === "asdf") {
-//     //send session
-//     res.redirect("/admin");
-//   }
-//   res.redirect("/admin");
-// });
 
 router.get("/removedcompletedsquiggles", auth, async (req, res, next) => {
   //   let page = req.params.page;
   let squiggles = await CompletedSquiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
@@ -42,7 +25,7 @@ router.get("/removedsquiggles", auth, async (req, res, next) => {
   let page = req.params.page;
 
   let squiggles = await Squiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
@@ -53,7 +36,7 @@ router.get("/allsquiggles", auth, async (req, res, next) => {
   let page = req.params.page;
 
   let squiggles = await Squiggle.find().sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
