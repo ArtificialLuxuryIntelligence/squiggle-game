@@ -8,9 +8,7 @@ const loader3 = document.getElementById("loader3");
 
 const pageCont = document.querySelector(".container");
 
-const token = localStorage.getItem("token");
-
-window.onload = async function() {
+window.onload = async function () {
   await loadImages();
   await loadSquiggles();
   addHeaders();
@@ -35,10 +33,6 @@ async function loadImages() {
     // const response = await fetch("/admin/removedcompletedsquiggles");
     const response = await fetch("/admin/removedcompletedsquiggles", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${token}`
-      }
     });
     const json = await response.json();
     if (json.message == "auth failed") {
@@ -66,7 +60,7 @@ async function loadImages() {
     loader.innerHTML = "no complete squiggles reported";
   }
 
-  squiggles.forEach(squiggle => {
+  squiggles.forEach((squiggle) => {
     let imgcont = document.createElement("div");
     imgcont.appendChild(addImage(squiggle.img2.data, squiggle.img.data));
     imgcont.appendChild(
@@ -101,10 +95,6 @@ async function loadSquiggles() {
     // const response = await fetch("/admin/removedsquiggles");
     const response = await fetch("/admin/removedsquiggles", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${token}`
-      }
     });
     const json = await response.json();
     return json;
@@ -116,6 +106,8 @@ async function loadSquiggles() {
     canvas.height = 600;
     canvas.style.border = "1px solid";
     let ctx = canvas.getContext("2d");
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     let line = await JSON.parse(squiggle.line);
 
     drawFromPoints(line, "blue", ctx);
@@ -127,7 +119,7 @@ async function loadSquiggles() {
   if (squiggles.length == 0) {
     loader2.innerHTML = "no squiggles reported";
   }
-  await squiggles.forEach(async squiggle => {
+  await squiggles.forEach(async (squiggle) => {
     let imgcont = document.createElement("div");
     let canvas = await addCanvas(squiggle);
     imgcont.appendChild(canvas);
@@ -147,10 +139,6 @@ async function loadAllSquiggles() {
     // const response = await fetch("/admin/allsquiggles");
     const response = await fetch("/admin/allsquiggles", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `bearer ${token}`
-      }
     });
     const json = await response.json();
     console.log(json);
@@ -176,7 +164,7 @@ async function loadAllSquiggles() {
     return;
   }
   await (async () => {
-    squiggles.forEach(async squiggle => {
+    squiggles.forEach(async (squiggle) => {
       let imgcont = document.createElement("div");
       let canvas = await addCanvas(squiggle);
       imgcont.appendChild(canvas);
@@ -187,16 +175,12 @@ async function loadAllSquiggles() {
         formButton(squiggle, "restore", "/admin/undoreport/squiggle/")
       );
       let forms = imgcont.querySelectorAll("form");
-      forms.forEach(form => {
-        form.addEventListener("submit", e => {
+      forms.forEach((form) => {
+        form.addEventListener("submit", (e) => {
           e.preventDefault();
           let action = e.target.action;
           fetch(action, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${token}`
-            }
           });
         });
       });
@@ -211,17 +195,13 @@ async function loadAllSquiggles() {
 const addHeaders = () => {
   let forms = document.querySelectorAll("form");
 
-  forms.forEach(form => {
+  forms.forEach((form) => {
     console.log(form);
-    form.addEventListener("submit", e => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       let action = e.target.action;
       fetch(action, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `bearer ${token}`
-        }
       });
     });
   });
@@ -244,13 +224,13 @@ const hideScrollToTop = () => {
 
 let toTopOptions = {
   root: null,
-  rootMargin: "300px"
+  rootMargin: "300px",
 };
 
 const homeButton = document.querySelector("#home-link");
 
-let toTopObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry =>
+let toTopObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) =>
     entry.isIntersecting ? hideScrollToTop() : showScrollToTop()
   );
 }, toTopOptions);

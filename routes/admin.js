@@ -8,7 +8,7 @@ const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
 router.get("/", auth, function (req, res, next) {
-  res.render("admin");
+  res.render("admin", { name: req.user.name });
 });
 
 router.get("/removedcompletedsquiggles", auth, async (req, res, next) => {

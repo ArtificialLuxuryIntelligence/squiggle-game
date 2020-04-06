@@ -9,6 +9,8 @@ const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
+const loggedIn = require("./middleware/loggedIn");
+
 //session middleware
 
 // router.use(function (req, res, next) {
@@ -29,7 +31,7 @@ router.get("/", function (req, res, next) {
   res.render("index", { animate: false });
 });
 
-router.get("/login", (req, res) => {
+router.get("/login", loggedIn, (req, res) => {
   let messages = req.flash("error");
   res.render("login", { hasErrors: messages.length > 0, messages });
 });
@@ -47,7 +49,7 @@ router.post(
 router.post(
   "/login/signup",
   passport.authenticate("local.signup", {
-    successRedirect: "/",
+    successRedirect: "/login",
     failureRedirect: "/login",
     failureFlash: true,
   })

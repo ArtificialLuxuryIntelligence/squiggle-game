@@ -19,7 +19,6 @@ module.exports = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  console.log("Redirected- Not authenticated");
 
   res.redirect("/");
 };
