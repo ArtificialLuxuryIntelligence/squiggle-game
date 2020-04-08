@@ -93,36 +93,52 @@ h2 {
     background-color: white; }
 
 .home {
-  background-color: white;
+  position: relative;
   height: 100%;
   width: 100%;
   display: flex;
-  align-items: center; }
+  align-items: center;
+  overflow-y: hidden; }
+  .home #background-mask {
+    background-color: rgba(255, 255, 255, 0.603);
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    border: 50px solid rgba(255, 255, 255, 0.5);
+    background-clip: padding-box;
+    padding: 100px; }
+  .home #background-squiggles {
+    position: absolute;
+    z-index: -2;
+    height: 100%; }
   .home .squig {
-    height: 100px;
-    width: 300px;
-    stroke-width: 5px; }
+    width: 100%; }
   .home .animate {
-    stroke-dasharray: 350;
+    stroke-width: 6px;
+    stroke-dasharray: 2500;
     stroke-dashoffset: 0;
     animation: dash 3s linear; }
+  .home .animate-background {
+    stroke-width: 3px;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 0;
+    animation: dash-background 3s linear; }
 
 @keyframes dash {
   0% {
-    stroke-dashoffset: 350; }
+    stroke-dashoffset: 2500; }
+  100% {
+    stroke-dashoffset: 0; } }
+
+@keyframes dash-background {
+  0% {
+    stroke-dashoffset: 600; }
   100% {
     stroke-dashoffset: 0; } }
   .home .container {
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly; }
-    .home .container img {
-      max-width: 600px;
-      border: 2px solid red;
-      margin: 2px;
-      width: 100%;
-      height: 40%; }
+    display: flex; }
     .home .container .button-container {
       display: flex;
       flex-direction: column; }
@@ -133,6 +149,9 @@ h2 {
         width: 30vw;
         height: 30vw;
         margin-bottom: 2rem; }
+        .home .container .button-container .button img {
+          width: 100%;
+          height: auto; }
 
 #home-link {
   font-size: 1rem; }
@@ -205,6 +224,8 @@ h2 {
       width: 10rem;
       height: 10rem;
       margin: 1rem; }
+  .home #background-squiggles {
+    display: none; }
   .game .container .drawing .canvas-container canvas {
     border: 2px solid black; }
   #report-squiggle {

@@ -28,7 +28,20 @@ const loggedIn = require("./middleware/loggedIn");
 // });
 
 router.get("/", function (req, res, next) {
-  res.render("index", { animate: false });
+  console.log("session", req.session);
+
+  if (req.session && req.session.animate) {
+    req.session.animate = true;
+    res.render("index", { animate: false });
+  } else {
+    res.render("index", { animate: true });
+  }
+});
+
+//home page with no animation
+router.get("/home", function (req, res, next) {
+  req.session.animate = false;
+  return res.redirect("/");
 });
 
 router.get("/login", loggedIn, (req, res) => {
@@ -57,12 +70,6 @@ router.post(
 
 router.get("/logout", function (req, res, next) {
   req.logout();
-  return res.redirect("/");
-});
-
-//home page with no animation
-router.get("/home", function (req, res, next) {
-  // req.app.set("animate", { animate: false });
   return res.redirect("/");
 });
 

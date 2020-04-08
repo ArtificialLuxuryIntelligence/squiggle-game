@@ -1,6 +1,9 @@
 $bg-col: rgb(255, 255, 255);
 $bg-col-home: rgb(255, 255, 255);
 
+$background-dash-offset: 600;
+$title-dash-offset: 2500;
+
 html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   scroll-behavior: smooth;
@@ -106,9 +109,11 @@ h2 {
           pointer-events: none;
         }
       }
-      .button-container .button {
-        width: 5rem;
-        height: 5rem;
+      .button-container {
+        .button {
+          width: 5rem;
+          height: 5rem;
+        }
       }
     }
 
@@ -133,27 +138,68 @@ h2 {
 // ------------------------------ home page
 
 .home {
-  background-color: $bg-col-home;
+  position: relative;
+  // background-color: $bg-col-home;
   height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
+  //why is there overflow in the first place??
+  overflow-y: hidden;
+  .button-container {
+  }
+  // #background-mask {
+  //   background-color: rgba(255, 255, 255, 0.603);
+  //   position: absolute;
+  //   z-index: -1;
+  //   height: 100%; //chnage?
+  //   width: 100%;
+  //   border: 50px solid rgba(255, 255, 255, 0.5);
+  //   // border-radius: 50px;
+  //   background-clip: padding-box;
+  //   padding: 100px;
+  // }
+  #background-squiggles {
+    position: absolute;
+    z-index: -2;
+    // width: 100%;
+    height: 100%;
+  }
 
   .squig {
-    height: 100px;
-    width: 300px;
-    stroke-width: 5px;
+    // height: 100px;
+    width: 100%;
+    // stroke-width: 40px;
   }
 
   .animate {
-    stroke-dasharray: 350;
+    stroke-width: 6px;
+
+    stroke-dasharray: $title-dash-offset;
     stroke-dashoffset: 0;
     animation: dash 3s linear;
   }
 
+  .animate-background {
+    stroke-width: 3px;
+
+    stroke-dasharray: $background-dash-offset;
+    stroke-dashoffset: 0;
+    animation: dash-background 3s linear;
+  }
+
   @keyframes dash {
     0% {
-      stroke-dashoffset: 350;
+      stroke-dashoffset: $title-dash-offset;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  //could create a mixin here to reuse dash keyframes above
+  @keyframes dash-background {
+    0% {
+      stroke-dashoffset: $background-dash-offset;
     }
     100% {
       stroke-dashoffset: 0;
@@ -164,16 +210,9 @@ h2 {
     // justify-content: center;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+    // flex-direction: column;
+    // justify-content: space-evenly;
 
-    img {
-      max-width: 600px;
-      border: 2px solid red;
-      margin: 2px;
-      width: 100%;
-      height: 40%;
-    }
     .button-container {
       // margin-top: 40vh;
       display: flex;
@@ -186,6 +225,10 @@ h2 {
         width: 30vw;
         height: 30vw;
         margin-bottom: 2rem;
+        img {
+          width: 100%;
+          height: auto;
+        }
       }
 
       #playbutton {
@@ -305,6 +348,9 @@ h2 {
         height: 10rem;
         margin: 1rem;
       }
+    }
+    #background-squiggles {
+      display: none;
     }
   }
   .game {
