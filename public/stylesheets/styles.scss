@@ -148,17 +148,17 @@ h2 {
   overflow-y: hidden;
   .button-container {
   }
-  // #background-mask {
-  //   background-color: rgba(255, 255, 255, 0.603);
-  //   position: absolute;
-  //   z-index: -1;
-  //   height: 100%; //chnage?
-  //   width: 100%;
-  //   border: 50px solid rgba(255, 255, 255, 0.5);
-  //   // border-radius: 50px;
-  //   background-clip: padding-box;
-  //   padding: 100px;
-  // }
+  #background-mask {
+    background-color: rgba(255, 255, 255, 0.603);
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    // border: 50px solid rgba(255, 255, 255, 0.5);
+    // // border-radius: 50px;
+    // background-clip: padding-box;
+    // padding: 100px;
+  }
   #background-squiggles {
     position: absolute;
     z-index: -2;
@@ -341,12 +341,15 @@ h2 {
 //-------------MEDIA QUERIES
 @media (min-width: 600px) {
   .home {
-    .container .button-container {
-      flex-direction: row;
-      .button {
-        width: 10rem;
-        height: 10rem;
-        margin: 1rem;
+    .container {
+      height: auto;
+      .button-container {
+        flex-direction: row;
+        .button {
+          width: 10rem;
+          height: 10rem;
+          margin: 2rem;
+        }
       }
     }
     #background-squiggles {
@@ -406,7 +409,7 @@ h2 {
     .container {
       .button-container {
         .button {
-          margin: 1rem;
+          margin: 4rem;
         }
       }
     }
