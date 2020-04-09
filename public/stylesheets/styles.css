@@ -1,7 +1,6 @@
 html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  scroll-behavior: smooth;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+  scroll-behavior: smooth; }
 
 .touch-only {
   display: none; }
@@ -109,7 +108,7 @@ h2 {
     background-clip: padding-box;
     padding: 100px; }
   .home #background-squiggles {
-    stroke-width: 5px;
+    stroke-width: 9px;
     position: absolute;
     z-index: -2;
     height: 100%; }
