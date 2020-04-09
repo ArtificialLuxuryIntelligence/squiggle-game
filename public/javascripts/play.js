@@ -158,6 +158,13 @@ ctx.lineCap = "round";
 ctx.lineJoin = "round";
 // ctx.imageSmoothingEnabled = true;
 
+function midPointOf(p1, p2) {
+  return {
+    x: p1.x + (p2.x - p1.x) / 2,
+    y: p1.y + (p2.y - p1.y) / 2,
+  };
+}
+
 //currently using white so might not be need at all
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
@@ -172,22 +179,37 @@ const drawFromPoints = (collection, strokecolour) => {
   for (let i = 0; i < collection.length; i++) {
     // ctx.moveTo(collection[i][0].x, collection[i][0].y);
     ctx.beginPath();
-    for (let j = 0; j < collection[i].length; j++) {
+    for (let j = 0; j < collection[i].length - 1; j++) {
       // linear;
-      ctx.lineTo(collection[i][j].x, collection[i][j].y);
-      // ctx.moveTo(collection[i][j].x, collection[i][j].y);
+      // ctx.lineTo(collection[i][j].x, collection[i][j].y);
+
+      //quadratic:
+      const midPoint = midPointOf(collection[i][j], collection[i][j + 1]);
+      ctx.quadraticCurveTo(
+        collection[i][j].x,
+        collection[i][j].y,
+        midPoint.x,
+        midPoint.y
+      );
     }
+    //straight line to last pt.
+    ctx.lineTo(
+      collection[i][collection[i].length],
+      collection[i][collection[i].length]
+    );
+
     ctx.stroke();
     ctx.closePath();
   }
 };
 
 const drawLoop = () => {
-  console.log("rerender loop");
+  // console.log("rerender loop");
   console.log(points);
 
-  drawFromPoints(points, strokeColour);
-  drawCircle(points.slice(-1)[0], touch);
+  rerender();
+  // drawFromPoints(points, strokeColour);
+  // drawCircle(points.slice(-1)[0], touch);
 
   drawAnim = requestAnimationFrame(drawLoop);
 };
@@ -196,7 +218,7 @@ const drawLoop = () => {
 
 // Get the position of touch on canvas
 function touchPos(e) {
-  console.log("getting pos", isDrawing);
+  // console.log("getting pos", isDrawing);
 
   var rect = canvas.getBoundingClientRect();
 
@@ -322,10 +344,10 @@ const touchMoveHandler = (e) => {
   // e.preventDefault();
   // e.stopPropagation();
 
-  console.log("drawing");
+  // console.log("drawing");
 
   if (isDrawing) {
-    console.log(points);
+    // console.log(points);
 
     let lastArray = points.slice(-1)[0];
 
@@ -352,6 +374,7 @@ const touchMoveHandler = (e) => {
       if (dist < chain) {
         //do nothing (distance is too short)
         // return;
+        // lastArray.push({ x: x1, y: y1 });
       }
       if (dist >= chain) {
         //draw a new point in the direction of the mouse pointer
@@ -374,7 +397,7 @@ const touchUpHandler = (e) => {
   if (isDrawing) {
     console.log("end touch");
 
-    ctx2.clearRect(0, 0, cwidth, cheight);
+    // ctx2.clearRect(0, 0, cwidth, cheight);
     ctx.closePath();
 
     // canvas.removeEventListener("touchmove", touchdraw, { passive: false });
@@ -388,11 +411,7 @@ const touchUpHandler = (e) => {
       //   section--;
       // }
     }
-    //rerender drawing: (not needed unless fancy smoothing is done)
-    // drawFromPoints(points);
-    // if (isDrawing) {
-    //   section++;
-    // }
+
     isDrawing = false;
     rerender();
   }
@@ -430,53 +449,53 @@ function mousePos(e) {
   }
 }
 
-function draw() {
-  //helper
+// function draw() {
+//   //helper
 
-  //shouldnt need this check
-  if (isDrawing) {
-    console.log(points);
+//   //shouldnt need this check
+//   if (isDrawing) {
+//     console.log(points);
 
-    let lastArray = points.slice(-1)[0];
-    drawCircle(lastArray, mouse);
+//     let lastArray = points.slice(-1)[0];
+//     drawCircle(lastArray, mouse);
 
-    if (lastArray.length == 0) {
-      ctx.lineTo(mouse.x, mouse.y);
-      ctx.stroke();
-      lastArray.push({ x: mouse.x, y: mouse.y });
-      console.log("LastArray length 0");
-    } else {
-      //smoothing radius (chain) set globally
-      //x1 is last point in lastArray (of points)
-      let x1 = lastArray.slice(-1)[0].x;
-      let y1 = lastArray.slice(-1)[0].y;
-      let x2 = mouse.x;
-      let y2 = mouse.y;
+//     if (lastArray.length == 0) {
+//       ctx.lineTo(mouse.x, mouse.y);
+//       ctx.stroke();
+//       lastArray.push({ x: mouse.x, y: mouse.y });
+//       console.log("LastArray length 0");
+//     } else {
+//       //smoothing radius (chain) set globally
+//       //x1 is last point in lastArray (of points)
+//       let x1 = lastArray.slice(-1)[0].x;
+//       let y1 = lastArray.slice(-1)[0].y;
+//       let x2 = mouse.x;
+//       let y2 = mouse.y;
 
-      //disatnce between points
-      let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-      //angle between drawFromPoints
-      let alpha = Math.atan2(x2 - x1, y2 - y1);
+//       //disatnce between points
+//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+//       //angle between drawFromPoints
+//       let alpha = Math.atan2(x2 - x1, y2 - y1);
 
-      if (dist < chain) {
-        //do nothing (distance is too short)
-      }
-      if (dist >= chain) {
-        //draw a new point in the direction of the mouse pointer
-        let x = (dist - chain) * Math.sin(alpha) + x1;
-        let y = (dist - chain) * Math.cos(alpha) + y1;
+//       if (dist < chain) {
+//         //do nothing (distance is too short)
+//       }
+//       if (dist >= chain) {
+//         //draw a new point in the direction of the mouse pointer
+//         let x = (dist - chain) * Math.sin(alpha) + x1;
+//         let y = (dist - chain) * Math.cos(alpha) + y1;
 
-        ctx.lineTo(x, y);
-        ctx.stroke();
+//         ctx.lineTo(x, y);
+//         ctx.stroke();
 
-        lastArray.push({ x: x, y: y });
-        // if (points[section]) {
-        //   points[section].push({ x: x, y: y });
-        // }
-      }
-    }
-  }
-}
+//         lastArray.push({ x: x, y: y });
+//         // if (points[section]) {
+//         //   points[section].push({ x: x, y: y });
+//         // }
+//       }
+//     }
+//   }
+// }
 
 //  -------------------- MOUSE  Handlers
 
@@ -529,7 +548,7 @@ const mouseMoveHandler = () => {
 
   //shouldnt need this check
   if (isDrawing) {
-    console.log(points);
+    console.log("register");
 
     let lastArray = points.slice(-1)[0];
 

@@ -30,7 +30,7 @@ const loggedIn = require("./middleware/loggedIn");
 router.get("/", function (req, res, next) {
   console.log("session", req.session);
 
-  if (req.session && req.session.animate) {
+  if (req.session && !req.session.animate) {
     req.session.animate = true;
     res.render("index", { animate: false });
   } else {

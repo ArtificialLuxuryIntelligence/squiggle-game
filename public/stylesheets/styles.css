@@ -1,6 +1,7 @@
 html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  scroll-behavior: smooth; }
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 
 .touch-only {
   display: none; }
@@ -108,18 +109,18 @@ h2 {
     background-clip: padding-box;
     padding: 100px; }
   .home #background-squiggles {
+    stroke-width: 5px;
     position: absolute;
     z-index: -2;
     height: 100%; }
   .home .squig {
-    width: 100%; }
+    width: 100%;
+    stroke-width: 7px; }
   .home .animate {
-    stroke-width: 7px;
     stroke-dasharray: 2500;
     stroke-dashoffset: 0;
     animation: dash 3s linear; }
   .home .animate-background {
-    stroke-width: 3px;
     stroke-dasharray: 600;
     stroke-dashoffset: 0;
     animation: dash-background 3s linear; }
@@ -208,11 +209,13 @@ h2 {
   margin-top: 2rem;
   margin-bottom: 2rem; }
 
-.admin #squiggle-container {
+.admin #squiggle-container,
+.admin #allsquiggle-container {
   display: flex;
   flex-direction: column;
   align-items: center; }
-  .admin #squiggle-container canvas {
+  .admin #squiggle-container canvas,
+  .admin #allsquiggle-container canvas {
     max-width: 100vw;
     max-height: 100vw; }
 
