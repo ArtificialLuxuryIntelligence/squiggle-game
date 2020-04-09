@@ -100,11 +100,13 @@ h2 {
   align-items: center;
   overflow-y: hidden; }
   .home #background-mask {
-    background-color: rgba(255, 255, 255, 0.603);
+    background-color: rgba(255, 255, 255, 0.7);
     position: absolute;
     z-index: -1;
     height: 100%;
-    width: 100%; }
+    width: 100%;
+    background-clip: padding-box;
+    padding: 100px; }
   .home #background-squiggles {
     position: absolute;
     z-index: -2;
@@ -112,7 +114,7 @@ h2 {
   .home .squig {
     width: 100%; }
   .home .animate {
-    stroke-width: 6px;
+    stroke-width: 7px;
     stroke-dasharray: 2500;
     stroke-dashoffset: 0;
     animation: dash 3s linear; }
