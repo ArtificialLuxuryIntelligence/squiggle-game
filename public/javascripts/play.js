@@ -301,12 +301,12 @@ const touchDownHandler = (e) => {
   canvas.addEventListener("touchmove", touchMoveHandler, {
     passive: false,
   });
+  drawAnim = requestAnimationFrame(drawLoop);
 
   //50ms delay in drawing after touch so that multitouch pinch zoom doesn't draw on canvas
   setTimeout(() => {
     if (e.touches.length === 1) {
       isDrawing = true;
-      drawAnim = requestAnimationFrame(drawLoop);
 
       // ctx.closePath();
       //creates new section of drawing
