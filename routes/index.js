@@ -3,44 +3,36 @@ const bcrypt = require("bcrypt");
 // const jwt = require("jsonwebtoken");
 // const session = require("express-session");
 const router = express.Router();
-const passport = require("passport");
 
 const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
+const Game = require("../models/game");
 
 const loggedIn = require("./middleware/loggedIn");
 
-//session middleware
-
-// router.use(function (req, res, next) {
-//   res.locals.login = req.isAuthenticated();
-//   next();
-// });
-
-// router.get("/", function (req, res, next) {
-//   if (req.app.get("animate") && req.app.get("animate").animate === false) {
-//     req.app.set("animate", { animate: true });
-
-//     res.render("index", { animate: false });
-//   }
-//   res.render("index", { animate: true });
-// });
-
 router.get("/", function (req, res, next) {
-  console.log("session", req.session);
+  //not in private game
+  req.session.gameId = null;
+  req.session.squiggleId = null;
+
+  // console.log("session", req.session);
 
   if (req.session && !req.session.animate) {
     req.session.animate = true;
-    res.render("index", { animate: false });
+
+    res.render("index", { animate: false, user: req.user });
   } else {
-    res.render("index", { animate: true });
+    // console.log(req.user);
+
+    res.render("index", { animate: true, user: req.user });
   }
 });
 
 //home page with no animation
 router.get("/home", function (req, res, next) {
   req.session.animate = false;
+
   return res.redirect("/");
 });
 
@@ -49,30 +41,9 @@ router.get("/login", loggedIn, (req, res) => {
   res.render("login", { hasErrors: messages.length > 0, messages });
 });
 
-router.post(
-  "/login/login",
-  passport.authenticate("local.signin", {
-    successRedirect: "/admin",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })
-);
+//////////
 
-//bad name
-router.post(
-  "/login/signup",
-  passport.authenticate("local.signup", {
-    successRedirect: "/login",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })
-);
-
-router.get("/logout", function (req, res, next) {
-  req.logout();
-  return res.redirect("/");
-});
-
+//MAYBE if(!req.sess)etc
 router.get("/gallery", function (req, res, next) {
   res.render("gallery");
 });
@@ -84,6 +55,7 @@ router.get("/gallery", function (req, res, next) {
 //   res.json(squiggles);
 // });
 
+//if(!req.sess)etc
 router.get("/gallery/squiggles/:page", async (req, res, next) => {
   let page = req.params.page;
 
@@ -94,35 +66,55 @@ router.get("/gallery/squiggles/:page", async (req, res, next) => {
   res.json(squiggles);
 });
 
-router.get("/play", function (req, res, next) {
-  res.render("game", { newsquiggle: false });
+//sets private game data in session
+router.get("/play/private", function (req, res, next) {
+  console.log(req.query);
+
+  req.session.gameId = req.query.gameid;
+  req.session.squiggleId = req.query.squiggleid;
+
+  console.log("REDIRECTING");
+
+  return res.redirect("/play");
 });
+
+//if(!req.sess)etc
+
+router.get("/play", function (req, res, next) {
+  if (!req.session.gameId) {
+    res.render("play", { newsquiggle: false });
+  } else {
+    let gameId = req.session.gameId;
+
+    //USE gameId for changing submit form action
+    res.render("play", { newsquiggle: false, gameId: gameId });
+  }
+});
+
+//if(!req.sess)etc
 
 router.get("/play/squiggle", async (req, res, next) => {
-  const numSquiggles = await Squiggle.countDocuments({ reports: { $lt: 1 } });
-  let rand = Math.floor(Math.random() * numSquiggles);
+  console.log("sess", req.session);
 
-  let squiggle = await Squiggle.findOne({ reports: { $lt: 1 } }).skip(rand);
-  res.json(squiggle);
-});
+  //no specific squiggle given
+  if (!req.session.squiggleId || req.session.squiggleId == "random") {
+    const numSquiggles = await Squiggle.countDocuments({ reports: { $lt: 1 } });
+    let rand = Math.floor(Math.random() * numSquiggles);
 
-router.get("/newsquiggle", function (req, res, next) {
-  res.render("game", { newsquiggle: true });
-});
-
-router.post("/newsquiggle/submit", function (req, res, next) {
-  let squiggle = new Squiggle({
-    line: req.body.data,
-    size: req.body.originalSize,
-  });
-  squiggle.save((err) => {
-    if (err) {
-      next(err);
+    let squiggle = await Squiggle.findOne({ reports: { $lt: 1 } }).skip(rand);
+    res.json(squiggle);
+  } else {
+    //find specific squiggle
+    try {
+      let squiggle = await Squiggle.findById(req.session.squiggleId);
+      res.json(squiggle);
+    } catch (err) {
+      console.log(err);
     }
-    res.redirect("/home");
-  });
+  }
 });
 
+// set to also accepts query string?
 router.post("/play/submit", function (req, res, next) {
   let squiggle = new CompletedSquiggle({
     author: "completer",
@@ -140,6 +132,27 @@ router.post("/play/submit", function (req, res, next) {
       next(err);
     }
     res.redirect("/newsquiggle");
+  });
+});
+
+//if(!req.sess)etc
+
+router.get("/newsquiggle", function (req, res, next) {
+  res.render("play", { newsquiggle: true });
+});
+
+// set to also accepts query string?
+
+router.post("/newsquiggle/submit", function (req, res, next) {
+  let squiggle = new Squiggle({
+    line: req.body.data,
+    size: req.body.originalSize,
+  });
+  squiggle.save((err) => {
+    if (err) {
+      next(err);
+    }
+    res.redirect("/home");
   });
 });
 
@@ -178,34 +191,80 @@ router.post("/report/squiggle/:id", (req, res) => {
     }
   );
 });
-//admin
 
-//middleware
-// function auth(req, res, next) {
-//   console.log("locals rec", req.isLoggedIn);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//FRIEND GAME ROUTES
 
-//   let isLoggedIn = req.locals.isLoggedIn;
-//   if (isLoggedIn) {
-//     next();
-//   } else {
-//     redirect("/");
-//   }
-// }
+router.get("/game/:id", function (req, res, next) {
+  // console.log(req.user);
+  let id = req.params.id;
+  console.log("id", id);
 
-// router.get("/login", (req, res) => {
-//   res.render("login");
-// });
+  Game.findOne({ _id: id }, function (err, game) {
+    if (err) {
+      res.render("account", { message: "error", user: req.user });
+    }
+    if (!game) {
+      console.log("NO GAME");
+      return res.redirect("/");
+    }
 
-// router.post("/admin/login", function(req, res, next) {
-//   let valid = req.body.password === "asdf" ? true : false;
-//   res.locals.isLoggedIn = valid;
-//   console.log("LOCALS", res.locals.isLoggedIn);
+    //game found
 
-//   if (valid) {
-//     res.redirect("/admin");
-//   } else {
-//     res.redirect("/");
-//   }
-// });
+    //save some game data in session?
+
+    game.currentPlayer = game.players[game.turn];
+    let myTurn = {};
+    if (game.currentPlayer == req.user.name) {
+      myTurn.bool = true;
+
+      //last squiggle in game.squiggles array.
+      myTurn.squiggle = 4365646;
+    } else {
+      myTurn.bool = false;
+    }
+
+    res.render("game", { game: game, myTurn: myTurn });
+  });
+
+  //db lookup for game
+});
+
+router.post("/newgame", (req, res, next) => {
+  let newGame = new Game({
+    admin: req.user.name,
+    name: req.body.gamename,
+    players: [req.user.name],
+  });
+
+  newGame.save(async (err, game) => {
+    if (err) {
+      console.log(err);
+
+      next(err);
+    }
+    //add game to user
+
+    console.log(game);
+
+    User.findOneAndUpdate(
+      { _id: req.user.id },
+      { $push: { games: { id: game.id, name: game.name } } },
+      (err, doc) => {
+        if (err) {
+          //user data??->
+          res.redirect("/account");
+          console.log(err);
+        }
+        if (doc) {
+          //CHANGE THIS:
+          //SET GAME ID IN SESSION ; REDIRECT TO NEW SQUIGGLE THEN TO THIS REDIRECT BELOW
+          res.redirect(`/game/${game.id}`);
+          // console.log(doc);
+        }
+      }
+    );
+  });
+});
 
 module.exports = router;

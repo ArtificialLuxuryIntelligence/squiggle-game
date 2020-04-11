@@ -5,6 +5,17 @@
     <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
   </header> --}}
 
+  {{#if user}}
+    <div> 
+      <p>You're loggin in, {{user.name}}</p>
+      <a href="/users/logout">LOGOUT</a>
+
+      <a href="/users/account">Play with friends</a>
+    </div>
+  {{else}}
+  <a href="/login">LOGIN</a>
+  {{/if}}
+
 {{#if animate}}
 
 {{!-- background squiggles --}} 

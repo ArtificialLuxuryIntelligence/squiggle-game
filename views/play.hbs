@@ -1,0 +1,82 @@
+<div class="game">
+<div class="container">
+<div class="drawing">
+  <div class="canvas-container">
+    <canvas id="canvas2"></canvas>
+    <canvas id="canvas"></canvas>
+
+  </div>
+
+  <div class="form-container">
+
+    {{#if gameId}}
+    <p>private game</p>
+    {{/if}}
+
+    {{#if newsquiggle}}
+
+    {{!-- if private game; change action --}}
+      <form class="button-container" id="submit-form" action="/newsquiggle/submit" method="post"> 
+        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>       
+        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>      
+        <input type='hidden' id= 'hiddenField' name='data'  />
+        <input type='hidden' id= 'hiddenField3' name='originalSize'  />
+      </form>
+
+      {{else}}
+    {{!-- if private game; change action --}}
+
+      <form class="button-container" id="submit-form" action="/play/submit" method="post">
+
+        <button class="button disabled" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button>
+        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>       
+        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
+    {{!-- if private game; change "home" to private game home..? --}}
+        
+        <a id="link-button" href="/home"><button  class="button disabled"  type="button"  name="button"><img src="assets/svg/home.svg" alt=""></button></a>       
+        <input type='hidden' id= 'hiddenField' name='data'  />
+        <input type='hidden' id= 'hiddenField2' name='png'  />
+
+      </form>
+   
+
+    {{/if}}
+  </div>
+
+
+</div>
+
+{{#if newsquiggle}}
+  <div class="text-container">
+   <h2>Now draw a new squiggle for someone else!</h2>
+       <p>Keep it simple</p>
+
+  </div>
+{{else}}
+  <div class="text-container">
+    <h2>Complete the squiggle. </h2>
+    <p class="touch-only" >Use two fingers to zoom and pan</p>
+    </div>
+       {{!-- action dynamically added depending on squiggle id --}}
+    
+      
+{{/if}}
+
+</div>
+
+
+
+</div>
+{{#if newsquiggle}}
+
+{{else}}
+
+      <form id="report-squiggle" action="" method="POST"> 
+        <input id="report-squiggle-btn" type="submit" value="report squiggle">
+      </form>
+      
+{{/if}}
+
+
+<script src="javascripts/play.js"></script>
+

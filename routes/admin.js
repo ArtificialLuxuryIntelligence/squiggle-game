@@ -2,16 +2,17 @@ var express = require("express");
 var router = express.Router();
 
 const auth = require("./middleware/auth");
+const isAdmin = require("./middleware/isAdmin");
 
 const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
-router.use("/", auth, (req, res, next) => {
+//protect all admin routes
+router.use("/", isAdmin, (req, res, next) => {
   next();
 });
 
-//protect all admin routes
 router.get("/", function (req, res, next) {
   res.render("admin", { name: req.user.name });
 });

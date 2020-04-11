@@ -76,6 +76,8 @@ async function loadImages() {
 const drawFromPoints = (collection, strokecolour, ctx) => {
   ctx.strokeStyle = strokecolour;
   ctx.lineWidth = "6";
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
   for (let i = 0; i < collection.length; i++) {
     // ctx.moveTo(collection[i][0].x, collection[i][0].y);
@@ -106,8 +108,7 @@ async function loadSquiggles() {
     canvas.height = 600;
     canvas.style.border = "1px solid";
     let ctx = canvas.getContext("2d");
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+
     let line = await JSON.parse(squiggle.line);
 
     drawFromPoints(line, "blue", ctx);

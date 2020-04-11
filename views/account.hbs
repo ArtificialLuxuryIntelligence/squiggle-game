@@ -1,0 +1,57 @@
+<div class="home">
+
+  <div class="container">
+  {{!-- <header class="title">
+    <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
+  </header> --}}
+
+    <div> 
+      <p>You're logged in, {{user.name}}</p>
+      <a href="/users/logout">LOGOUT</a>
+      <a href="/">HOME</a>
+    </div>
+
+    {{#if messages}}
+    {{#each messages}}
+    <p>{{this}}</p>
+
+    {{/each}}
+    {{/if}}
+<h2>Your Games</h2>
+
+  <ul>
+    {{#each user.games}}
+      {{!-- <li><a href="/game/{{this.id}}">{{this.name}}</a></li> --}}
+      <li><a href="/game/{{this.id}}">{{this.name}}</a></li>
+
+    {{/each}}
+  </ul>  
+
+
+<h3>Join game</h3>
+<form id="join-game" action="/" method="POST">
+<input name ="id" type="text">
+<input type="submit" value="join"></form>
+
+<h3>Create a new game</h3>
+<form id="new-game" action="/newgame" method="POST">
+<input name ="gamename" type="text">
+<input type="submit" value="Create"></form>
+  {{!-- <div class="button-container">
+
+    <a id="playbutton" class="button" href="/play">    <img src="assets/svg/playhome.svg" alt=""> </a>
+
+ 
+
+    <a id="playbutton" class="button" href="/gallery">    <img src="assets/svg/galleryhome.svg" alt=""> </a>
+
+
+  </div> --}}
+
+  </div>
+
+</div>
+
+
+<script type="text/javascript" src="/javascripts/account.js"></script>
+

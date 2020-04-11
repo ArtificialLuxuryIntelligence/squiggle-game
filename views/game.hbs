@@ -1,84 +1,56 @@
-<div class="game">
-<div class="container">
-<div class="drawing">
-  <div class="canvas-container">
-    <canvas id="canvas2"></canvas>
-    <canvas id="canvas"></canvas>
+<div class="home">
 
-  </div>
-  {{!-- <canvas id="zoom" width="150" height="150" style="position:absolute; top:0; left:0; display:none"></canvas> --}}
-  {{!-- <canvas id="scale" width="300" height="300" style="position:absolute; top:0; left:0; display:none"></canvas> --}}
+  <div class="container">
+  {{!-- <header class="title">
+    <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
+  </header> --}}
 
+    <div> 
+      <p>You're loggin in, {{user.name}}</p>
+      <a href="/users/logout">LOGOUT</a>
+      <a href="/users/account">ACCOUNT</a>
 
-  <div class="form-container">
-    {{#if newsquiggle}}
-      <form class="button-container" id="submit-form" action="/newsquiggle/submit" method="post">
-       
-        {{!-- <button class="button" type="button" id="restart"><img src="assets/svg/restart.svg" alt=""></button> --}}
-        {{!-- <button class="button" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button> --}}
+      <a href="/">HOME</a>
 
-        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>       
-        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
-      
-        <input type='hidden' id= 'hiddenField' name='data'  />
-        <input type='hidden' id= 'hiddenField3' name='originalSize'  />
-      </form>
-
-      {{else}}
-
-      <form class="button-container" id="submit-form" action="/play/submit" method="post">
-
-        {{!-- <button class="button" type="button" id="restart"><img src="assets/svg/restart.svg" alt=""></button> --}}
-        <button class="button disabled" type="button" id="rotate"><img src="assets/svg/undo.svg" alt=""></button>
-
-        <button class="button disabled"  type="button" id="undo" name="undo"><img src="assets/svg/restart.svg" alt=""></button>
-       
-        <button class="button disabled" type="submit" id="submit" name="button"><img src="assets/svg/submit.svg" alt=""></button>
-        <a id="link-button" href="/home"><button  class="button disabled"  type="button"  name="button"><img src="assets/svg/home.svg" alt=""></button></a>
-        
-        <input type='hidden' id= 'hiddenField' name='data'  />
-        <input type='hidden' id= 'hiddenField2' name='png'  />
-
-      </form>
-   
-
-    {{/if}}
-  </div>
-
-
-</div>
-
-{{#if newsquiggle}}
-  <div class="text-container">
-   <h2>Now draw a new squiggle for someone else!</h2>
-       <p>Keep it simple</p>
-
-  </div>
-{{else}}
-  <div class="text-container">
-    <h2>Complete the squiggle. </h2>
-    <p class="touch-only" >Use two fingers to zoom and pan</p>
     </div>
-       {{!-- action dynamically added depending on squiggle id --}}
-    
-      
-{{/if}}
+
+    <div>
+        <p>Game name: {{game.name}}</p>
+        <p>Game id: {{game.id}}</p>
+
+
+        <button> Share game</button>
+
+        <h3>Players</h3>
+        <ul>
+            {{#each game.players}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>   
+
+        {{#if myTurn.bool}}
+        <h3>It's your turn</h3>
+
+          <div class="button-container">
+            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid={{myTurn.squiggle}}">    <img src="/assets/svg/playhome.svg" alt=""> </a>
+            <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+         </div>
+
+
+        {{else}}
+        <h3>It's {{game.currentPlayer}}'s turn to draw.</h3>  
+
+          <div class="button-container">
+            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=random">    <img src="/assets/svg/playhome.svg" alt=""> </a>
+            <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+          </div>
+
+
+        {{/if}}
+    </div>
+
+
+  </div>
 
 </div>
-
-
-
-</div>
-{{#if newsquiggle}}
-
-{{else}}
-
-      <form id="report-squiggle" action="" method="POST"> 
-        <input id="report-squiggle-btn" type="submit" value="report squiggle">
-      </form>
-      
-{{/if}}
-
-
-<script src="javascripts/play.js"></script>
 
