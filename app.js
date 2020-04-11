@@ -5,9 +5,16 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
 var logger = require("morgan");
-var mongodb = require("mongodb");
+// var mongodb = require("mongodb");
 var mongoose = require("mongoose");
+var passport = require("passport");
+var session = require("express-session");
+var flash = require("connect-flash");
+var MongoStore = require("connect-mongo")(session);
+
 var cors = require("cors");
+
+require("./config/passport");
 require("dotenv").config();
 
 var indexRouter = require("./routes/index");
@@ -15,32 +22,6 @@ var usersRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
 
 var app = express();
-
-// //production
-// app.use(cors({
-//   origin: 'http://squiggle-game.herokuapp.com/'
-// }));
-
-// var allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://squiggle-game.herokuapp.com"
-// ];
-
-// app.use(
-//   cors({
-//     origin: function(origin, callback) {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) === -1) {
-//         var msg =
-//           "The CORS policy for this site does not " +
-//           "allow access from the specified Origin.";
-//         return callback(new Error(msg), false);
-//       }
-//       return callback(null, true);
-//     }
-//   })
-// );
-
 app.use(cors());
 
 // connect to database
@@ -52,30 +33,50 @@ db.on("error", console.error.bind(console, "connection error:"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
-// increased limit
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
-
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+
+// increased limit
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
+
+app.use(
+  session({
+    secret: "very secret this is",
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  })
+);
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
+
+//>?
+// app.use(function (req, res, next) {
+//   res.locals.session = req.session;
+//   next();
+// });
 
 //no favicon loaded
 app.get("/favicon.ico", (req, res) => res.status(204));
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

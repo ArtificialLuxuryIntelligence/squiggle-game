@@ -1,9 +1,14 @@
 $bg-col: rgb(255, 255, 255);
 $bg-col-home: rgb(255, 255, 255);
 
+$background-dash-offset: 600;
+$title-dash-offset: 2500;
+
 html {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   scroll-behavior: smooth;
+  //removes blue sqaure 'flash' on buttons
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .touch-only {
@@ -106,9 +111,11 @@ h2 {
           pointer-events: none;
         }
       }
-      .button-container .button {
-        width: 5rem;
-        height: 5rem;
+      .button-container {
+        .button {
+          width: 5rem;
+          height: 5rem;
+        }
       }
     }
 
@@ -133,27 +140,87 @@ h2 {
 // ------------------------------ home page
 
 .home {
-  background-color: $bg-col-home;
+  position: relative;
+  // background-color: $bg-col-home;
   height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
+  //why is there overflow in the first place??
+  overflow-y: hidden;
+  .button-container {
+  }
+  #background-mask {
+    background-color: rgba(255, 255, 255, 0.7);
+    // background: linear-gradient(
+    //   to right,
+    //   white 20%,
+    //   rgba(197, 39, 39, 0.466) 20% 80%,
+    //   white 80%
+    // );
+    // background: linear-gradient(
+    //   to right,
+    //   red 20%,
+    //   orange 20% 40%,
+    //   yellow 40% 60%,
+    //   green 60% 80%,
+    //   blue 80%
+    // );
+
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    // border: 30px solid rgba(255, 255, 255, 0.575);
+    // border-radius: 50px;
+    background-clip: padding-box;
+    padding: 100px;
+  }
+  #background-squiggles {
+    stroke-width: 9px;
+
+    path {
+      // stroke: red;
+    }
+    position: absolute;
+    // top: 40%;
+    z-index: -2;
+    // width: 100%;
+    height: 100%;
+  }
 
   .squig {
-    height: 100px;
-    width: 300px;
-    stroke-width: 5px;
+    // height: 100px;
+    width: 100%;
+    stroke-width: 7px;
+
+    // stroke-width: 40px;
   }
 
   .animate {
-    stroke-dasharray: 350;
+    stroke-dasharray: $title-dash-offset;
     stroke-dashoffset: 0;
     animation: dash 3s linear;
   }
 
+  .animate-background {
+    stroke-dasharray: $background-dash-offset;
+    stroke-dashoffset: 0;
+    animation: dash-background 3s linear;
+  }
+
   @keyframes dash {
     0% {
-      stroke-dashoffset: 350;
+      stroke-dashoffset: $title-dash-offset;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  //could create a mixin here to reuse dash keyframes above
+  @keyframes dash-background {
+    0% {
+      stroke-dashoffset: $background-dash-offset;
     }
     100% {
       stroke-dashoffset: 0;
@@ -164,16 +231,9 @@ h2 {
     // justify-content: center;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+    // flex-direction: column;
+    // justify-content: space-evenly;
 
-    img {
-      max-width: 600px;
-      border: 2px solid red;
-      margin: 2px;
-      width: 100%;
-      height: 40%;
-    }
     .button-container {
       // margin-top: 40vh;
       display: flex;
@@ -186,6 +246,16 @@ h2 {
         width: 30vw;
         height: 30vw;
         margin-bottom: 2rem;
+
+        // &:active,
+        // &:focus {
+        //   background-color: red;
+        // }
+
+        img {
+          width: 100%;
+          height: auto;
+        }
       }
 
       #playbutton {
@@ -204,7 +274,9 @@ h2 {
 // ------------------------------ gallery page
 
 #home-link {
+  padding: 0.66rem;
   font-size: 1rem;
+  border: 1.5px solid black;
   img {
     width: 20px;
     height: 20px;
@@ -213,8 +285,8 @@ h2 {
 
 .gallery {
   background-color: $bg-col;
-
   position: relative;
+
   nav {
     display: flex;
     padding: 1rem 1rem 0 1rem;
@@ -222,6 +294,13 @@ h2 {
     width: 100%;
     a {
       // margin-left: auto;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    img {
+      width: 40%;
     }
   }
 
@@ -247,7 +326,7 @@ h2 {
       margin-bottom: 1rem;
     }
     img {
-      border-radius: 10px;
+      // border-radius: 10px;
       border: 2px solid black;
       width: 100%;
 
@@ -284,7 +363,8 @@ h2 {
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
-  #squiggle-container {
+  #squiggle-container,
+  #allsquiggle-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -298,13 +378,19 @@ h2 {
 //-------------MEDIA QUERIES
 @media (min-width: 600px) {
   .home {
-    .container .button-container {
-      flex-direction: row;
-      .button {
-        width: 10rem;
-        height: 10rem;
-        margin: 1rem;
+    .container {
+      height: auto;
+      .button-container {
+        flex-direction: row;
+        .button {
+          width: 10rem;
+          height: 10rem;
+          margin: 2rem;
+        }
       }
+    }
+    #background-squiggles {
+      display: none;
     }
   }
   .game {
@@ -360,7 +446,7 @@ h2 {
     .container {
       .button-container {
         .button {
-          margin: 1rem;
+          margin: 4rem;
         }
       }
     }

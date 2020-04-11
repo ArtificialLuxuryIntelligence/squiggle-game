@@ -7,60 +7,48 @@ const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
-router.get("/", function(req, res, next) {
-  res.render("admin");
+router.use("/", auth, (req, res, next) => {
+  next();
 });
 
-// VERY bad login just for now
+//protect all admin routes
+router.get("/", function (req, res, next) {
+  res.render("admin", { name: req.user.name });
+});
 
-// router.get("/admin", function(req, res, next) {
-//   if (req.params.token && req.params.token === "secret") {
-//     res.render("admin", { loggedIn: true });
-//   }
-//   res.render("admin");
-// });
-
-// router.post("/login", (req, res) => {
-//   if (req.body.password === "asdf") {
-//     //send session
-//     res.redirect("/admin");
-//   }
-//   res.redirect("/admin");
-// });
-
-router.get("/removedcompletedsquiggles", auth, async (req, res, next) => {
+router.get("/removedcompletedsquiggles", async (req, res, next) => {
   //   let page = req.params.page;
   let squiggles = await CompletedSquiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
   res.json(squiggles);
 });
 
-router.get("/removedsquiggles", auth, async (req, res, next) => {
+router.get("/removedsquiggles", async (req, res, next) => {
   let page = req.params.page;
 
   let squiggles = await Squiggle.find({ reports: { $gt: 0 } }).sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
   res.json(squiggles);
 });
 
-router.get("/allsquiggles", auth, async (req, res, next) => {
+router.get("/allsquiggles", async (req, res, next) => {
   let page = req.params.page;
 
   let squiggles = await Squiggle.find().sort({
-    time: -1
+    time: -1,
   });
   // .skip(parseInt(page) * 5)
   // .limit(5);
   res.json(squiggles);
 });
 
-router.post("/undoreport/completedsquiggle/:id", auth, (req, res) => {
+router.post("/undoreport/completedsquiggle/:id", (req, res) => {
   CompletedSquiggle.update(
     { _id: req.params.id },
     { reports: 0 },
@@ -76,7 +64,7 @@ router.post("/undoreport/completedsquiggle/:id", auth, (req, res) => {
   );
 });
 
-router.post("/delete/completedsquiggle/:id", auth, (req, res) => {
+router.post("/delete/completedsquiggle/:id", (req, res) => {
   CompletedSquiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
     if (err) {
       // res.redirect("/admin");
@@ -89,7 +77,7 @@ router.post("/delete/completedsquiggle/:id", auth, (req, res) => {
   });
 });
 
-router.post("/undoreport/squiggle/:id", auth, (req, res) => {
+router.post("/undoreport/squiggle/:id", (req, res) => {
   Squiggle.update({ _id: req.params.id }, { reports: 0 }, (err, doc) => {
     if (err) {
       // res.redirect("/admin");
@@ -102,7 +90,7 @@ router.post("/undoreport/squiggle/:id", auth, (req, res) => {
   });
 });
 
-router.post("/delete/squiggle/:id", auth, (req, res) => {
+router.post("/delete/squiggle/:id", (req, res) => {
   Squiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
     if (err) {
       // res.redirect("/admin");

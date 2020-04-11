@@ -1,116 +1,79 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 // const session = require("express-session");
 const router = express.Router();
+const passport = require("passport");
 
 const Squiggle = require("../models/squiggle");
 const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 
-/* GET home page. */
-router.get("/", function(req, res, next) {
-  if (req.app.get("animate") && req.app.get("animate").animate === false) {
-    req.app.set("animate", { animate: true });
+const loggedIn = require("./middleware/loggedIn");
 
+//session middleware
+
+// router.use(function (req, res, next) {
+//   res.locals.login = req.isAuthenticated();
+//   next();
+// });
+
+// router.get("/", function (req, res, next) {
+//   if (req.app.get("animate") && req.app.get("animate").animate === false) {
+//     req.app.set("animate", { animate: true });
+
+//     res.render("index", { animate: false });
+//   }
+//   res.render("index", { animate: true });
+// });
+
+router.get("/", function (req, res, next) {
+  console.log("session", req.session);
+
+  if (req.session && !req.session.animate) {
+    req.session.animate = true;
     res.render("index", { animate: false });
+  } else {
+    res.render("index", { animate: true });
   }
-  res.render("index", { animate: true });
-});
-
-router.get("/login", (req, res) => {
-  res.render("login");
-});
-
-router.post("/login/login", (req, res) => {
-  User.find({ name: req.body.name })
-    .exec()
-    .then(user => {
-      if (user.length < 1) {
-        return res.status(401).json({
-          message: "login failed"
-        });
-      } else {
-        bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-          if (err) {
-            return res.status(401).json({
-              message: "login failed" //same fail msg as above for security
-            });
-          }
-          if (result) {
-            const token = jwt.sign(
-              { name: user.name, id: user._id },
-              process.env.JWT_KEY,
-              {
-                expiresIn: "1h"
-              }
-            );
-            return res.status(200).json({
-              message: "login successful",
-              token
-            });
-          }
-          return res.status(401).json({
-            message: "login failed"
-          });
-        });
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({
-        error: err
-      });
-    });
-});
-
-//only used for creating users
-router.post("/login/signup", (req, res) => {
-  User.find({ name: req.body.name })
-    .exec()
-    .then(user => {
-      if (user.length >= 1) {
-        return res.status(409).json({
-          message: "name taken"
-        });
-      } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            return res.status(500).json({
-              error: err
-            });
-          } else {
-            const user = new User({
-              name: req.body.name,
-              password: hash
-            });
-            user
-              .save()
-              .then(result => {
-                console.log(result);
-                res.status(201).json({
-                  message: "User created"
-                });
-              })
-              .catch(err => {
-                console.log(err);
-                res.status(500).json({
-                  error: err
-                });
-              });
-          }
-        });
-      }
-    });
 });
 
 //home page with no animation
-router.get("/home", function(req, res, next) {
-  req.app.set("animate", { animate: false });
+router.get("/home", function (req, res, next) {
+  req.session.animate = false;
   return res.redirect("/");
 });
 
-router.get("/gallery", function(req, res, next) {
+router.get("/login", loggedIn, (req, res) => {
+  let messages = req.flash("error");
+  res.render("login", { hasErrors: messages.length > 0, messages });
+});
+
+router.post(
+  "/login/login",
+  passport.authenticate("local.signin", {
+    successRedirect: "/admin",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
+
+//bad name
+router.post(
+  "/login/signup",
+  passport.authenticate("local.signup", {
+    successRedirect: "/login",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
+
+router.get("/logout", function (req, res, next) {
+  req.logout();
+  return res.redirect("/");
+});
+
+router.get("/gallery", function (req, res, next) {
   res.render("gallery");
 });
 
@@ -131,7 +94,7 @@ router.get("/gallery/squiggles/:page", async (req, res, next) => {
   res.json(squiggles);
 });
 
-router.get("/play", function(req, res, next) {
+router.get("/play", function (req, res, next) {
   res.render("game", { newsquiggle: false });
 });
 
@@ -143,16 +106,16 @@ router.get("/play/squiggle", async (req, res, next) => {
   res.json(squiggle);
 });
 
-router.get("/newsquiggle", function(req, res, next) {
+router.get("/newsquiggle", function (req, res, next) {
   res.render("game", { newsquiggle: true });
 });
 
-router.post("/newsquiggle/submit", function(req, res, next) {
+router.post("/newsquiggle/submit", function (req, res, next) {
   let squiggle = new Squiggle({
     line: req.body.data,
-    size: req.body.originalSize
+    size: req.body.originalSize,
   });
-  squiggle.save(err => {
+  squiggle.save((err) => {
     if (err) {
       next(err);
     }
@@ -160,19 +123,19 @@ router.post("/newsquiggle/submit", function(req, res, next) {
   });
 });
 
-router.post("/play/submit", function(req, res, next) {
+router.post("/play/submit", function (req, res, next) {
   let squiggle = new CompletedSquiggle({
     author: "completer",
     img: {
       data: req.body.data,
-      contentType: "image/png"
+      contentType: "image/png",
     },
     img2: {
       data: req.body.png,
-      contentType: "image/png"
-    }
+      contentType: "image/png",
+    },
   });
-  squiggle.save(err => {
+  squiggle.save((err) => {
     if (err) {
       next(err);
     }
