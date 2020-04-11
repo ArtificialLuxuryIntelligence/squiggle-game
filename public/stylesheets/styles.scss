@@ -274,7 +274,9 @@ h2 {
 // ------------------------------ gallery page
 
 #home-link {
+  padding: 0.66rem;
   font-size: 1rem;
+  border: 1.5px solid black;
   img {
     width: 20px;
     height: 20px;
@@ -283,8 +285,8 @@ h2 {
 
 .gallery {
   background-color: $bg-col;
-
   position: relative;
+
   nav {
     display: flex;
     padding: 1rem 1rem 0 1rem;
@@ -292,6 +294,13 @@ h2 {
     width: 100%;
     a {
       // margin-left: auto;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    img {
+      width: 40%;
     }
   }
 
@@ -317,7 +326,7 @@ h2 {
       margin-bottom: 1rem;
     }
     img {
-      border-radius: 10px;
+      // border-radius: 10px;
       border: 2px solid black;
       width: 100%;
 

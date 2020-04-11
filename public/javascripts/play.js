@@ -2,8 +2,8 @@
 
 // CONTENTS
 // colour;
-// scaling;
-// drawing;
+// canvas scaling;
+// canvas drawing;
 //   touch
 //   mouse
 // button handlers
@@ -14,14 +14,14 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const body = document.body;
-const canvas2 = document.getElementById("canvas2");
+//drawing canvas
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 //circle overlay canvas
+const canvas2 = document.getElementById("canvas2");
 const ctx2 = canvas2.getContext("2d");
 
 const undo = document.getElementById("undo");
-// const restart = document.getElementById("restart");
 const rotate = document.getElementById("rotate");
 const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
@@ -33,7 +33,6 @@ const mouse = { x: 0, y: 0 };
 const touch = { x: null, y: null };
 let isDrawing = false;
 let points = [];
-let section;
 let squiggle;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,19 +51,7 @@ const generateColourScheme = function (arr) {
   squiggleColour = obj.sqCol;
   let rand = Math.floor(obj.stCol.length * Math.random());
   strokeColour = obj.stCol[rand];
-  // var keys = Object.keys(obj);
-  // let prop = obj[keys[(keys.length * Math.random()) << 0]];
-  // squiggleColour = prop.sqCol;
-  // let randomStrokeIndex = (prop.stCol.length * Math.random()) << 0;
-  // strokeColour = prop.stCol[randomStrokeIndex];
 };
-
-/// on load
-
-// let squiggleColour =
-//   squiggleColours[Math.floor(Math.random() * squiggleColours.length)];
-// let strokeColour =
-//   strokeColours[Math.floor(Math.random() * strokeColours.length)];
 
 let fillColour = "white";
 
@@ -133,18 +120,6 @@ const drawScaling = () => {
   scaling.renderScaling = false;
 };
 
-// ctx.lineWidth = cwidth / 100; //??
-
-// console.log(ctx);
-
-// fixed scaling
-// canvas.style.width = "300px";
-// canvas.style.height = "300px";
-// canvas.width = 600;
-// canvas.height = 600;
-// ctx.lineWidth = 3;
-// ctx.scale(2, 2);
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //DRAWING mechanics
@@ -158,6 +133,7 @@ ctx.lineCap = "round";
 ctx.lineJoin = "round";
 // ctx.imageSmoothingEnabled = true;
 
+//helper
 function midPointOf(p1, p2) {
   return {
     x: p1.x + (p2.x - p1.x) / 2,
@@ -165,12 +141,9 @@ function midPointOf(p1, p2) {
   };
 }
 
-//currently using white so might not be need at all
 const backgroundFill = () => {
   ctx.fillStyle = fillColour;
-  // console.log("FC", fillColour);
   ctx.fillRect(0, 0, cwidth, cwidth);
-  // ctx.fill();
 };
 
 // draw from array of array of points
@@ -204,22 +177,28 @@ const drawFromPoints = (collection, strokecolour) => {
 };
 
 const drawLoop = () => {
-  // console.log("rerender loop");
-  console.log(points);
-
+  // console.log(points);
+  //simple drawing here so probably not too bad to rerender the whole image each frame
   rerender();
-  // drawFromPoints(points, strokeColour);
-  // drawCircle(points.slice(-1)[0], touch);
-
   drawAnim = requestAnimationFrame(drawLoop);
+};
+
+//drawing from points uses stroke once per complete line => smoother
+const rerender = () => {
+  ctx.clearRect(0, 0, cwidth, cheight);
+  backgroundFill();
+  renderScaling();
+  if (squiggle) {
+    drawFromPoints(squiggle, squiggleColour);
+  }
+  drawScaling();
+  drawFromPoints(points, strokeColour);
 };
 
 // TOUCH drawing
 
 // Get the position of touch on canvas
 function touchPos(e) {
-  // console.log("getting pos", isDrawing);
-
   var rect = canvas.getBoundingClientRect();
 
   switch ((turns % 4) + 1) {
@@ -244,57 +223,6 @@ function touchPos(e) {
   }
 }
 
-// function touchdraw() {
-//   console.log("drawing");
-
-//   if (isDrawing) {
-//     let lastArray = points.slice(-1)[0];
-//     // console.log("la", lastArray);
-
-//     drawCircle(lastArray, touch);
-
-//     if (lastArray.length == 0) {
-//       // console.log("first point!", touch.x, touch.y);
-
-//       // ctx.moveTo(touch.x, touch.y);
-//       ctx.lineTo(touch.x, touch.y);
-//       ctx.stroke();
-//       lastArray.push({ x: touch.x, y: touch.y });
-//     } else {
-//       //smoothing radius (chain) set globally
-//       //x1 is last point in lastArray (of points)
-//       let x1 = lastArray.slice(-1)[0].x;
-//       let y1 = lastArray.slice(-1)[0].y;
-//       let x2 = touch.x;
-//       let y2 = touch.y;
-
-//       //disatnce between points
-//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-//       //angle between drawFromPoints
-//       let alpha = Math.atan2(x2 - x1, y2 - y1);
-
-//       if (dist < chain) {
-//         //do nothing (distance is too short)
-//         // return;
-//       }
-//       if (dist >= chain) {
-//         //draw a new point in the direction of the mouse pointer
-//         let x = (dist - chain) * Math.sin(alpha) + x1;
-//         let y = (dist - chain) * Math.cos(alpha) + y1;
-
-//         ctx.lineTo(x, y);
-//         ctx.stroke();
-
-//         lastArray.push({ x: x, y: y });
-//         // if (points[section]) {
-//         //   points[section].push({ x: x, y: y });
-//         // }
-//       }
-//     }
-//   }
-//   drawAnim = requestAnimationFrame(touchdraw);
-// }
-
 //  -------------------- TOUCH Handlers
 
 const touchDownHandler = (e) => {
@@ -316,21 +244,10 @@ const touchDownHandler = (e) => {
 
       ctx.moveTo(touch.x, touch.y); // move this outside of timeout? (to avoid x:0, y:0 issue in animation frame)
       ctx.beginPath();
-
-      // canvas.addEventListener("touchmove", touchdraw, { passive: false });
-      // canvas.addEventListener("touchmove", drawingLoop, { passive: false });
-      // const drawingLoop = () => {
-      //   touchdraw();
-      //   drawAnim = requestAnimationFrame(drawingLoop);
-      // };
-      // requestAnimationFrame(drawingLoop);
-
-      // drawAnim = requestAnimationFrame(touchdraw);
     } else {
-      console.log("ended drawing");
+      // console.log("ended drawing");
 
       isDrawing = false;
-      // canvas.removeEventListener("touchmove", touchdraw, { passive: false });
       canvas.removeEventListener("touchmove", touchMoveHandler, {
         passive: false,
       });
@@ -338,29 +255,13 @@ const touchDownHandler = (e) => {
   }, 50);
 };
 
-//test
-
 const touchMoveHandler = (e) => {
-  // e.preventDefault();
-  // e.stopPropagation();
-
-  // console.log("drawing");
-
   if (isDrawing) {
-    // console.log(points);
-
     let lastArray = points.slice(-1)[0];
 
     if (lastArray.length == 0) {
-      // console.log("first point!", touch.x, touch.y);
-
-      // ctx.moveTo(touch.x, touch.y);
-      // ctx.lineTo(touch.x, touch.y);
-      // ctx.stroke();
       lastArray.push({ x: touch.x, y: touch.y });
     } else {
-      //smoothing radius (chain) set globally
-      //x1 is last point in lastArray (of points)
       let x1 = lastArray.slice(-1)[0].x;
       let y1 = lastArray.slice(-1)[0].y;
       let x2 = touch.x;
@@ -372,22 +273,13 @@ const touchMoveHandler = (e) => {
       let alpha = Math.atan2(x2 - x1, y2 - y1);
 
       if (dist < chain) {
-        //do nothing (distance is too short)
-        // return;
-        // lastArray.push({ x: x1, y: y1 });
       }
       if (dist >= chain) {
-        //draw a new point in the direction of the mouse pointer
+        //add a new point in the direction of the mouse pointer
         let x = (dist - chain) * Math.sin(alpha) + x1;
         let y = (dist - chain) * Math.cos(alpha) + y1;
 
-        // ctx.lineTo(x, y);
-        // ctx.stroke();
-
         lastArray.push({ x, y });
-        // if (points[section]) {
-        //   points[section].push({ x: x, y: y });
-        // }
       }
     }
   }
@@ -395,10 +287,7 @@ const touchMoveHandler = (e) => {
 
 const touchUpHandler = (e) => {
   if (isDrawing) {
-    console.log("end touch");
-
-    // ctx2.clearRect(0, 0, cwidth, cheight);
-    ctx.closePath();
+    // ctx.closePath();
 
     // canvas.removeEventListener("touchmove", touchdraw, { passive: false });
     // canvas.removeEventListener("touchmove", drawingLoop, { passive: false });
@@ -415,7 +304,7 @@ const touchUpHandler = (e) => {
     isDrawing = false;
     rerender();
   }
-  console.log("cancel anim ");
+  // console.log("cancel anim ");
 
   cancelAnimationFrame(drawAnim);
 };
@@ -449,54 +338,6 @@ function mousePos(e) {
   }
 }
 
-// function draw() {
-//   //helper
-
-//   //shouldnt need this check
-//   if (isDrawing) {
-//     console.log(points);
-
-//     let lastArray = points.slice(-1)[0];
-//     drawCircle(lastArray, mouse);
-
-//     if (lastArray.length == 0) {
-//       ctx.lineTo(mouse.x, mouse.y);
-//       ctx.stroke();
-//       lastArray.push({ x: mouse.x, y: mouse.y });
-//       console.log("LastArray length 0");
-//     } else {
-//       //smoothing radius (chain) set globally
-//       //x1 is last point in lastArray (of points)
-//       let x1 = lastArray.slice(-1)[0].x;
-//       let y1 = lastArray.slice(-1)[0].y;
-//       let x2 = mouse.x;
-//       let y2 = mouse.y;
-
-//       //disatnce between points
-//       let dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-//       //angle between drawFromPoints
-//       let alpha = Math.atan2(x2 - x1, y2 - y1);
-
-//       if (dist < chain) {
-//         //do nothing (distance is too short)
-//       }
-//       if (dist >= chain) {
-//         //draw a new point in the direction of the mouse pointer
-//         let x = (dist - chain) * Math.sin(alpha) + x1;
-//         let y = (dist - chain) * Math.cos(alpha) + y1;
-
-//         ctx.lineTo(x, y);
-//         ctx.stroke();
-
-//         lastArray.push({ x: x, y: y });
-//         // if (points[section]) {
-//         //   points[section].push({ x: x, y: y });
-//         // }
-//       }
-//     }
-//   }
-// }
-
 //  -------------------- MOUSE  Handlers
 
 //////////////////////////////
@@ -507,7 +348,7 @@ const mouseDownHandler = () => {
 
   ctx.strokeStyle = strokeColour;
   ctx.fillStyle = strokeColour;
-  ctx.closePath();
+  // ctx.closePath();
   points.push([]);
   ctx.moveTo(mouse.x, mouse.y);
   ctx.beginPath();
@@ -529,34 +370,13 @@ const mouseDownHandler = () => {
   // }
 };
 
-const mouseUpHandler = () => {
-  canvas.removeEventListener("mousemove", mouseMoveHandler);
-  cancelAnimationFrame(drawAnim);
-
-  if (isDrawing) {
-    ctx2.clearRect(0, 0, cwidth, cheight);
-    ctx.closePath();
-    isDrawing = false;
-    //remove any point arrays with no content (a quick click or touch doesn't draw anything)
-    points = points.filter((arr) => arr.length !== 0);
-    rerender();
-  }
-};
-
 const mouseMoveHandler = () => {
-  //helper
-
   //shouldnt need this check
   if (isDrawing) {
-    console.log("register");
-
     let lastArray = points.slice(-1)[0];
 
     if (lastArray.length == 0) {
-      // ctx.lineTo(mouse.x, mouse.y);
-      // ctx.stroke();
       lastArray.push({ x: mouse.x, y: mouse.y });
-      console.log("LastArray length 0");
     } else {
       //smoothing radius (chain) set globally
       //x1 is last point in lastArray (of points)
@@ -578,24 +398,29 @@ const mouseMoveHandler = () => {
         let x = (dist - chain) * Math.sin(alpha) + x1;
         let y = (dist - chain) * Math.cos(alpha) + y1;
 
-        // ctx.lineTo(x, y);
-        // ctx.stroke();
-
         lastArray.push({ x: x, y: y });
-        // if (points[section]) {
-        //   points[section].push({ x: x, y: y });
-        // }
       }
     }
+  }
+};
+
+const mouseUpHandler = () => {
+  canvas.removeEventListener("mousemove", mouseMoveHandler);
+  cancelAnimationFrame(drawAnim);
+
+  if (isDrawing) {
+    ctx2.clearRect(0, 0, cwidth, cheight);
+    // ctx.closePath();
+    isDrawing = false;
+    //remove any point arrays with no content (a quick click or touch doesn't draw anything)
+    points = points.filter((arr) => arr.length !== 0);
+    rerender();
   }
 };
 
 const mouseOutHandler = () => {
   canvas.removeEventListener("mousemove", mouseMoveHandler);
   cancelAnimationFrame(drawAnim);
-  if (isDrawing) {
-    section++;
-  }
   isDrawing = false;
 };
 
@@ -603,50 +428,21 @@ const mouseOutHandler = () => {
 
 const undoHandler = (points) => {
   points.pop();
-  // if (section > 0) {
-  //   section--;
-  // }
-  ctx.clearRect(0, 0, cwidth, cheight);
-  backgroundFill();
-  renderScaling();
-  drawFromPoints(squiggle, squiggleColour);
-  drawScaling();
-  drawFromPoints(points, strokeColour);
-};
 
-//use this fn above
+  // ctx.clearRect(0, 0, cwidth, cheight);
+  // backgroundFill();
+  // renderScaling();
+  // drawFromPoints(squiggle, squiggleColour);
+  // drawScaling();
+  // drawFromPoints(points, strokeColour);
 
-//drawing from points uses stroke once per complete line => smoother than drawing
-const rerender = () => {
-  ctx.clearRect(0, 0, cwidth, cheight);
-  backgroundFill();
-  renderScaling();
-  if (squiggle) {
-    drawFromPoints(squiggle, squiggleColour);
-  }
-  drawScaling();
-  drawFromPoints(points, strokeColour);
-};
-
-const resetCanvas = () => {
-  ctx.clearRect(0, 0, cwidth, cheight);
-
-  if (window.location.pathname.split("/")[1] == "play") {
-    backgroundFill();
-    renderScaling();
-    drawFromPoints(squiggle, squiggleColour);
-    drawScaling();
-    ctx.strokeStyle = strokeColour;
-    section = 0;
-    points = [];
-    isDrawing = false;
-  }
+  rerender();
 };
 
 let turns = 0;
 const rotateCanvas = async () => {
   turns++;
-  console.log((turns % 4) + 1);
+  // console.log((turns % 4) + 1);
 
   ctx.clearRect(0, 0, cwidth, cwidth);
   backgroundFill();
@@ -660,7 +456,7 @@ const rotateCanvas = async () => {
   ctx2.rotate(Math.PI / 2);
   ctx2.translate(-cwidth / 2, -cwidth / 2);
 
-  //
+  // same as rerender function: (with save)
   renderScaling();
   drawFromPoints(squiggle, squiggleColour);
   drawScaling();
@@ -713,8 +509,6 @@ const animateSquiggle = () => {
   console.log("animating...");
   // clear the canvas
   ctx.strokeStyle = squiggleColour;
-  // ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // ctx.fill();
 
   // start the animation
   let t = 1;
@@ -843,11 +637,7 @@ const addListeners = (path) => {
 window.addEventListener("load", async () => {
   // run different function depending on pathname: newsquiggle or play
   if (window.location.pathname.split("/")[1] == "newsquiggle") {
-    // let squiggleColour = "#36494E";
-    // let strokeColour = "#9E2A2B";
-    // let fillColour = "white";
     generateColourScheme(colours);
-
     backgroundFill();
     ctx.strokeStyle = strokeColour;
     drawScaling();
@@ -868,7 +658,7 @@ window.addEventListener("load", async () => {
     originalSize = json.size;
     scaleFactor = cwidth / originalSize;
 
-    // this section saves the squiggle to the form input before the squiggle is animated
+    // this section saves the squiggle (as base64 png) to the form input before the squiggle is animated
     renderScaling();
     drawFromPoints(squiggle, squiggleColour);
     drawScaling();
