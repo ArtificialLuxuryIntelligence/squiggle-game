@@ -28,12 +28,17 @@
             {{/each}}
         </ul>   
 
-        {{#if myTurn.bool}}
+{{#if noPlayers}}
+<h3>Add some people to play with</h3>
+{{else}}
+     {{#if myTurn.bool}}
         <h3>It's your turn</h3>
 
           <div class="button-container">
-            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid={{myTurn.squiggle}}">    <img src="/assets/svg/playhome.svg" alt=""> </a>
-            <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=latest">    <img src="/assets/svg/playhome.svg" alt=""> </a>
+            {{!-- <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a> --}}
+            <a id="playbutton" class="button" href="/gallery">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+
          </div>
 
 
@@ -42,11 +47,15 @@
 
           <div class="button-container">
             <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=random">    <img src="/assets/svg/playhome.svg" alt=""> </a>
-            <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+            {{!-- <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a> --}}
+            <a id="playbutton" class="button" href="/gallery">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+         
           </div>
 
 
         {{/if}}
+{{/if}}
+   
     </div>
 
 

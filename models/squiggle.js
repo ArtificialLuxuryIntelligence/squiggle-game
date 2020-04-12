@@ -9,6 +9,7 @@ const squiggleSchema = new Schema({
   line: { type: String, required: true },
   size: { type: String },
   reports: { type: Number, default: 0 },
+  gameId: { type: String, default: null },
 });
 
 module.exports = mongoose.model("squiggle", squiggleSchema);
