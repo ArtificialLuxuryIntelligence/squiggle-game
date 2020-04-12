@@ -2,6 +2,9 @@ const cont = document.getElementById("gallery-container");
 const loader = document.getElementById("loader");
 const pageCont = document.querySelector(".container");
 
+// 'if game' hackily tells us if it's a group game or not
+const game = document.getElementById("gameName");
+
 // pageCont.style.width = window.innerWidth;
 
 let pageNum = 0;
@@ -10,14 +13,14 @@ let pageNum = 0;
 if ("ontouchstart" in document.documentElement) {
   document
     .querySelectorAll(".touch-only")
-    .forEach(e => (e.style.display = "block"));
+    .forEach((e) => (e.style.display = "block"));
 } else {
 }
 
 //fetch squiggle
 
 async function loadImages(page) {
-  const fetchSquiggles = async page => {
+  const fetchSquiggles = async (page) => {
     const response = await fetch("/gallery/squiggles/" + page);
     const json = await response.json();
     console.log(json);
@@ -59,10 +62,17 @@ async function loadImages(page) {
     loader.innerHTML = "end of the squiggleverse";
   }
 
-  squiggles.forEach(squiggle => {
+  squiggles.forEach((squiggle) => {
     let imgcont = document.createElement("div");
     imgcont.appendChild(addImage(squiggle.img2.data, squiggle.img.data));
-    imgcont.appendChild(addReportButton(squiggle._id));
+    if (game) {
+      let author = document.createElement("p");
+      author.innerText = squiggle.author;
+      author.setAttribute("class", "author-tag");
+      imgcont.appendChild(author);
+    } else {
+      imgcont.appendChild(addReportButton(squiggle._id));
+    }
     cont.insertBefore(imgcont, loader);
   });
 
@@ -79,7 +89,7 @@ async function loadImages(page) {
 let options = {
   root: null,
   rootMargin: "100px",
-  threshold: 1.0
+  threshold: 1.0,
 };
 
 let observer = new IntersectionObserver(() => loadImages(pageNum));
@@ -101,13 +111,13 @@ const hideScrollToTop = () => {
 
 let toTopOptions = {
   root: null,
-  rootMargin: "300px"
+  rootMargin: "300px",
 };
 
 const homeButton = document.querySelector("#home-link");
 
-let toTopObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry =>
+let toTopObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) =>
     entry.isIntersecting ? hideScrollToTop() : showScrollToTop()
   );
 }, toTopOptions);

@@ -17,8 +17,22 @@
 
     {{/each}}
     {{/if}}
-<h2>Your Games</h2>
 
+
+      {{#if waitingGames}}
+  <h2>It's your turn!</h2>
+  <ul>
+    {{#each waitingGames}}
+     <li> <span>{{this.name}}</span> <span><a href="/game/{{this._id}}">Play now</a></span></li>
+     {{/each}}   
+  </ul>  
+  <hr/>
+  {{/if}}
+
+
+
+
+  <h3>All Games</h3>
   <ul>
     {{#each user.games}}
       {{!-- <li><a href="/game/{{this.id}}">{{this.name}}</a></li> --}}
@@ -28,10 +42,17 @@
   </ul>  
 
 
-<h3>Join game</h3>
+
+
+
+  {{#if joinId}}
+  <h3>Join game</h3>
 <form id="join-game" action="/" method="POST">
-<input name ="id" type="text">
+<input name ="id" type="text" value={{joinId}}>
 <input type="submit" value="join"></form>
+
+    {{/if}}
+
 
 <h3>Create a new game</h3>
 <form id="new-game" action="/newgame" method="POST">

@@ -1,5 +1,10 @@
 <div class="game">
+  
+   
 <div class="container">
+  {{#if gameName}}
+  <h3>{{gameName}}</h3>
+  {{/if}}
 <div class="drawing">
   <div class="canvas-container">
     <canvas id="canvas2"></canvas>
@@ -9,9 +14,6 @@
 
   <div class="form-container">
 
-    {{#if gameId}}
-    <p>private game</p>
-    {{/if}}
 
     {{#if newsquiggle}}
 
@@ -36,6 +38,7 @@
         <a id="link-button" href="/home"><button  class="button disabled"  type="button"  name="button"><img src="assets/svg/home.svg" alt=""></button></a>       
         <input type='hidden' id= 'hiddenField' name='data'  />
         <input type='hidden' id= 'hiddenField2' name='png'  />
+        <input type="hidden" id="idinput", name="squiggleId">
 
       </form>
    
@@ -78,5 +81,5 @@
 {{/if}}
 
 
-<script src="javascripts/play.js"></script>
+<script type="text/javascript"  src="/javascripts/play.js"></script>
 

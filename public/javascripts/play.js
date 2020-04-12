@@ -27,6 +27,7 @@ const form = document.getElementById("submit-form");
 const input = document.getElementById("hiddenField");
 const input2 = document.getElementById("hiddenField2");
 const input3 = document.getElementById("hiddenField3");
+const IDinput = document.getElementById("idinput");
 const buttons = document.querySelectorAll(".button");
 
 const mouse = { x: 0, y: 0 };
@@ -511,18 +512,26 @@ const animateSquiggle = () => {
   ctx.strokeStyle = squiggleColour;
 
   // start the animation
-  let t = 1;
+  let p = 0;
   let i = 0;
+  // ctx.beginPath();
   animate();
 
   function animate() {
-    if (squiggle[i] && t < squiggle[i].length - 1) {
+    if (squiggle[i] && p < squiggle[i].length) {
+      //draw point by point
+      let s = squiggle.slice(0, i + 1);
+      let pop = s.pop();
+      s.push(pop.slice(0, p + 1));
+      drawFromPoints(s, squiggleColour);
+      p++;
+
       requestAnimationFrame(animate);
       //increments i in order to move to next section of squiggle
     } else if (i < squiggle.length) {
       setTimeout(() => {
         i++;
-        t = 1;
+        p = 0;
         requestAnimationFrame(animate);
       }, 300);
     }
@@ -530,13 +539,16 @@ const animateSquiggle = () => {
       console.log("...animation complete");
       addListeners("play");
       drawScaling();
+      rerender();
+
       return;
     }
-    ctx.beginPath();
-    ctx.moveTo(squiggle[i][t - 1].x, squiggle[i][t - 1].y);
-    ctx.lineTo(squiggle[i][t].x, squiggle[i][t].y);
-    ctx.stroke();
-    t++;
+
+    // ctx.beginPath();
+    // ctx.moveTo(squiggle[i][p - 1].x, squiggle[i][p - 1].y);
+    // ctx.lineTo(squiggle[i][p].x, squiggle[i][p].y);
+    // ctx.stroke();
+    // p++;
   }
 };
 
@@ -648,13 +660,15 @@ window.addEventListener("load", async () => {
     generateColourScheme(colours);
     backgroundFill();
     let json = await fetchSquiggle();
+    let squiggleId = json._id;
 
     //set squiggle id in report form
     document
       .querySelector("#report-squiggle")
-      .setAttribute("action", `/report/squiggle/${json._id}`);
+      .setAttribute("action", `/report/squiggle/${squiggleId}`);
     //
     squiggle = JSON.parse(json.line);
+
     originalSize = json.size;
     scaleFactor = cwidth / originalSize;
 
@@ -664,6 +678,7 @@ window.addEventListener("load", async () => {
     drawScaling();
     let dataURL = await canvas.toDataURL();
     input2.value = dataURL;
+    IDinput.value = squiggleId;
     ctx.clearRect(0, 0, cwidth, cheight);
     backgroundFill();
     animateSquiggle();

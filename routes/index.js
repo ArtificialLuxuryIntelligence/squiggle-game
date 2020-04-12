@@ -10,22 +10,35 @@ const User = require("../models/user");
 const Game = require("../models/game");
 
 const loggedIn = require("./middleware/loggedIn");
+const auth = require("./middleware/auth");
+const myTurn = require("./middleware/myTurn");
+
+router.use("/", myTurn, (req, res, next) => {
+  console.log("SESSION", req.session);
+  console.log("USER", req.user);
+
+  next();
+});
 
 router.get("/", function (req, res, next) {
   //not in private game
   req.session.gameId = null;
+  req.session.gameName = null;
+  req.session.myTurn = null;
+
   // req.session.squiggleId = null;
 
   // console.log("session", req.session);
+  let waitingGames = req.session.waitingGames;
 
   if (req.session && !req.session.animate) {
     req.session.animate = true;
 
-    res.render("index", { animate: false, user: req.user });
+    res.render("index", { animate: false, user: req.user, waitingGames });
   } else {
     // console.log(req.user);
 
-    res.render("index", { animate: true, user: req.user });
+    res.render("index", { animate: true, user: req.user, waitingGames });
   }
 });
 
@@ -48,8 +61,9 @@ router.get("/gallery", function (req, res, next) {
   if (!req.session.gameId) {
     res.render("gallery");
   } else {
+    let gameName = req.session.gameName;
     let gameId = req.session.gameId;
-    res.render("gallery", { gameId: gameId });
+    res.render("gallery", { gameName: gameName, gameId });
   }
 });
 
@@ -91,17 +105,18 @@ router.get("/play", function (req, res, next) {
   if (!req.session.gameId) {
     res.render("play", { newsquiggle: false });
   } else {
-    let gameId = req.session.gameId;
+    // let gameId = req.session.gameId;
+    let gameName = req.session.gameName;
 
     //USE gameId for changing submit form action
-    res.render("play", { newsquiggle: false, gameId: gameId });
+    res.render("play", { newsquiggle: false, gameName });
   }
 });
 
 //if(!req.sess)etc
 
 router.get("/play/squiggle", async (req, res, next) => {
-  console.log("sess", req.session);
+  // console.log("sess", req.session);
 
   //no specific squiggle given
   if (!req.session.squiggleId) {
@@ -144,6 +159,7 @@ router.post("/play/submit", (req, res, next) => {
 
     let squiggle = new CompletedSquiggle({
       author: author,
+      squiggleId: req.body.squiggleId,
       img: {
         data: req.body.data,
         contentType: "image/png",
@@ -242,7 +258,11 @@ router.post("/newsquiggle/submit", function (req, res, next) {
         console.log("UPDATING GAME OBJECT");
         let gameId = req.session.gameId;
         try {
-          await Game.update({ _id: gameId }, { $inc: { turn: 1 } });
+          let game = await Game.findOne({ _id: gameId });
+          // console.log("GAAAAAAAAAAAME", game.turn, game.players);
+          let turnName = game.players[(game.turn + 1) % game.players.length];
+
+          await Game.update({ _id: gameId }, { $inc: { turn: 1 }, turnName });
           req.session.myTurn = false;
           res.redirect(`/game/${gameId}`);
         } catch (err) {
@@ -300,14 +320,23 @@ router.post("/report/squiggle/:id", (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FRIEND GAME ROUTES
 
-router.get("/game/:id", function (req, res, next) {
+router.get("/join", (req, res) => {
+  res.render("account", {
+    messages: req.flash("msg"),
+    user: req.user,
+    joinId: req.query.id,
+  });
+});
+
+router.get("/game/:id", auth, function (req, res, next) {
   // console.log(req.user);
   let id = req.params.id;
   console.log("entering new game");
 
   req.session.gameId = id;
+  req.session.gameName = null; //added when game is fetched
   req.session.squiggleId = null;
-
+  req.session.myTurn = null;
   Game.findOne({ _id: id }, function (err, game) {
     if (err) {
       res.render("account", { message: "error", user: req.user });
@@ -320,6 +349,7 @@ router.get("/game/:id", function (req, res, next) {
     //game found
 
     req.session.gameId = id;
+    req.session.gameName = game.name;
 
     if (game.players.length === 1) {
       res.render("game", {
@@ -360,11 +390,12 @@ router.get("/game/:id", function (req, res, next) {
   //db lookup for game
 });
 
-router.post("/newgame", (req, res, next) => {
+router.post("/newgame", auth, (req, res, next) => {
   let newGame = new Game({
     admin: req.user.name,
     name: req.body.gamename,
     players: [req.user.name],
+    turnName: req.user.name,
   });
 
   newGame.save(async (err, game) => {

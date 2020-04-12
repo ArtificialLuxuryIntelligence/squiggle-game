@@ -3,5 +3,5 @@ module.exports = (req, res, next) => {
     return next();
   }
 
-  res.redirect("/admin");
+  res.redirect("/");
 };

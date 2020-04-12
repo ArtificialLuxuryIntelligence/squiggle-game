@@ -6,9 +6,9 @@
   </header> --}}
 
     <div> 
-      <p>You're loggin in, {{user.name}}</p>
+      <p>You're logged in, {{user.name}}</p>
       <a href="/users/logout">LOGOUT</a>
-      <a href="/users/account">ACCOUNT</a>
+      <a href="/users/account">GAMES</a>
 
       <a href="/">HOME</a>
 
@@ -16,10 +16,16 @@
 
     <div>
         <p>Game name: {{game.name}}</p>
-        <p>Game id: {{game.id}}</p>
+        
+        <p>Your friends can join with this link:</p>
 
+        {{!-- <p>Game ID: <span id="gameId">{{game.id}}</span> <span><button id="copyId"> Copy to clipboard</button></span></p> --}}
 
-        <button> Share game</button>
+        <p><span id="gameLink">http://localhost:3000/join?id={{game.id}}</span> <span><button id="copyLink"> Copy link to clipboard</button></span> </p>
+        
+        {{!-- <p><span id="gameLink">https://squiggle-game.herokuapp.com/join?id={{game.id}}</span> <span><button id="copyLink"> Copy link to clipboard</button></span> </p> --}}
+       
+        
 
         <h3>Players</h3>
         <ul>
@@ -44,6 +50,8 @@
 
         {{else}}
         <h3>It's {{game.currentPlayer}}'s turn to draw.</h3>  
+            <p>You can complete other squiggles from the group anyway</p>
+            <p>You only add a new squiggle on your go.</p>
 
           <div class="button-container">
             <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=random">    <img src="/assets/svg/playhome.svg" alt=""> </a>
@@ -63,3 +71,4 @@
 
 </div>
 
+<script type="text/javascript"  src="/javascripts/game.js"></script>

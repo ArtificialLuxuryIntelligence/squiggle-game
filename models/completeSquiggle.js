@@ -6,6 +6,7 @@ const squiggleSchema = new Schema({
   time: { type: Date, default: Date.now },
   img: { data: String },
   img2: { data: String },
+  squiggleId: { type: String },
   reports: { type: Number, default: 0 },
   gameId: { type: String, default: null },
 });

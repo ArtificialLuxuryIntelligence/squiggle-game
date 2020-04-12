@@ -7,11 +7,23 @@
 
   {{#if user}}
     <div> 
-      <p>You're loggin in, {{user.name}}</p>
+      <p>You're logged in, {{user.name}}</p>
       <a href="/users/logout">LOGOUT</a>
 
       <a href="/users/account">Play with friends</a>
     </div>
+  {{#if waitingGames}}
+  <h3>It's your go!</h3>
+  <ul>
+    {{#each waitingGames}}
+     <li> <span>{{this.name}}</span> <span><a href="/game/{{this._id}}">Play now</a></span></li>
+     {{/each}}   
+  </ul>
+  
+{{/if}}
+
+
+
   {{else}}
   <a href="/login">LOGIN</a>
   {{/if}}

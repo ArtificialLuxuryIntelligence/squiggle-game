@@ -7,10 +7,18 @@
     
     <a id="top"></a>
     <nav>
+        {{#if gameId}}
+<a href="/game/{{gameId}}">BACK</a>    {{else}} <p></p>{{/if}}
+      
       <a id="home-link" class="button" href="/home"><img src="assets/svg/home.svg" alt=""></a>    
     </nav>    
 
+    {{#if gameName}}
+      <h2 id="gameName">{{gameName}}</h2>
+    {{/if}}
     <h1><img src="assets/svg/galleryhome.svg" alt=""></h1>
+
+
 
     <div id="gallery-container">
       <h3 class="touch-only">Click on the squiggles!</h3>
