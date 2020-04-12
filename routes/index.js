@@ -320,7 +320,7 @@ router.post("/report/squiggle/:id", (req, res) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //FRIEND GAME ROUTES
 
-router.get("/join", (req, res) => {
+router.get("/join", auth, (req, res) => {
   res.render("account", {
     messages: req.flash("msg"),
     user: req.user,
