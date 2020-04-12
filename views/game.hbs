@@ -1,4 +1,4 @@
-<div class="home">
+<div class="game">
 
   <div class="container">
   {{!-- <header class="title">
@@ -34,6 +34,9 @@
             {{/each}}
         </ul>   
 
+
+        
+
 {{#if noPlayers}}
 <h3>Add some people to play with</h3>
 {{else}}
@@ -51,14 +54,9 @@
         {{else}}
         <h3>It's {{game.currentPlayer}}'s turn to draw.</h3>  
             <p>You can complete other squiggles from the group anyway</p>
-            <p>You only add a new squiggle on your go.</p>
+            <p>You only add a new squiggle on your turn.</p>
 
-          <div class="button-container">
-            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=random">    <img src="/assets/svg/playhome.svg" alt=""> </a>
-            {{!-- <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a> --}}
-            <a id="playbutton" class="button" href="/gallery">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
          
-          </div>
 
 
         {{/if}}
@@ -66,6 +64,28 @@
    
     </div>
 
+
+    {{#if noPlayers}}
+
+    {{else}}
+  <div id="imgCont"></div>
+
+  {{#if myTurn.bool}}
+
+  {{else}}
+ <div class="button-container">
+            <a id="playbutton" class="button" href="/play/private/?gameid={{game.id}}&squiggleid=random">    <img src="/assets/svg/playhome.svg" alt=""> </a>
+            {{!-- <a id="playbutton" class="button" href="/gallery/private/?gameid={{game.id}}">    <img src="/assets/svg/galleryhome.svg" alt=""> </a> --}}
+            <a id="playbutton" class="button" href="/gallery">    <img src="/assets/svg/galleryhome.svg" alt=""> </a>
+         
+        </div>
+  {{/if}}
+
+   
+    
+
+    {{/if}}
+  
 
   </div>
 

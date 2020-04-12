@@ -74,9 +74,9 @@ h2 {
   //   justify-content: space-around;
 }
 
-// ------------------------------ game pages
+// ------------------------------ play pages
 
-.game {
+.play {
   // height: 100%;
   background-color: $bg-col;
   width: 100%;
@@ -354,6 +354,66 @@ h2 {
     }
   }
 }
+// ------------------------------ game page
+
+.game {
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 8rem;
+      height: 8rem;
+      margin: 1rem;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+  #imgCont {
+    width: 95vw;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+
+    .touch-only {
+      margin-bottom: 1rem;
+    }
+    img {
+      // border-radius: 10px;
+      border: 2px solid black;
+      width: 100%;
+
+      // -ms-interpolation-mode: nearest-neighbor;
+      image-rendering: smooth;
+      // filter: blur(0.5px);
+    }
+    .author-tag {
+      font-size: 1.5rem;
+      margin-bottom: 0.4rem;
+      padding: 0.3rem;
+      text-align: end;
+    }
+    // form {
+    //   display: flex;
+    //   margin-bottom: 1.5rem;
+
+    //   #report-squiggle-btn {
+    //     color: rgba($color: #000000, $alpha: 0.8);
+    //     margin-left: auto;
+    //     padding: 0.4rem;
+    //     background-color: rgba($color: #000000, $alpha: 0);
+    //     border: none;
+    //   }
+    // }
+  }
+}
 
 // ------------------------------ admin page
 
@@ -400,6 +460,8 @@ h2 {
     }
   }
   .game {
+  }
+  .play {
     // flex-direction: column;
     .container {
       .drawing {

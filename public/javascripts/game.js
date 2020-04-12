@@ -30,6 +30,51 @@ function saveToClipboard(id) {
   alert("Copied: " + value);
 }
 
+///load latest squiggle
+
+const cont = document.getElementById("imgCont");
+//functions basically from gallery.js
+
+async function loadImage() {
+  const fetchSquiggle = async () => {
+    const response = await fetch("/gallery/latest");
+    const json = await response.json();
+    return json;
+  };
+
+  function addImage(source1, source2) {
+    let i = document.createElement("img");
+    i.src = source1;
+    i.addEventListener("mouseover", () => {
+      i.setAttribute("src", source2);
+    });
+    i.addEventListener("mouseout", () => {
+      i.setAttribute("src", source1);
+    });
+    return i;
+  }
+
+  let [squiggle] = await fetchSquiggle();
+  console.log(squiggle);
+
+  let imgcont = document.createElement("div");
+  let title = document.createElement("h3");
+  title.innerText = "Latest superb squiggle solution";
+  imgcont.appendChild(title);
+  imgcont.appendChild(addImage(squiggle.img2.data, squiggle.img.data));
+
+  let author = document.createElement("p");
+  author.innerText = squiggle.author;
+  author.setAttribute("class", "author-tag");
+  imgcont.appendChild(author);
+  cont.appendChild(imgcont);
+
+  // console.log(pageNum);
+  // console.log(squiggles);
+}
+
+loadImage();
+
 //////////////
 
 // PUSH NOTIFICATIONS TEST

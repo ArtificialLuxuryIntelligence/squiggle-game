@@ -89,6 +89,13 @@ router.get("/gallery/squiggles/:page", async (req, res, next) => {
   }
 });
 
+router.get("/gallery/latest", async (req, res, next) => {
+  let squiggle = await CompletedSquiggle.find({ gameId: req.session.gameId })
+    .sort({ time: -1 })
+    .limit(1);
+  res.json(squiggle);
+});
+
 //sets  game data in session
 router.get("/play/private", function (req, res, next) {
   console.log(req.query);
@@ -337,7 +344,7 @@ router.get("/game/:id", auth, function (req, res, next) {
   req.session.gameName = null; //added when game is fetched
   req.session.squiggleId = null;
   req.session.myTurn = null;
-  Game.findOne({ _id: id }, function (err, game) {
+  Game.findOne({ _id: id }, function async(err, game) {
     if (err) {
       res.render("account", { message: "error", user: req.user });
     }
@@ -359,16 +366,7 @@ router.get("/game/:id", auth, function (req, res, next) {
       });
     } else {
       const totalPlayers = game.players.length;
-
       game.currentPlayer = game.players[game.turn % totalPlayers];
-
-      console.log(
-        "TOTAL PLAYERS",
-        totalPlayers,
-        game.currentPlayer,
-        "TURN",
-        game.turn
-      );
 
       let myTurn = {};
       if (game.currentPlayer == req.user.name) {
@@ -377,6 +375,11 @@ router.get("/game/:id", auth, function (req, res, next) {
       } else {
         myTurn.bool = false;
       }
+      console.log(game);
+
+      // let lastSquiggle;
+
+      // let latestCompletedSquiggle = await CompletedSquiggle.findOne({gameId:game._id})
 
       res.render("game", {
         game: game,
@@ -386,8 +389,6 @@ router.get("/game/:id", auth, function (req, res, next) {
       });
     }
   });
-
-  //db lookup for game
 });
 
 router.post("/newgame", auth, (req, res, next) => {
