@@ -91,7 +91,7 @@ router.post("/joingame/:id", async (req, res) => {
 router.post(
   "/login",
   passport.authenticate("local.signin", {
-    successRedirect: "/admin",
+    successRedirect: "/",
     failureRedirect: "/login",
     failureFlash: true,
   })

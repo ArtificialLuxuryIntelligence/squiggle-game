@@ -5,7 +5,7 @@
 
 const copyLinkButton = document.getElementById("copyLink");
 copyLinkButton.addEventListener("click", () => {
-  saveToClipboard("gameLink");
+  saveToClipboard("game-link");
 });
 
 function saveToClipboard(id) {
@@ -25,6 +25,7 @@ function saveToClipboard(id) {
 
   /* Copy the text inside the text field */
   document.execCommand("copy");
+  temp.remove();
 
   /* Alert the copied text */
   alert("Copied: " + value);

@@ -1,31 +1,33 @@
-{{#if hasErrors}}
-<p>{{messages}}</p>
-{{/if}}
+<div class="login">
+  <div class="container">
+    {{#if hasErrors}}
+    <p>{{ messages }}</p>
+    {{/if}}
 
+    <h3>Log in</h3>
+    <form id="login-form" action="/users/login" method="POST">
+      <label for="name">name</label>
+      <input type="name" name="name" required />
+      <br />
+      <label for="password">password</label>
 
-<form id="login-form" action="/users/login" method="POST" >
-    <label for="name">name</label>
-    <input type="name" name="name" required>
-    <br>
-    <label for="password">password</label>
+      <input type="password" name="password" required />
+      <br />
+      <input type="submit" value="login" />
+    </form>
+    <h3>Sign up</h3>
 
-    <input type="password" name="password" required>
-    <br>
-    <input type="submit" value="login">
-</form>
+    <form id="signup-form" action="/users/signup" method="POST">
+      <label for="name">name</label>
+      <input type="name" name="name" required />
+      <br />
+      <label for="password">password</label>
 
-    
-
-<form id="signup-form" action="/users/signup" method="POST" >
-    <label for="name">name</label>
-    <input type="name" name="name" required>
-    <br>
-    <label for="password">password</label>
-
-    <input type="password" name="password" required>
-    <br>
-    <input type="submit" value="signup">
-</form>
+      <input type="password" name="password" required />
+      <br />
+      <input type="submit" value="signup" />
+    </form>
+  </div>
+</div>
 
 <script type="text/javascript" src="javascripts/login.js"></script>
-    

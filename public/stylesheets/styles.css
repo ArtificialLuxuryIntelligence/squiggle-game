@@ -20,11 +20,15 @@ h1,
 h2 {
   margin-top: 2rem;
   color: black;
-  font-size: 2rem; }
+  font-size: 1.5rem; }
   h1 span,
   h2 span {
     display: block;
     text-align: center; }
+
+h1 {
+  margin-top: 1rem;
+  font-size: 2rem; }
 
 .button {
   color: black;
@@ -32,26 +36,99 @@ h2 {
   /* font-weight: 300; */
   font-family: system-ui, sans-serif;
   font-size: 2rem;
-  line-height: 1.2;
   white-space: nowrap;
   border: 2px solid black;
   background-color: white;
   text-align: center;
   border-radius: 50%;
   margin: 1px;
-  padding: 1rem;
   cursor: pointer; }
   .button:focus {
     outline: none; }
   .button img {
+    margin: 1rem;
     width: 30px;
     height: 30px; }
+
+.button-text {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .button-text img {
+    width: 100%;
+    height: auto; }
+
+.button-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+button,
+input {
+  padding: 0.4rem;
+  border: 1px solid black;
+  background-color: white; }
 
 .container {
   display: flex;
   align-items: center;
   width: 100%;
   flex-direction: column; }
+
+.nav a {
+  text-decoration: none;
+  color: black;
+  padding: 0.2rem;
+  font-size: 1.2rem; }
+
+.nav,
+nav {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem 1rem 0 1rem; }
+  .nav .button,
+  nav .button {
+    width: 3rem;
+    height: 3rem;
+    border: 1.5px solid black; }
+  .nav .button-svg img,
+  nav .button-svg img {
+    margin: 0px;
+    width: 20px;
+    height: 20px; }
+  .nav a,
+  nav a {
+    border-radius: 2px;
+    border: 1px solid black; }
+
+.games-list {
+  text-align: center; }
+  .games-list ul,
+  .games-list li {
+    margin: 0px;
+    padding: 0px;
+    list-style: none; }
+  .games-list ul {
+    margin: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden; }
+  .games-list li {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    text-align: center; }
+  .games-list a {
+    padding: 0.5rem;
+    text-decoration: none;
+    color: black;
+    display: block;
+    flex: 1 1 auto; }
+    .games-list a:hover {
+      cursor: pointer; }
 
 .play {
   background-color: white;
@@ -63,6 +140,12 @@ h2 {
   .play .container {
     height: 100%;
     justify-content: space-between; }
+    .play .container .nav,
+    .play .container nav {
+      justify-content: flex-end; }
+      .play .container .nav a,
+      .play .container nav a {
+        border-radius: 50%; }
     .play .container .drawing {
       text-align: center; }
       .play .container .drawing .canvas-container {
@@ -96,10 +179,12 @@ h2 {
 .home {
   position: relative;
   height: 100%;
-  width: 100%;
+  width: 100vw;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  overflow-y: hidden; }
+  align-items: stretch; }
+  .home .container {
+    overflow: hidden; }
   .home #background-mask {
     background-color: rgba(255, 255, 255, 0.7);
     position: absolute;
@@ -109,10 +194,10 @@ h2 {
     background-clip: padding-box;
     padding: 100px; }
   .home #background-squiggles {
-    stroke-width: 9px;
     position: absolute;
     z-index: -2;
-    height: 100%; }
+    height: 100%;
+    stroke-width: 9px; }
   .home .squig {
     width: 100%;
     stroke-width: 7px; }
@@ -143,9 +228,6 @@ h2 {
       display: flex;
       flex-direction: column; }
       .home .container .button-container .button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         width: 30vw;
         height: 30vw;
         margin-bottom: 2rem; }
@@ -153,22 +235,27 @@ h2 {
           width: 100%;
           height: auto; }
 
-#home-link {
-  padding: 0.66rem;
-  font-size: 1rem;
-  border: 1.5px solid black; }
-  #home-link img {
-    width: 20px;
-    height: 20px; }
+.login .container {
+  height: 100vh;
+  justify-content: center; }
+  .login .container form {
+    padding: 1rem;
+    margin-bottom: 3rem;
+    margin-bottom: 3rem; }
+    .login .container form label {
+      display: block; }
+
+.account {
+  position: relative;
+  height: 100%;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch; }
 
 .gallery {
   background-color: white;
   position: relative; }
-  .gallery nav {
-    display: flex;
-    padding: 1rem 1rem 0 1rem;
-    justify-content: space-between;
-    width: 100%; }
   .gallery h1 {
     text-align: center; }
     .gallery h1 img {
@@ -209,20 +296,23 @@ h2 {
         background-color: rgba(0, 0, 0, 0);
         border: none; }
 
+.game ul,
+.game li {
+  list-style-type: none; }
+
+.game .game-info {
+  margin: 1rem; }
+  .game .game-info .game-link {
+    display: none; }
+
 .game .button-container {
   width: 100%;
   display: flex;
   justify-content: center; }
   .game .button-container .button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 8rem;
     height: 8rem;
     margin: 1rem; }
-    .game .button-container .button img {
-      width: 100%;
-      height: auto; }
 
 .game #imgCont {
   width: 95vw;

@@ -21,6 +21,9 @@ router.use("/", myTurn, (req, res, next) => {
 });
 
 router.get("/", function (req, res, next) {
+  console.log(req.user);
+
+  let isAdmin;
   //not in private game
   req.session.gameId = null;
   req.session.gameName = null;
@@ -31,14 +34,28 @@ router.get("/", function (req, res, next) {
   // console.log("session", req.session);
   let waitingGames = req.session.waitingGames;
 
+  if (req.user) {
+    isAdmin = req.user.isAdmin;
+  }
+
   if (req.session && !req.session.animate) {
     req.session.animate = true;
 
-    res.render("index", { animate: false, user: req.user, waitingGames });
+    res.render("index", {
+      animate: false,
+      user: req.user,
+      waitingGames,
+      isAdmin,
+    });
   } else {
     // console.log(req.user);
 
-    res.render("index", { animate: true, user: req.user, waitingGames });
+    res.render("index", {
+      animate: true,
+      user: req.user,
+      waitingGames,
+      isAdmin,
+    });
   }
 });
 

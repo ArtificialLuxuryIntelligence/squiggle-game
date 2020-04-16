@@ -1,12 +1,13 @@
-<div class="home">
-
+<div class="account">
   <div class="container">
-  {{!-- <header class="title">
-    <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
-  </header> --}}
+    {{!--
+    <header class="title">
+      <h1><span>The</span> <span>Squiggle</span> <span>Game</span></h1>
+    </header>
+    --}}
 
-    <div> 
-      <p>You're logged in, {{user.name}}</p>
+    <div class="nav">
+      {{!-- <p>You're logged in, {{ user.name }}</p> --}}
       <a href="/users/logout">LOGOUT</a>
       <a href="/">HOME</a>
     </div>
@@ -17,62 +18,64 @@
 
     {{/each}}
     {{/if}}
+<div class="games-list">
+    {{#if waitingGames}}
+    <div class="notification">
+      <h3>It's your turn!</h3>
+      <ul>
+        {{#each waitingGames}}
+        <li>
+           <a href="/game/{{ this._id }}">{{ this.name }}</a>
 
-
-      {{#if waitingGames}}
-  <h2>It's your turn!</h2>
-  <ul>
-    {{#each waitingGames}}
-     <li> <span>{{this.name}}</span> <span><a href="/game/{{this._id}}">Play now</a></span></li>
-     {{/each}}   
-  </ul>  
-  <hr/>
-  {{/if}}
-
-
-
-
-  <h3>All Games</h3>
-  <ul>
-    {{#each user.games}}
-      {{!-- <li><a href="/game/{{this.id}}">{{this.name}}</a></li> --}}
-      <li><a href="/game/{{this.id}}">{{this.name}}</a></li>
-
-    {{/each}}
-  </ul>  
-
-
-
-
-
-  {{#if joinId}}
-  <h3>Join game</h3>
-<form id="join-game" action="/" method="POST">
-<input name ="id" type="text" value={{joinId}}>
-<input type="submit" value="join"></form>
-
+        </li>
+        {{/each}}
+      </ul>
+    </div>
     {{/if}}
 
 
-<h3>Create a new game</h3>
-<form id="new-game" action="/newgame" method="POST">
-<input name ="gamename" type="text">
-<input type="submit" value="Create"></form>
-  {{!-- <div class="button-container">
+  <h3>All Games</h3>
+    <ul>
+      {{#each user.games}}
+      <li>
+        <a href="/game/{{ this.id }}">{{ this.name }}</a>
+      </li>
 
-    <a id="playbutton" class="button" href="/play">    <img src="assets/svg/playhome.svg" alt=""> </a>
+      {{/each}}
+    </ul>
+
+</div>
+  
+
+    {{#if joinId}}
+    <h3>Join game</h3>
+    <form id="join-game" action="/" method="POST">
+      <input name="id" type="text" value="{{ joinId }}" />
+      <input type="submit" value="join" />
+    </form>
+{{else}}
+
+   <h3>Create a new game</h3>
+    <form id="new-game" action="/newgame" method="POST">
+      <input name="gamename" type="text" />
+      <input type="submit" value="Create" />
+    </form>
+    {{/if}}
 
  
 
-    <a id="playbutton" class="button" href="/gallery">    <img src="assets/svg/galleryhome.svg" alt=""> </a>
+    {{!--
+    <div class="button-container">
+      <a id="playbutton" class="button" href="/play">
+        <img src="assets/svg/playhome.svg" alt="" />
+      </a>
 
-
-  </div> --}}
-
+      <a id="playbutton" class="button" href="/gallery">
+        <img src="assets/svg/galleryhome.svg" alt="" />
+      </a>
+    </div>
+    --}}
   </div>
-
 </div>
 
-
 <script type="text/javascript" src="/javascripts/account.js"></script>
-
