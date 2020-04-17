@@ -20,6 +20,9 @@ require("dotenv").config();
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
+var galleryRouter = require("./routes/gallery");
+var playRouter = require("./routes/play");
+var gameRouter = require("./routes/game");
 
 var app = express();
 app.use(cors());
@@ -69,6 +72,9 @@ app.get("/favicon.ico", (req, res) => res.status(204));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
+app.use("/gallery", galleryRouter);
+app.use("/play", playRouter);
+app.use("/game", gameRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

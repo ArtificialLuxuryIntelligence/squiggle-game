@@ -648,7 +648,7 @@ const addListeners = (path) => {
 
 window.addEventListener("load", async () => {
   // run different function depending on pathname: newsquiggle or play
-  if (window.location.pathname.split("/")[1] == "newsquiggle") {
+  if (window.location.pathname.split("/")[2] == "newsquiggle") {
     generateColourScheme(colours);
     backgroundFill();
     ctx.strokeStyle = strokeColour;

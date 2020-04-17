@@ -15,7 +15,7 @@
     </div>
 
     <div class="game-info">
-      <p>Game name: {{ game.name }}</p>
+      <h2>{{ game.name }}</h2>
 
       <p>Your friends can join with this link:</p>
 
@@ -26,14 +26,14 @@
       </p>
       --}} {{!--
       <p>
-        <span id="gameLink">http://localhost:3000/join?id={{ game.id }}</span>
+        <span id="gameLink">http://localhost:3000/game/join?id={{ game.id }}</span>
         <span><button id="copyLink">Copy link to clipboard</button></span>
       </p>
       --}}
 
       <p>
         <span id="game-link"
-          >https://squiggle-game.herokuapp.com/join?id={{ game.id }}</span
+          >https://squiggle-game.herokuapp.com/game/join?id={{ game.id }}</span
         >
         <span><button id="copyLink">Copy link to clipboard</button></span>
       </p>
