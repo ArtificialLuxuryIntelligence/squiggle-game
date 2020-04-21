@@ -673,6 +673,7 @@ window.addEventListener("load", async () => {
     scaleFactor = cwidth / originalSize;
 
     // this section saves the squiggle (as base64 png) to the form input before the squiggle is animated
+    //(might just save as array of points in the future - smaller than png)
     renderScaling();
     drawFromPoints(squiggle, squiggleColour);
     drawScaling();
