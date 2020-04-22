@@ -229,6 +229,9 @@ let toTopOptions = {
 };
 
 const homeButton = document.querySelector("#home-link");
+const loadAllButton = document.getElementById("load");
+
+loadAllButton.addEventListener("click", loadAllSquiggles);
 
 let toTopObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) =>

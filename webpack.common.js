@@ -8,13 +8,13 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: {
-    index: "./javascripts/index.js",
-    account: "./javascripts/account.js",
-    admin: "./javascripts/admin.js",
-    gallery: "./javascripts/gallery.js",
-    game: "./javascripts/game.js",
-    play: "./javascripts/play.js",
-    styles: "./stylesheets/main.scss",
+    index: "./scripts/pages/index.js",
+    account: "./scripts/pages/account.js",
+    admin: "./scripts/pages/admin.js",
+    gallery: "./scripts/pages/gallery.js",
+    game: "./scripts/pages/game.js",
+    play: "./scripts/pages/playclass.js",
+    styles: "./styles/main.scss",
   },
   output: {
     path: path.resolve(__dirname, "public"),
@@ -45,8 +45,8 @@ module.exports = {
     ],
   },
   plugins: [
-    new CopyPlugin([{ from: "assets", to: "assets" }]),
-    new MiniCssExtractPlugin({ filename: "[name].css" }),
     new CleanWebpackPlugin(),
+    new CopyPlugin([{ from: "images", to: "images" }]),
+    new MiniCssExtractPlugin({ filename: "[name].css" }),
   ],
 };

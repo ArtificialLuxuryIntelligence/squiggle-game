@@ -12,6 +12,11 @@
 // event listeners
 // on window load
 
+setTimeout(() => {
+  console.log("SF", scaleFactor);
+  console.log("SF1", scaleFactor1);
+}, 500);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const body = document.body;
 //drawing canvas
@@ -66,7 +71,7 @@ let fillColour = "white";
 const maxWidth = 600;
 
 const cwidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth; //max canvas width 600px in brower
-const cheight = window.innerHeight;
+// const cheight = window.innerHeight;
 
 canvas.style.width = cwidth + "px";
 canvas.style.height = cwidth + "px";
@@ -98,7 +103,7 @@ let scaling = { renderScaling: true };
 
 //for rendering squiggle
 const renderScaling = () => {
-  // console.log(`render scaling called`);
+  console.log(`render scaling called`);
   ctx.scale(scaleFactor, scaleFactor);
   ctx2.scale(scaleFactor, scaleFactor);
 
@@ -111,6 +116,8 @@ const renderScaling = () => {
 
 //inverses renderscaling
 const drawScaling = () => {
+  console.log(`draw scaling called`);
+
   let invScaleFactor = 1 / scaleFactor;
   ctx.scale(invScaleFactor, invScaleFactor);
   ctx2.scale(invScaleFactor, invScaleFactor);
@@ -186,7 +193,7 @@ const drawLoop = () => {
 
 //drawing from points uses stroke once per complete line => smoother
 const rerender = () => {
-  ctx.clearRect(0, 0, cwidth, cheight);
+  ctx.clearRect(0, 0, cwidth, cwidth);
   backgroundFill();
   renderScaling();
   if (squiggle) {
@@ -410,7 +417,7 @@ const mouseUpHandler = () => {
   cancelAnimationFrame(drawAnim);
 
   if (isDrawing) {
-    ctx2.clearRect(0, 0, cwidth, cheight);
+    ctx2.clearRect(0, 0, cwidth, cwidth);
     // ctx.closePath();
     isDrawing = false;
     //remove any point arrays with no content (a quick click or touch doesn't draw anything)
@@ -432,7 +439,7 @@ const undoHandler = (points) => {
 
   // ctx.clearRect(0, 0, cwidth, cheight);
   // backgroundFill();
-  // renderScaling();
+  // this.renderScaling();
   // drawFromPoints(squiggle, squiggleColour);
   // drawScaling();
   // drawFromPoints(points, strokeColour);
@@ -558,7 +565,7 @@ const drawCircle = (lastArray, pointer) => {
   let lastPoint = lastArray.slice(-1)[0];
   // console.log(lastPoint);
 
-  ctx2.clearRect(0, 0, cwidth, cheight);
+  ctx2.clearRect(0, 0, cwidth, cwidth);
 
   if (lastArray.length == 0) {
     return;
@@ -680,7 +687,7 @@ window.addEventListener("load", async () => {
     let dataURL = await canvas.toDataURL();
     input2.value = dataURL;
     IDinput.value = squiggleId;
-    ctx.clearRect(0, 0, cwidth, cheight);
+    ctx.clearRect(0, 0, cwidth, cwidth);
     backgroundFill();
     animateSquiggle();
   }
