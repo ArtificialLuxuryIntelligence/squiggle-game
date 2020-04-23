@@ -1,3 +1,5 @@
+import { drawFromPoints } from "../components/canvas/drawFromPoints";
+
 const cont = document.getElementById("gallery-container");
 const squigCont = document.getElementById("squiggle-container");
 const squigAllCont = document.getElementById("allsquiggle-container");
@@ -11,7 +13,7 @@ const pageCont = document.querySelector(".container");
 window.onload = async function () {
   await loadImages();
   await loadSquiggles();
-  addHeaders();
+  // addHeaders();
 };
 
 const formButton = (squiggle, buttonValue, action) => {
@@ -73,25 +75,6 @@ async function loadImages() {
   });
 }
 
-const drawFromPoints = (collection, strokecolour, ctx) => {
-  ctx.strokeStyle = strokecolour;
-  ctx.lineWidth = "6";
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  for (let i = 0; i < collection.length; i++) {
-    // ctx.moveTo(collection[i][0].x, collection[i][0].y);
-    ctx.beginPath();
-    for (let j = 0; j < collection[i].length; j++) {
-      // linear;
-      ctx.lineTo(collection[i][j].x, collection[i][j].y);
-      // ctx.moveTo(collection[i][j].x, collection[i][j].y);
-    }
-    ctx.stroke();
-    ctx.closePath();
-  }
-};
-
 async function loadSquiggles() {
   const fetchSquiggles = async () => {
     // const response = await fetch("/admin/removedsquiggles");
@@ -111,7 +94,7 @@ async function loadSquiggles() {
 
     let line = await JSON.parse(squiggle.line);
 
-    drawFromPoints(line, "blue", ctx);
+    drawFromPoints(ctx, line, "blue");
     return canvas;
   }
 
@@ -154,7 +137,7 @@ async function loadAllSquiggles() {
     canvas.style.border = "1px solid";
     let ctx = canvas.getContext("2d");
     let line = await JSON.parse(squiggle.line);
-    drawFromPoints(line, "blue", ctx);
+    drawFromPoints(ctx, line, "blue");
     return canvas;
   }
 
@@ -189,24 +172,24 @@ async function loadAllSquiggles() {
       squigAllCont.insertBefore(imgcont, loader3);
     });
   })();
-  addHeaders();
+  // addHeaders();
 }
 
 // add auth headers to all button API calls
-const addHeaders = () => {
-  let forms = document.querySelectorAll("form");
+// const addHeaders = () => {
+//   let forms = document.querySelectorAll("form");
 
-  forms.forEach((form) => {
-    console.log(form);
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      let action = e.target.action;
-      fetch(action, {
-        method: "POST",
-      });
-    });
-  });
-};
+//   forms.forEach((form) => {
+//     console.log(form);
+//     form.addEventListener("submit", (e) => {
+//       e.preventDefault();
+//       let action = e.target.action;
+//       fetch(action, {
+//         method: "POST",
+//       });
+//     });
+//   });
+// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

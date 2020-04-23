@@ -1,39 +1,18 @@
+import { saveToClipboard } from "../globals/saveToClipboard";
+
 // const copyIdButton = document.getElementById("copyId");
 // copyIdButton.addEventListener("click", () => {
 //   saveToClipboard("gameId");
 // });
-
+const cont = document.getElementById("imgCont");
 const copyLinkButton = document.getElementById("copyLink");
+
 copyLinkButton.addEventListener("click", () => {
   saveToClipboard("game-link");
 });
 
-function saveToClipboard(id) {
-  /* Get the text field */
-  console.log(id);
-  let el = document.getElementById(id);
-  let value = el.innerText;
-  console.log(value);
-
-  let temp = document.createElement("input");
-  temp.setAttribute("value", value);
-  document.body.appendChild(temp);
-
-  /* Select the text field */
-  temp.select();
-  temp.setSelectionRange(0, 99999); /*For mobile devices*/
-
-  /* Copy the text inside the text field */
-  document.execCommand("copy");
-  temp.remove();
-
-  /* Alert the copied text */
-  alert("Copied: " + value);
-}
-
 ///load latest squiggle
 
-const cont = document.getElementById("imgCont");
 //functions basically from gallery.js
 
 async function loadImage() {
@@ -69,9 +48,6 @@ async function loadImage() {
   author.setAttribute("class", "author-tag");
   imgcont.appendChild(author);
   cont.appendChild(imgcont);
-
-  // console.log(pageNum);
-  // console.log(squiggles);
 }
 
 loadImage();

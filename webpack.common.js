@@ -13,7 +13,7 @@ module.exports = {
     admin: "./scripts/pages/admin.js",
     gallery: "./scripts/pages/gallery.js",
     game: "./scripts/pages/game.js",
-    play: "./scripts/pages/playclass.js",
+    play: "./scripts/pages/play.js",
     styles: "./styles/main.scss",
   },
   output: {

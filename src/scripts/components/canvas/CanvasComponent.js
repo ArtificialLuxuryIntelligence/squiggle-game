@@ -1,20 +1,15 @@
 import { generateColourScheme } from "./colours";
+import { drawFromPoints } from "./drawFromPoints";
 
 //import fetch squiggle (make more general?)
 //import drawfrompts
 
 const path = window.location.pathname.split("/")[1];
 const chain = 4;
-const fillColour = "white";
+const fillColour = "white"; //background
 const maxWidth = 600;
 
 //helper function
-function midPointOf(p1, p2) {
-  return {
-    x: p1.x + (p2.x - p1.x) / 2,
-    y: p1.y + (p2.y - p1.y) / 2,
-  };
-}
 
 //this will be used if pathname is right in play.js
 const fetchSquiggle = async () => {
@@ -39,6 +34,7 @@ class CanvasComponent {
     originalSizeInput,
   }) {
     //DOM
+    this.cwidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth; //max this.canvas width 600px in brower
     //buttons
     this.rotate = document.getElementById(rotate);
     this.undo = document.getElementById(undo);
@@ -50,15 +46,12 @@ class CanvasComponent {
     this.input2 = document.getElementById(pngInput);
     this.input3 = document.getElementById(originalSizeInput);
     this.IDinput = document.getElementById(squiggleIdInput);
-
     this.reportSquiggle = document.getElementById(reportSquiggle);
     //canvas
     this.canvas = document.getElementById(canvas);
     this.ctx = this.canvas.getContext("2d");
     this.canvas2 = document.getElementById(overlayCanvas);
     this.ctx2 = this.canvas2.getContext("2d");
-
-    this.cwidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth; //max this.canvas width 600px in brower
 
     if (squiggleData) {
       this.originalSize = squiggleData.originalSize;
@@ -135,7 +128,7 @@ class CanvasComponent {
         //(might just save as array of this.points in the future - smaller than png)
 
         this.renderScaling();
-        this.drawFromPoints(this.squiggle, this.colours.squiggleColour);
+        drawFromPoints(this.ctx, this.squiggle, this.colours.squiggleColour);
         this.drawScaling();
 
         let dataURL = await this.canvas.toDataURL();
@@ -178,12 +171,12 @@ class CanvasComponent {
 
     // same as rerender function: (with save)
     this.renderScaling(); //ok
-    this.drawFromPoints(this.squiggle, this.colours.squiggleColour);
+    drawFromPoints(this.ctx, this.squiggle, this.colours.squiggleColour);
     this.drawScaling();
     this.ctx.strokeStyle = this.colours.strokeColour;
     let dataURL = await this.canvas.toDataURL(); //saves newly rotated squiggle
     this.input2.value = dataURL;
-    this.drawFromPoints(this.points, this.colours.strokeColour);
+    drawFromPoints(this.ctx, this.points, this.colours.strokeColour);
     this.isDrawing = false;
     //
   }
@@ -223,34 +216,34 @@ class CanvasComponent {
   }
 
   // drawFromPoints //imported function?? (with extra argument - this.canvas/context)
-  drawFromPoints(collection, strokecolour) {
-    this.ctx.strokeStyle = strokecolour;
-    for (let i = 0; i < collection.length; i++) {
-      // this.ctx.moveTo(collection[i][0].x, collection[i][0].y);
-      this.ctx.beginPath();
-      for (let j = 0; j < collection[i].length - 1; j++) {
-        // linear;
-        // this.ctx.lineTo(collection[i][j].x, collection[i][j].y);
+  // drawFromPoints(collection, strokecolour) {
+  //   this.ctx.strokeStyle = strokecolour;
+  //   for (let i = 0; i < collection.length; i++) {
+  //     // this.ctx.moveTo(collection[i][0].x, collection[i][0].y);
+  //     this.ctx.beginPath();
+  //     for (let j = 0; j < collection[i].length - 1; j++) {
+  //       // linear;
+  //       // this.ctx.lineTo(collection[i][j].x, collection[i][j].y);
 
-        //quadratic:
-        const midPoint = midPointOf(collection[i][j], collection[i][j + 1]);
-        this.ctx.quadraticCurveTo(
-          collection[i][j].x,
-          collection[i][j].y,
-          midPoint.x,
-          midPoint.y
-        );
-      }
-      //straight line to last pt.
-      this.ctx.lineTo(
-        collection[i][collection[i].length],
-        collection[i][collection[i].length]
-      );
+  //       //quadratic:
+  //       const midPoint = midPointOf(collection[i][j], collection[i][j + 1]);
+  //       this.ctx.quadraticCurveTo(
+  //         collection[i][j].x,
+  //         collection[i][j].y,
+  //         midPoint.x,
+  //         midPoint.y
+  //       );
+  //     }
+  //     //straight line to last pt.
+  //     this.ctx.lineTo(
+  //       collection[i][collection[i].length],
+  //       collection[i][collection[i].length]
+  //     );
 
-      this.ctx.stroke();
-      this.ctx.closePath();
-    }
-  }
+  //     this.ctx.stroke();
+  //     this.ctx.closePath();
+  //   }
+  // }
 
   //  backgroundFill (probably overused)
   backgroundFill() {
@@ -274,10 +267,10 @@ class CanvasComponent {
     this.backgroundFill();
     this.renderScaling(); //ok
     if (this.squiggle) {
-      this.drawFromPoints(this.squiggle, this.colours.squiggleColour);
+      drawFromPoints(this.ctx, this.squiggle, this.colours.squiggleColour);
     }
     this.drawScaling();
-    this.drawFromPoints(this.points, this.colours.strokeColour);
+    drawFromPoints(this.ctx, this.points, this.colours.strokeColour);
   }
 
   //  animateSquiggle
@@ -289,7 +282,7 @@ class CanvasComponent {
         let s = squiggle.slice(0, i + 1);
         let pop = s.pop();
         s.push(pop.slice(0, p + 1));
-        this.drawFromPoints(s, this.colours.squiggleColour);
+        drawFromPoints(this.ctx, s, this.colours.squiggleColour);
         p++;
 
         requestAnimationFrame(animate);
