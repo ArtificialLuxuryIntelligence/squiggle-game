@@ -195,6 +195,8 @@ class CanvasComponent {
 
     this.ctx.lineWidth = this.originalSize / 60;
     this.ctx2.lineWidth = this.originalSize / 300;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
 
     // scaling.renderScaling = true;
     // console.log(`render scaling run`);
