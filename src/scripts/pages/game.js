@@ -52,6 +52,25 @@ async function loadImage() {
 
 loadImage();
 
+/// open delete modal;
+
+let modal = document.querySelector("#delete-modal");
+let modalNo = modal.querySelector("#close-modal");
+modalNo.addEventListener("click", (e) => {
+  e.preventDefault();
+  toggleModal();
+});
+document.querySelector("#modal-toggle").addEventListener("click", toggleModal);
+
+function toggleModal() {
+  if (modal.style.display == "block") {
+    modal.style.display = "none";
+  } else {
+    modal.style.display = "block";
+  }
+}
+//////////////
+
 //////////////
 
 // PUSH NOTIFICATIONS TEST

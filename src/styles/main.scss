@@ -454,6 +454,15 @@ nav {
         margin-bottom: 1rem;
       }
     }
+    #join-form {
+      text-align: center;
+      h2 {
+        margin-bottom: 4rem;
+      }
+    }
+    .spacer {
+      height: 20%;
+    }
   }
 }
 
@@ -590,6 +599,16 @@ nav {
     //   }
     // }
   }
+  #delete-modal {
+    margin-top: 2rem;
+    display: none;
+    text-align: center;
+    input,
+    button {
+      width: 4rem;
+      height: 2rem;
+    }
+  }
 }
 
 // ------------------------------ admin page
@@ -682,7 +701,7 @@ nav {
   //   }
   // }
   .container {
-    // min-height: 100%;
+    min-height: 100vh;
     height: 100%;
     border-left: 3px solid black;
     border-right: 3px solid black;

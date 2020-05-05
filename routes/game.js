@@ -106,18 +106,40 @@ router.get("/:id", auth, function (req, res, next) {
     if (err) {
       res.render("account", { message: "error", user: req.user });
     }
+
+    // game not found
+
     if (!game) {
       console.log("NO GAME");
-      return res.redirect("/");
+      User.findOneAndUpdate(
+        { _id: req.user.id },
+        { $pull: { games: { id: id } } },
+        (err, doc) => {
+          if (err) {
+            //user data??->
+            console.log("", err);
+            return res.redirect("/users/account");
+          }
+          if (doc) {
+            console.log("doc", doc);
+
+            return res.redirect("/users/account");
+          }
+        }
+      );
+      return;
     }
 
     //game found
 
     req.session.gameId = id;
     req.session.gameName = game.name;
+    let gameAdmin = game.admin == req.user.name;
 
     if (game.players.length === 1) {
       res.render("game", {
+        gameAdmin: gameAdmin,
+
         user: req.user,
         game: game,
         noPlayers: true,
@@ -133,13 +155,14 @@ router.get("/:id", auth, function (req, res, next) {
       } else {
         myTurn.bool = false;
       }
-      console.log(game);
+      console.log("GAME", game);
 
       // let lastSquiggle;
 
       // let latestCompletedSquiggle = await CompletedSquiggle.findOne({gameId:game._id})
 
       res.render("game", {
+        gameAdmin: gameAdmin,
         game: game,
         user: req.user,
         myTurn: myTurn,
@@ -182,6 +205,38 @@ router.post("/new", auth, (req, res, next) => {
         }
       }
     );
+  });
+});
+
+router.post("/delete/:id", auth, (req, res, next) => {
+  // console.log(req.user.id);
+
+  const gameId = req.params.id;
+  const userId = req.user.id;
+
+  Game.findByIdAndDelete(gameId, (err, doc) => {
+    if (err) {
+      console.log(err);
+
+      res.redirect("/users/account");
+    } else {
+      User.findOneAndUpdate(
+        { _id: req.user.id },
+        { $pull: { games: { id: gameId } } },
+        (err, doc) => {
+          if (err) {
+            //user data??->
+            res.redirect("/users/account");
+            console.log(err);
+          }
+          if (doc) {
+            console.log("doc", doc);
+
+            res.redirect("/users/account");
+          }
+        }
+      );
+    }
   });
 });
 

@@ -18,6 +18,21 @@
 
     {{/each}}
     {{/if}}
+
+  
+
+    {{#if joinId}}
+    <div id=join-form>
+     <h2>Join game</h2>
+      <form id="join-game" action="/" method="POST">
+        <input name="id" type="text" value="{{ joinId }}" />
+        <input type="submit" value="join" />
+      </form>
+
+    </div>
+   <p class="spacer"></p>
+{{else}}
+
 <div class="games-list">
     {{#if waitingGames}}
     <div class="notification">
@@ -45,15 +60,6 @@
     </ul>
 
 </div>
-  
-
-    {{#if joinId}}
-    <h3>Join game</h3>
-    <form id="join-game" action="/" method="POST">
-      <input name="id" type="text" value="{{ joinId }}" />
-      <input type="submit" value="join" />
-    </form>
-{{else}}
 
 <div class="new-game">
   <h3>Create a new game</h3>
