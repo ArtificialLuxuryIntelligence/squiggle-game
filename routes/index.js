@@ -14,8 +14,8 @@ const auth = require("./middleware/auth");
 const myTurn = require("./middleware/myTurn");
 
 router.use("/", myTurn, (req, res, next) => {
-  console.log("SESSION", req.session);
-  console.log("USER", req.user);
+  // console.log("SESSION", req.session);
+  // console.log("USER", req.user);
 
   next();
 });

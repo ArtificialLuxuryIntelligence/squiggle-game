@@ -114,6 +114,22 @@
     {{/if}}
 
     {{/if}}
+
+    {{#if gameAdmin}}
+
+    <button id="modal-toggle">Delete game</button>
+    <div id="delete-modal">
+      <form action="delete/{{ game.id }}" method="POST">
+        <p>Delete game?</p>
+        <input type="submit" value="yes">
+        <button id="close-modal">no</button>
+      </form>
+    </div>
+
+   
+
+
+    {{/if}}
   </div>
 </div>
 

@@ -143,45 +143,6 @@ nav {
 .notification {
 }
 
-.games-list {
-  text-align: center;
-  ul,
-  li {
-    margin: 0px;
-    padding: 0px;
-    list-style: none;
-  }
-
-  ul {
-    margin: 1rem;
-    // border-bottom: 1px solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    overflow: hidden;
-  }
-
-  li {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    // margin-right: 10px;
-    text-align: center;
-  }
-
-  a {
-    padding: 0.5rem;
-    text-decoration: none;
-    color: black;
-    display: block;
-    flex: 1 1 auto;
-    // background-color: #ccc;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-}
-
 // ------------------------------ play pages
 
 .play {
@@ -349,9 +310,20 @@ nav {
 
     .nav {
       .waiting-games {
-        border-color: red;
+        animation: 1s linear infinite alternate both flash;
+      }
+      @keyframes flash {
+        0% {
+          border-color: red;
+          color: red;
+        }
+        100% {
+          border-color: black;
+          color: black;
+        }
       }
     }
+
     .squig {
       flex: 1 0 auto;
       margin-top: auto;
@@ -434,6 +406,64 @@ nav {
   overflow: hidden;
   display: flex;
   align-items: stretch;
+  .container {
+    justify-content: space-between;
+    .games-list {
+      text-align: center;
+      ul,
+      li {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+      }
+
+      ul {
+        margin: 1rem;
+        // border-bottom: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        overflow: hidden;
+      }
+
+      li {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        // margin-right: 10px;
+        text-align: center;
+      }
+
+      a {
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        text-decoration: none;
+        color: rgb(148, 36, 36);
+        display: block;
+        flex: 1 1 auto;
+        // background-color: #ccc;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    .new-game {
+      margin-bottom: 2rem;
+      h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+    }
+    #join-form {
+      text-align: center;
+      h2 {
+        margin-bottom: 4rem;
+      }
+    }
+    .spacer {
+      height: 20%;
+    }
+  }
 }
 
 // ------------------------------ gallery page
@@ -569,6 +599,16 @@ nav {
     //   }
     // }
   }
+  #delete-modal {
+    margin-top: 2rem;
+    display: none;
+    text-align: center;
+    input,
+    button {
+      width: 4rem;
+      height: 2rem;
+    }
+  }
 }
 
 // ------------------------------ admin page
@@ -661,7 +701,7 @@ nav {
   //   }
   // }
   .container {
-    // min-height: 100%;
+    min-height: 100vh;
     height: 100%;
     border-left: 3px solid black;
     border-right: 3px solid black;
