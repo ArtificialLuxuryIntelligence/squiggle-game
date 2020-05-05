@@ -103,11 +103,6 @@ input {
 
 .nav {
   a {
-    text-decoration: none;
-    color: black;
-    padding: 0.2rem;
-    // background-color: blue;
-    font-size: 1.2rem;
   }
 }
 
@@ -135,8 +130,13 @@ nav {
     }
   }
   a {
-    border-radius: 2px;
-    border: 1px solid black;
+    border: 1px solid rgb(0, 0, 0);
+    text-decoration: none;
+    color: black;
+    padding: 0.7rem;
+    // background-color: blue;
+    font-size: 1.2rem;
+    border-radius: 6px;
   }
 }
 
@@ -264,11 +264,7 @@ nav {
   display: flex;
   align-items: stretch;
   //why is there overflow in the first place??
-  .button-container {
-  }
-  .container {
-    overflow: hidden;
-  }
+
   #background-mask {
     background-color: rgba(255, 255, 255, 0.7);
     // background: linear-gradient(
@@ -312,14 +308,6 @@ nav {
     }
   }
 
-  .squig {
-    // height: 100px;
-    width: 100%;
-    stroke-width: 7px;
-
-    // stroke-width: 40px;
-  }
-
   .animate {
     stroke-dasharray: $title-dash-offset;
     stroke-dashoffset: 0;
@@ -354,11 +342,31 @@ nav {
     // justify-content: center;
     height: 100%;
     display: flex;
+    overflow: hidden;
+
     // flex-direction: column;
     // justify-content: space-evenly;
 
+    .nav {
+      .waiting-games {
+        border-color: red;
+      }
+    }
+    .squig {
+      flex: 1 0 auto;
+      margin-top: auto;
+      margin-bottom: 12%;
+      height: auto;
+      width: 100%;
+      stroke-width: 7px;
+
+      // stroke-width: 40px;
+    }
+
     .button-container {
-      // margin-top: 40vh;
+      flex: 0 0 auto;
+
+      margin-bottom: 10%;
       display: flex;
       flex-direction: column;
       // width: 60%;
@@ -396,16 +404,23 @@ nav {
 .login {
   .container {
     height: 100vh;
-    justify-content: center;
-
+    .nav {
+      margin-bottom: 15%;
+    }
     form {
-      label {
-        display: block;
-      }
       padding: 1rem;
       margin-bottom: 3rem;
 
       margin-bottom: 3rem;
+      input {
+        border-radius: 4px;
+      }
+      input[type="submit"] {
+        margin-top: 0.5rem;
+      }
+      label {
+        display: block;
+      }
     }
   }
 }
@@ -585,6 +600,11 @@ nav {
 //-------------------------------------------------------------------------------------------MEDIA QUERIES
 //---------------------------------------------------------------------------------------------------------------------
 @media (min-width: 600px) {
+  nav {
+  }
+  .notification {
+  }
+
   .home {
     .container {
       height: auto;
@@ -634,12 +654,17 @@ nav {
     // border: 3px solid black;
     // display: flex;
     // justify-content: center;
-    .container {
-      // min-height: 100%;
-      height: 100%;
-      border-left: 3px solid black;
-      border-right: 3px solid black;
-    }
+  }
+  // .login {
+  //   .container {
+  //     height: 100vh;
+  //   }
+  // }
+  .container {
+    // min-height: 100%;
+    height: 100%;
+    border-left: 3px solid black;
+    border-right: 3px solid black;
   }
   // body div:first-child >div {
   //   width: 70%;
@@ -654,6 +679,9 @@ nav {
   // }
   .home {
     .container {
+      .squig {
+        margin-bottom: 0;
+      }
       .button-container {
         .button {
           margin: 4rem;
