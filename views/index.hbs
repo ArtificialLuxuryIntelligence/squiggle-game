@@ -11,16 +11,25 @@
       <!-- <p>You're logged in, {{ user.name }}</p> -->
       <a href="/users/logout">LOGOUT</a>
 
-      <a href="/users/account">Play with friends</a>
+    {{#if waitingGames}}
+      <a class="waiting-games" id="play-friends" href="/users/account">Play with friends</a>
+    {{else}}
+      <a id="play-friends" href="/users/account">Play with friends</a>
+
+    {{/if}}
+
+
       {{#if isAdmin}}
       <a href="/admin">Admin</a>
       {{/if}}
     </div>
-    {{#if waitingGames}}
+
+
+    {{!-- {{#if waitingGames}}
     <div class="notification">
       <div class="games-list">
 
- <h3>It's your turn!</h3>
+    <h3>It's your turn!</h3>
       <ul>
         {{#each waitingGames}}
         <li>
@@ -31,7 +40,7 @@
       </div>
      
     </div>
-    {{/if}}
+    {{/if}} --}}
 
     {{else}}
     <div class="nav"><a href="/login">LOGIN</a></div>
@@ -43,7 +52,7 @@
     {{!-- background squiggles --}}
     <div id="background-mask"></div>
 
-    {{!-- id="background-squiggles" class="animate-background" --}}
+    {{!-- background squiggles --}}
     <svg
       id="background-squiggles"
       class="animate-background"
@@ -532,7 +541,7 @@
 
     <div class="button-container">
       <a id="playbutton" class="button button-text" href="/play">
-        <img src="assets/svg/playhome.svg" alt="" />
+        <img src="/images/svg/playhome.svg" alt="" />
       </a>
 
       {{!--
@@ -542,7 +551,7 @@
       --}}
 
       <a id="playbutton" class="button button-text" href="/gallery">
-        <img src="assets/svg/galleryhome.svg" alt="" />
+        <img src="/images/svg/galleryhome.svg" alt="" />
       </a>
     </div>
   </div>

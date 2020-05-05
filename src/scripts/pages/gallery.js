@@ -2,7 +2,7 @@ const cont = document.getElementById("gallery-container");
 const loader = document.getElementById("loader");
 const pageCont = document.querySelector(".container");
 
-// 'if game' hackily tells us if it's a group game or not
+// 'if game' hackily tells us if it's a group game or not (gameName element is conditionally rendered by hbs)
 const game = document.getElementById("gameName");
 
 // pageCont.style.width = window.innerWidth;
@@ -17,7 +17,7 @@ if ("ontouchstart" in document.documentElement) {
 } else {
 }
 
-//fetch squiggle
+//--------------------------------------------------------------------------------------fetch squiggle
 
 async function loadImages(page) {
   const fetchSquiggles = async (page) => {
@@ -82,8 +82,8 @@ async function loadImages(page) {
   pageNum++;
 }
 
+////--------------------------------------------------------------------------------------
 // intersection observers
-
 // (lazy load images on scroll)
 
 let options = {
