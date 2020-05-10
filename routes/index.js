@@ -1,7 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-// const session = require("express-session");
 const router = express.Router();
 
 const Squiggle = require("../models/squiggle");
@@ -10,13 +7,11 @@ const User = require("../models/user");
 const Game = require("../models/game");
 
 const loggedIn = require("./middleware/loggedIn");
-const auth = require("./middleware/auth");
 const myTurn = require("./middleware/myTurn");
 
 router.use("/", myTurn, (req, res, next) => {
   // console.log("SESSION", req.session);
   // console.log("USER", req.user);
-
   next();
 });
 

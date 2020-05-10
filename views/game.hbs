@@ -119,11 +119,12 @@
 
     <button id="modal-toggle">Delete game</button>
     <div id="delete-modal">
-      <form action="delete/{{ game.id }}" method="POST">
+      {{!-- <form action="delete/{{ game.id }}" method="POST"> --}}
         <p>Delete game?</p>
-        <input type="submit" value="yes">
+        <button id="delete-game">yes</button>
+        {{!-- <input type="submit" value="yes"> --}}
         <button id="close-modal">no</button>
-      </form>
+      {{!-- </form> --}}
     </div>
 
    
