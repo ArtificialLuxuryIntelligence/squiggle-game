@@ -1,17 +1,9 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-// const session = require("express-session");
 const router = express.Router();
-
-const Squiggle = require("../models/squiggle");
-const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 const Game = require("../models/game");
 
-const loggedIn = require("./middleware/loggedIn");
 const auth = require("./middleware/auth");
-const myTurn = require("./middleware/myTurn");
 
 router.post("/join/:id", async (req, res) => {
   let username = req.user.name;
@@ -96,7 +88,7 @@ router.get("/join", auth, (req, res) => {
 router.get("/:id", auth, function (req, res, next) {
   // console.log(req.user);
   let id = req.params.id;
-  console.log("entering new game");
+  console.log(`entering game ${id}`);
 
   req.session.gameId = id;
   req.session.gameName = null; //added when game is fetched

@@ -73,10 +73,6 @@ router.get("/login", loggedIn, (req, res) => {
 
 //////////
 
-//MAYBE if(!req.sess)etc
-
-//sets  game data in session
-
 //report
 
 router.post("/report/completedsquiggle/:id", (req, res) => {
