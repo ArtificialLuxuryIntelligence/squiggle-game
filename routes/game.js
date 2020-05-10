@@ -1,18 +1,20 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-// const session = require("express-session");
 const router = express.Router();
-
-const Squiggle = require("../models/squiggle");
-const CompletedSquiggle = require("../models/completeSquiggle");
 const User = require("../models/user");
 const Game = require("../models/game");
 
-const loggedIn = require("./middleware/loggedIn");
 const auth = require("./middleware/auth");
-const myTurn = require("./middleware/myTurn");
 
+// Join confirmation page
+router.get("/join", auth, (req, res) => {
+  res.render("account", {
+    messages: req.flash("msg"),
+    user: req.user,
+    joinId: req.query.id,
+  });
+});
+
+// Join game
 router.post("/join/:id", async (req, res) => {
   let username = req.user.name;
   let gameId = req.params.id;
@@ -85,18 +87,11 @@ router.post("/join/:id", async (req, res) => {
   });
 });
 
-router.get("/join", auth, (req, res) => {
-  res.render("account", {
-    messages: req.flash("msg"),
-    user: req.user,
-    joinId: req.query.id,
-  });
-});
-
+// Private game home page
 router.get("/:id", auth, function (req, res, next) {
   // console.log(req.user);
   let id = req.params.id;
-  console.log("entering new game");
+  console.log(`entering game ${id}`);
 
   req.session.gameId = id;
   req.session.gameName = null; //added when game is fetched
@@ -172,6 +167,7 @@ router.get("/:id", auth, function (req, res, next) {
   });
 });
 
+// Create new game
 router.post("/new", auth, (req, res, next) => {
   let newGame = new Game({
     admin: req.user.name,
@@ -208,7 +204,8 @@ router.post("/new", auth, (req, res, next) => {
   });
 });
 
-router.post("/delete/:id", auth, (req, res, next) => {
+// Delete game
+router.delete("/delete/:id", auth, (req, res, next) => {
   // console.log(req.user.id);
 
   const gameId = req.params.id;
@@ -218,7 +215,7 @@ router.post("/delete/:id", auth, (req, res, next) => {
     if (err) {
       console.log(err);
 
-      res.redirect("/users/account");
+      res.json({ err });
     } else {
       User.findOneAndUpdate(
         { _id: req.user.id },
@@ -226,13 +223,13 @@ router.post("/delete/:id", auth, (req, res, next) => {
         (err, doc) => {
           if (err) {
             //user data??->
-            res.redirect("/users/account");
+            res.json({ err });
             console.log(err);
           }
           if (doc) {
             console.log("doc", doc);
 
-            res.redirect("/users/account");
+            res.json({ success: true });
           }
         }
       );

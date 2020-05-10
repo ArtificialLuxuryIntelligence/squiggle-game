@@ -52,14 +52,12 @@ async function loadImage() {
 
 loadImage();
 
-/// open delete modal;
+/// delete modal;
 
 let modal = document.querySelector("#delete-modal");
 let modalNo = modal.querySelector("#close-modal");
-modalNo.addEventListener("click", (e) => {
-  e.preventDefault();
-  toggleModal();
-});
+let modalYes = modal.querySelector("#delete-game");
+modalNo.addEventListener("click", toggleModal);
 document.querySelector("#modal-toggle").addEventListener("click", toggleModal);
 
 function toggleModal() {
@@ -69,6 +67,20 @@ function toggleModal() {
     modal.style.display = "block";
   }
 }
+
+let gameId = window.location.pathname.split("/game/")[1];
+console.log(gameId);
+
+modalYes.addEventListener("click", async () => {
+  console.log("deleting game..");
+  const response = await fetch(`delete/${gameId}`, {
+    method: "DELETE",
+  });
+  const json = await response.json();
+  if (json.success) {
+    window.location.href = "/users/account";
+  }
+});
 //////////////
 
 //////////////

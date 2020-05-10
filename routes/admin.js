@@ -16,6 +16,7 @@ router.get("/", function (req, res, next) {
   res.render("admin", { name: req.user.name });
 });
 
+// Returns all completed squiggles that have been reported (more than 0 times)
 router.get("/removedcompletedsquiggles", async (req, res, next) => {
   //   let page = req.params.page;
   let squiggles = await CompletedSquiggle.find({ reports: { $gt: 0 } }).sort({
@@ -25,6 +26,8 @@ router.get("/removedcompletedsquiggles", async (req, res, next) => {
   // .limit(5);
   res.json(squiggles);
 });
+
+// Returns all squiggles that have been reported (more than 0 times)
 
 router.get("/removedsquiggles", async (req, res, next) => {
   let page = req.params.page;
@@ -37,6 +40,8 @@ router.get("/removedsquiggles", async (req, res, next) => {
   res.json(squiggles);
 });
 
+// Returns ALL squiggles
+
 router.get("/allsquiggles", async (req, res, next) => {
   let page = req.params.page;
 
@@ -47,6 +52,8 @@ router.get("/allsquiggles", async (req, res, next) => {
   // .limit(5);
   res.json(squiggles);
 });
+
+//Resets reports to 0 of completed squiggle
 
 router.post("/undoreport/completedsquiggle/:id", (req, res) => {
   CompletedSquiggle.update(
@@ -64,7 +71,9 @@ router.post("/undoreport/completedsquiggle/:id", (req, res) => {
   );
 });
 
-router.post("/delete/completedsquiggle/:id", (req, res) => {
+// Deletes completed squiggle
+
+router.delete("/delete/completedsquiggle/:id", (req, res) => {
   CompletedSquiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
     if (err) {
       // res.redirect("/admin");
@@ -76,6 +85,8 @@ router.post("/delete/completedsquiggle/:id", (req, res) => {
     }
   });
 });
+
+//Resets reports to 0 of squiggle
 
 router.post("/undoreport/squiggle/:id", (req, res) => {
   Squiggle.update({ _id: req.params.id }, { reports: 0 }, (err, doc) => {
@@ -90,7 +101,9 @@ router.post("/undoreport/squiggle/:id", (req, res) => {
   });
 });
 
-router.post("/delete/squiggle/:id", (req, res) => {
+// Deletes squiggle
+
+router.delete("/delete/squiggle/:id", (req, res) => {
   Squiggle.findByIdAndDelete({ _id: req.params.id }, (err, doc) => {
     if (err) {
       // res.redirect("/admin");

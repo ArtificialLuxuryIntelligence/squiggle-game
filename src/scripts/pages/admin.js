@@ -16,16 +16,19 @@ window.onload = async function () {
   // addHeaders();
 };
 
-const formButton = (squiggle, buttonValue, action) => {
-  let f = document.createElement("form");
-  f.setAttribute("method", "POST");
-  f.setAttribute("action", action + squiggle._id);
-  let s = document.createElement("input");
-  s.setAttribute("type", "submit");
-  s.setAttribute("value", buttonValue);
-  f.appendChild(s);
-  // cont.insertBefore(f, loader);
-  return f;
+const ajaxButton = (squiggle, buttonValue, action, method = "POST") => {
+  let i = document.createElement("button");
+  i.innerText = buttonValue;
+  i.addEventListener("click", async () => {
+    console.log("clicked");
+    const response = await fetch(action + squiggle._id, {
+      method: method,
+    });
+    const json = await response.json();
+    //server currently not send anything useful back..
+    console.log(json);
+  });
+  return i;
 };
 
 //fetch squiggle
@@ -66,10 +69,15 @@ async function loadImages() {
     let imgcont = document.createElement("div");
     imgcont.appendChild(addImage(squiggle.img2.data, squiggle.img.data));
     imgcont.appendChild(
-      formButton(squiggle, "remove", "/admin/delete/completedsquiggle/")
+      ajaxButton(
+        squiggle,
+        "remove",
+        "/admin/delete/completedsquiggle/",
+        "DELETE"
+      )
     );
     imgcont.appendChild(
-      formButton(squiggle, "restore", "/admin/undoreport/completedsquiggle/")
+      ajaxButton(squiggle, "restore", "/admin/undoreport/completedsquiggle/")
     );
     cont.insertBefore(imgcont, loader);
   });
@@ -109,10 +117,10 @@ async function loadSquiggles() {
     imgcont.appendChild(canvas);
 
     imgcont.appendChild(
-      formButton(squiggle, "remove", "/admin/delete/squiggle/")
+      ajaxButton(squiggle, "remove", "/admin/delete/squiggle/", "DELETE")
     );
     imgcont.appendChild(
-      formButton(squiggle, "restore", "/admin/undoreport/squiggle/")
+      ajaxButton(squiggle, "restore", "/admin/undoreport/squiggle/")
     );
     squigCont.insertBefore(imgcont, loader2);
   });
@@ -153,10 +161,10 @@ async function loadAllSquiggles() {
       let canvas = await addCanvas(squiggle);
       imgcont.appendChild(canvas);
       imgcont.appendChild(
-        formButton(squiggle, "remove", "/admin/delete/squiggle/")
+        ajaxButton(squiggle, "remove", "/admin/delete/squiggle/", "DELETE")
       );
       imgcont.appendChild(
-        formButton(squiggle, "restore", "/admin/undoreport/squiggle/")
+        ajaxButton(squiggle, "restore", "/admin/undoreport/squiggle/")
       );
       let forms = imgcont.querySelectorAll("form");
       forms.forEach((form) => {
