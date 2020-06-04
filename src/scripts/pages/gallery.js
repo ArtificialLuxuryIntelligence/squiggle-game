@@ -9,6 +9,8 @@ const game = document.getElementById("gameName");
 
 let pageNum = 0;
 
+console.log("loaded");
+
 // touch-screen only content
 if ("ontouchstart" in document.documentElement) {
   document
