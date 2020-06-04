@@ -78,8 +78,8 @@ class CanvasComponent {
     console.log("SF", this.scaleFactor);
     // console.log("os", this.originalSize);
 
-    //initial this.canvas sizing
-    //all in one row?
+    //initial canvas sizing
+
     this.canvas.style.width = this.cwidth + "px";
     this.canvas.style.height = this.cwidth + "px";
     this.canvas2.style.width = this.cwidth + "px";

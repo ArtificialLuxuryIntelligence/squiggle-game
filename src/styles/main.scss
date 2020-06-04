@@ -170,18 +170,32 @@ nav {
 
     .drawing {
       text-align: center;
+      width: 100%;
+      max-width: 600px;
+
       .canvas-container {
-        padding: 4rem 0 1rem 0;
+        padding: 1rem 0 1rem 0;
         display: flex;
+        position: relative;
         justify-content: center;
         width: 100%;
 
         canvas {
+          //width is reset in js - this is to give it a size before the canvas data is loaded (currently )
+          width: 600px;
+          height: 600px;
+          width: 100%;
+
           border-top: 2px solid black;
           border-bottom: 2px solid black;
 
           // border-radius: 10px;
           z-index: 1;
+        }
+        // #canvas,
+        #canvas2 {
+          // display: none;
+          position: absolute;
         }
         #canvas2 {
           position: absolute;
@@ -669,9 +683,9 @@ nav {
           margin: 4rem;
         }
         .button {
-          width: 10rem;
-          height: 10rem;
-          margin: 2rem;
+          width: 8rem;
+          height: 8rem;
+          margin: 5rem;
         }
       }
     }
