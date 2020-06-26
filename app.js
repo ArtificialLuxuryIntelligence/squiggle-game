@@ -47,6 +47,7 @@ app.use(cookieParser());
 
 app.use(
   session({
+    //TO DO .env this file
     secret: "very secret this is",
     resave: false,
     saveUninitialized: true,
