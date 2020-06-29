@@ -14,13 +14,10 @@ const auth = require("./middleware/auth");
 const myTurn = require("./middleware/myTurn");
 
 router.get("/private", function (req, res, next) {
-  console.log(req.query);
+  // console.log(req.query);
 
   req.session.gameId = req.query.gameid;
   req.session.squiggleId = req.query.squiggleid;
-
-  console.log("REDIRECTING");
-
   return res.redirect("/play");
 });
 
@@ -60,8 +57,6 @@ router.get("/squiggle", async (req, res, next) => {
     //find specific squiggle
     let gameId = req.session.gameId;
     try {
-      console.log("latest");
-
       let squiggle = await Squiggle.find({ gameId: gameId })
         .sort({
           time: -1,
@@ -178,18 +173,18 @@ router.post("/newsquiggle/submit", function (req, res, next) {
         next(err);
       }
       if ((req.session.myTurn = true)) {
-        console.log("UPDATING GAME OBJECT");
+        // console.log("UPDATING GAME OBJECT");
         let gameId = req.session.gameId;
         try {
           let game = await Game.findOne({ _id: gameId });
-          // console.log("GAAAAAAAAAAAME", game.turn, game.players);
+          // console.log("Game", game.turn, game.players);
           let turnName = game.players[(game.turn + 1) % game.players.length];
 
           await Game.update({ _id: gameId }, { $inc: { turn: 1 }, turnName });
           req.session.myTurn = false;
           res.redirect(`/game/${gameId}`);
         } catch (err) {
-          console.log("game update error", err);
+          // console.log("game update error", err);
           return res.redirect("/");
         }
 

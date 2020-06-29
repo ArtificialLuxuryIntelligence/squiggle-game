@@ -30,7 +30,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background-color: $body-overflow-col;
+  z-index: -4;
 }
 
 h1,
@@ -679,6 +679,9 @@ nav {
 //-------------------------------------------------------------------------------------------MEDIA QUERIES
 //---------------------------------------------------------------------------------------------------------------------
 @media (min-width: 600px) {
+  body {
+    background-color: $body-overflow-col;
+  }
   nav {
   }
   .notification {

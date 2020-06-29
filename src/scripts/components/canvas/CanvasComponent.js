@@ -73,9 +73,8 @@ class CanvasComponent {
     this.init();
   }
   init() {
-    console.log("initializing ");
-
-    console.log("SF", this.scaleFactor);
+    // console.log("initializing ");
+    // console.log("SF", this.scaleFactor);
     // console.log("os", this.originalSize);
 
     //initial canvas sizing
@@ -94,7 +93,7 @@ class CanvasComponent {
 
     //normalises canvas/device width ratio
     let scaleFactor1 = size / this.cwidth; //same as devpixratio
-    console.log("SF1", scaleFactor1);
+    // console.log("SF1", scaleFactor1);
 
     this.ctx.scale(scaleFactor1, scaleFactor1);
     this.ctx2.scale(scaleFactor1, scaleFactor1);
@@ -152,12 +151,7 @@ class CanvasComponent {
   }
   async rotateCanvasHandler() {
     this.turns++;
-
-    console.log(this.turns);
-
-    // console.log((turns % 4) + 1);
-
-    this.ctx.clearRect(0, 0, this.cwidth, this.cwidth);
+   this.ctx.clearRect(0, 0, this.cwidth, this.cwidth);
     this.backgroundFill();
 
     //rotate this.canvas and rerender
@@ -188,7 +182,7 @@ class CanvasComponent {
 
   //for rendering squiggle
   renderScaling() {
-    console.log(`render scaling called`);
+    // console.log(`render scaling called`);
 
     this.ctx.scale(this.scaleFactor, this.scaleFactor);
     this.ctx2.scale(this.scaleFactor, this.scaleFactor);
@@ -204,7 +198,7 @@ class CanvasComponent {
 
   //inverses renderscaling
   drawScaling() {
-    console.log(`draw scaling called`);
+    // console.log(`draw scaling called`);
 
     let invScaleFactor = 1 / this.scaleFactor;
     this.ctx.scale(invScaleFactor, invScaleFactor);
@@ -394,7 +388,7 @@ class CanvasComponent {
 
   mouseMoveHandler() {
     let mouse = this.mouse;
-    console.log(this.mouse);
+    // console.log(this.mouse);
 
     //shouldnt need this check
     if (this.isDrawing) {

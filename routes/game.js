@@ -29,7 +29,6 @@ router.post("/join/:id", async (req, res) => {
       return;
     }
     if (game.players.includes(username)) {
-      console.log("already in game");
 
       res.redirect(`/game/${game.id}`);
     } else {
@@ -42,7 +41,7 @@ router.post("/join/:id", async (req, res) => {
       if (game.players.length == 1) {
         turn = game.turn; //already inc to 1
         turnName = req.user.name; // user now at index 1
-        console.log(turn, turnName);
+        // console.log(turn, turnName);
       } else {
         turn = game.players.indexOf(game.turnName);
         turnName = game.turnName;
@@ -89,9 +88,9 @@ router.post("/join/:id", async (req, res) => {
 
 // Private game home page
 router.get("/:id", auth, function (req, res, next) {
-  // console.log(req.user);
   let id = req.params.id;
-  console.log(`entering game ${id}`);
+  // console.log(req.user);
+  // console.log(`entering game ${id}`);
 
   req.session.gameId = id;
   req.session.gameName = null; //added when game is fetched
@@ -105,18 +104,17 @@ router.get("/:id", auth, function (req, res, next) {
     // game not found
 
     if (!game) {
-      console.log("NO GAME");
       User.findOneAndUpdate(
         { _id: req.user.id },
         { $pull: { games: { id: id } } },
         (err, doc) => {
           if (err) {
             //user data??->
-            console.log("", err);
+            // console.log("", err);
             return res.redirect("/users/account");
           }
           if (doc) {
-            console.log("doc", doc);
+            // console.log("doc", doc);
 
             return res.redirect("/users/account");
           }
@@ -150,7 +148,7 @@ router.get("/:id", auth, function (req, res, next) {
       } else {
         myTurn.bool = false;
       }
-      console.log("GAME", game);
+      // console.log("GAME", game);
 
       // let lastSquiggle;
 
@@ -184,7 +182,7 @@ router.post("/new", auth, (req, res, next) => {
     }
     //add game to user
 
-    console.log(game);
+    // console.log(game);
 
     User.findOneAndUpdate(
       { _id: req.user.id },
@@ -227,7 +225,7 @@ router.delete("/delete/:id", auth, (req, res, next) => {
             console.log(err);
           }
           if (doc) {
-            console.log("doc", doc);
+            // console.log("doc", doc);
 
             res.json({ success: true });
           }

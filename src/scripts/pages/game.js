@@ -35,9 +35,8 @@ async function loadImage() {
   }
 
   let [squiggle] = await fetchSquiggle();
-  console.log(squiggle);
-
-  let imgcont = document.createElement("div");
+  // console.log(squiggle);
+    let imgcont = document.createElement("div");
   let title = document.createElement("h3");
   title.innerText = "Latest superb squiggle solution";
   imgcont.appendChild(title);
@@ -69,10 +68,10 @@ function toggleModal() {
 }
 
 let gameId = window.location.pathname.split("/game/")[1];
-console.log(gameId);
+// console.log(gameId);
 
 modalYes.addEventListener("click", async () => {
-  console.log("deleting game..");
+  // console.log("deleting game..");
   const response = await fetch(`delete/${gameId}`, {
     method: "DELETE",
   });

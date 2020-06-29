@@ -66,7 +66,6 @@ passport.use(
         }
 
         if (bcrypt.compareSync(password, user.password)) {
-          console.log("correct password");
 
           return done(null, user);
         }

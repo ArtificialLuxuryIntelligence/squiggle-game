@@ -13,8 +13,8 @@
 // on window load
 
 setTimeout(() => {
-  console.log("SF", scaleFactor);
-  console.log("SF1", scaleFactor1);
+  // console.log("SF", scaleFactor);
+  // console.log("SF1", scaleFactor1);
 }, 500);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@ const game = document.getElementById("gameName");
 
 let pageNum = 0;
 
-console.log("loaded");
+// console.log("loaded");
 
 // touch-screen only content
 if ("ontouchstart" in document.documentElement) {
@@ -25,7 +25,7 @@ async function loadImages(page) {
   const fetchSquiggles = async (page) => {
     const response = await fetch("/gallery/squiggles/" + page);
     const json = await response.json();
-    console.log(json);
+    // console.log(json);
 
     return json;
   };

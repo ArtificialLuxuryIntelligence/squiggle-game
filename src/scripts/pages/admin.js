@@ -20,13 +20,13 @@ const ajaxButton = (squiggle, buttonValue, action, method = "POST") => {
   let i = document.createElement("button");
   i.innerText = buttonValue;
   i.addEventListener("click", async () => {
-    console.log("clicked");
+    // console.log("clicked");
     const response = await fetch(action + squiggle._id, {
       method: method,
     });
     const json = await response.json();
     //server currently not send anything useful back..
-    console.log(json);
+    // console.log(json);
   });
   return i;
 };
@@ -133,7 +133,7 @@ async function loadAllSquiggles() {
       method: "GET",
     });
     const json = await response.json();
-    console.log(json);
+    // console.log(json);
 
     return json;
   };

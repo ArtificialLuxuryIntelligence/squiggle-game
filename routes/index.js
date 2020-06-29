@@ -16,7 +16,7 @@ router.use("/", myTurn, (req, res, next) => {
 });
 
 router.get("/", function (req, res, next) {
-  console.log(req.user);
+  // console.log(req.user);
 
   let isAdmin;
   //not in private game
@@ -81,7 +81,7 @@ router.post("/report/completedsquiggle/:id", (req, res) => {
       }
       if (doc) {
         res.redirect("/gallery");
-        console.log(doc);
+        // console.log(doc);
       }
     }
   );
@@ -98,7 +98,7 @@ router.post("/report/squiggle/:id", (req, res) => {
       }
       if (doc) {
         res.redirect("/play");
-        console.log(doc);
+        // console.log(doc);
       }
     }
   );

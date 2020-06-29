@@ -17,7 +17,7 @@ window.addEventListener("load", async () => {
       originalSize: json.size,
       squiggleId: json._id,
     };
-    console.log(squiggleData);
+    // console.log(squiggleData);
 
     CanvasComp = new CanvasComponent({
       canvas: "canvas",

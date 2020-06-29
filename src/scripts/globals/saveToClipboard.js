@@ -1,10 +1,7 @@
 function saveToClipboard(id) {
   /* Get the text field */
-  console.log(id);
   let el = document.getElementById(id);
   let value = el.innerText;
-  console.log(value);
-
   let temp = document.createElement("input");
   temp.setAttribute("value", value);
   document.body.appendChild(temp);
