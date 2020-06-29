@@ -604,8 +604,6 @@ class CanvasComponent {
         this.input3.value = this.cwidth;
       });
     }
-
-    console.log("event listeners added");
   }
   //
 }

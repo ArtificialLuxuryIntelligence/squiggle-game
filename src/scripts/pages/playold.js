@@ -103,7 +103,7 @@ let scaling = { renderScaling: true };
 
 //for rendering squiggle
 const renderScaling = () => {
-  console.log(`render scaling called`);
+  // console.log(`render scaling called`);
   ctx.scale(scaleFactor, scaleFactor);
   ctx2.scale(scaleFactor, scaleFactor);
 
@@ -116,7 +116,7 @@ const renderScaling = () => {
 
 //inverses renderscaling
 const drawScaling = () => {
-  console.log(`draw scaling called`);
+  // console.log(`draw scaling called`);
 
   let invScaleFactor = 1 / scaleFactor;
   ctx.scale(invScaleFactor, invScaleFactor);
@@ -648,7 +648,7 @@ const addListeners = (path) => {
     });
   }
 
-  console.log("event listeners added");
+  // console.log("event listeners added");
 };
 
 // ON LOAD ------------------
